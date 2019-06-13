@@ -156,7 +156,7 @@ setup = {
 
     'dtlz4_3obj': {
         'termination': ('n_gen', 600),
-        'problem': get_problem("dtlz3", None, 3, k=10),
+        'problem': get_problem("dtlz4", None, 3, k=10),
         **get_setup(3)
 
     },

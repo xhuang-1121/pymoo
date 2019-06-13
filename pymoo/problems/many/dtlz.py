@@ -1,6 +1,7 @@
 import autograd.numpy as anp
 
 from pymoo.model.problem import Problem
+from pymoo.problems.util import load_pareto_front_from_file
 
 
 class DTLZ(Problem):
@@ -109,7 +110,10 @@ class DTLZ5(DTLZ):
         super().__init__(n_var, n_obj, **kwargs)
 
     def _calc_pareto_front(self):
-        raise Exception("Not implemented yet.")
+        if self.n_obj == 3:
+            return load_pareto_front_from_file("dtlz5-3d.pf")
+        else:
+            raise Exception("Not implemented yet.")
 
     def _evaluate(self, x, out, *args, **kwargs):
         X_, X_M = x[:, :self.n_obj - 1], x[:, self.n_obj - 1:]
@@ -126,7 +130,10 @@ class DTLZ6(DTLZ):
         super().__init__(n_var, n_obj, **kwargs)
 
     def _calc_pareto_front(self):
-        raise Exception("Not implemented yet.")
+        if self.n_obj == 3:
+            return load_pareto_front_from_file("dtlz6-3d.pf")
+        else:
+            raise Exception("Not implemented yet.")
 
     def _evaluate(self, x, out, *args, **kwargs):
         X_, X_M = x[:, :self.n_obj - 1], x[:, self.n_obj - 1:]
@@ -143,7 +150,10 @@ class DTLZ7(DTLZ):
         super().__init__(n_var, n_obj, **kwargs)
 
     def _calc_pareto_front(self):
-        raise Exception("Not implemented yet.")
+        if self.n_obj == 3:
+            return load_pareto_front_from_file("dtlz7-3d.pf")
+        else:
+            raise Exception("Not implemented yet.")
 
     def _evaluate(self, x, out, *args, **kwargs):
         f = []
@@ -199,23 +209,33 @@ class ConvexProblem(Problem):
         super().__init__(problem.n_var, problem.n_obj, problem.n_constr, problem.xl, problem.xu)
         self.problem = problem
 
-    @staticmethod
-    def get_power(n):
+    def get_power(self, n):
         p = anp.full(n, 4.0)
         p[-1] = 2.0
         return p
 
-    def evaluate(self, X, *args, **kwargs):
-        t = self.problem.evaluate(X, **kwargs)
-        F = anp.power(t[0], ConvexProblem.get_power(self.n_obj))
-        return tuple([F] + list(t)[1:])
+    def _evaluate(self, X, out, *args, **kwargs):
+        self.problem._evaluate(X, out, **kwargs)
+        out["F"] = anp.power(out["F"], self.get_power(self.n_obj))
 
     def _calc_pareto_front(self, ref_dirs, *args, **kwargs):
         F = self.problem.pareto_front(ref_dirs)
-        return anp.power(F, ConvexProblem.get_power(self.n_obj))
+        return anp.power(F, self.get_power(self.n_obj))
 
 
 class ScaledDTLZ1(ScaledProblem):
 
     def __init__(self, n_var=7, n_obj=3, scale_factor=10, **kwargs):
         super().__init__(DTLZ1(n_var=n_var, n_obj=n_obj, **kwargs), scale_factor=scale_factor)
+
+
+class ConvexDTLZ2(ConvexProblem):
+
+    def __init__(self, n_var=10, n_obj=3, **kwargs):
+        super().__init__(DTLZ2(n_var=n_var, n_obj=n_obj, **kwargs))
+
+
+class ConvexDTLZ4(ConvexProblem):
+
+    def __init__(self, n_var=10, n_obj=3, **kwargs):
+        super().__init__(DTLZ4(n_var=n_var, n_obj=n_obj, **kwargs))

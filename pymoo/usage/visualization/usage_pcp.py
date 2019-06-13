@@ -2,7 +2,7 @@
 
 from pymoo.factory import get_problem, get_reference_directions
 
-ref_dirs = get_reference_directions("uniform", 6, n_partitions=5) * [2, 4, 8, 16, 32, 64]
+ref_dirs = get_reference_directions("das-dennis", 6, n_partitions=5) * [2, 4, 8, 16, 32, 64]
 F = get_problem("dtlz1").pareto_front(ref_dirs)
 # END load_data
 

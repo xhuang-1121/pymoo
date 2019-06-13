@@ -73,7 +73,10 @@ class MOEAD(GeneticAlgorithm):
 
         return pop
 
-    def _next(self, pop):
+    def _next(self):
+
+        # retrieve the current population
+        pop = self.pop
 
         # iterate for each member of the population in random order
         for i in np.random.permutation(len(pop)):

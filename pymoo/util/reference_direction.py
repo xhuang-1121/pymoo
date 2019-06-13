@@ -56,7 +56,7 @@ def sample_on_simplex(n_points, n_dim, method="kraemer", seed=None):
             rnd[:, i - 1] = _rnd[:, i] - _rnd[:, i - 1]
         rnd /= M
 
-    elif method == "das_dennis":
+    elif method == "das-dennis":
         rnd = UniformReferenceDirectionFactory(n_dim, n_points=n_points).do()
 
     return rnd
@@ -95,7 +95,7 @@ def select_points_with_maximum_distance(X, n_select, selected=[]):
     return selected
 
 
-class SamplingReferenceDirectionFactory(ReferenceDirectionFactory):
+class ReductionBasedReferenceDirectionFactory(ReferenceDirectionFactory):
 
     def __init__(self, n_dim, scaling=None, n_points=None, n_sample_points=5000, sampling="kraemer", seed=1,
                  kmeans=True) -> None:
@@ -241,7 +241,7 @@ if __name__ == '__main__':
 
     plotting.plot(ref_dirs)
 
-    ref_dirs = SamplingReferenceDirectionFactory(3, n_points=200, n_sample_points=10000).do()
+    ref_dirs = ReductionBasedReferenceDirectionFactory(3, n_points=200, n_sample_points=10000).do()
     print(np.sum(ref_dirs, axis=1))
 
     plotting.plot(ref_dirs)

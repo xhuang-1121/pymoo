@@ -1,7 +1,7 @@
 import numpy as np
-from scipy.spatial.distance import cdist
 
-from pymoo.decision_making.decision_making import DecisionMaking, normalize
+from pymoo.model.decision_making import DecisionMaking
+from pymoo.util.normalization import normalize
 
 
 class CompromiseProgramming(DecisionMaking):
@@ -12,9 +12,9 @@ class CompromiseProgramming(DecisionMaking):
 
     def _do(self, F, **kwargs):
 
-        F, _, ideal_point, _ = normalize(F, self.ideal_point, self.nadir_point, estimate_bounds_if_none=True,
-                                         return_bounds=True)
+        F, _, ideal_point, nadir_point = normalize(F, x_min=self.ideal_point,
+                                                   x_max=self.nadir_point,
+                                                   estimate_bounds_if_none=True,
+                                                   return_bounds=True)
 
-        D = cdist(ideal_point[None, :], F)
-
-        return np.argmin(D)
+        return None

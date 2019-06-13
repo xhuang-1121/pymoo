@@ -8,6 +8,8 @@ The definitions for each object are purposely defined as a list and not as a dic
 import re
 
 from pymoo.configuration import Configuration
+
+
 from pymoo.problems.many import *
 from pymoo.problems.multi import *
 from pymoo.problems.single import *
@@ -16,6 +18,7 @@ from pymoo.problems.single import *
 # =========================================================================================================
 # Generic
 # =========================================================================================================
+
 
 
 def get_from_list(l, name, args, kwargs):
@@ -63,10 +66,12 @@ def get_algorithm_options():
     from pymoo.algorithms.so_de import de
     from pymoo.algorithms.so_genetic_algorithm import ga
     from pymoo.algorithms.unsga3 import unsga3
+    from pymoo.algorithms.so_nelder_mead import nelder_mead
 
     ALGORITHMS = [
         ("ga", ga),
         ("de", de),
+        ("nelder-mead", nelder_mead),
         ("nsga2", nsga2),
         ("rnsga2", rnsga2),
         ("nsga3", nsga3),
@@ -137,8 +142,8 @@ def get_crossover_options():
     from pymoo.operators.crossover.uniform_crossover import UniformCrossover
 
     CROSSOVER = [
-        ("real_sbx", SimulatedBinaryCrossover, dict(prob=1.0, eta=30, var_type=np.double)),
-        ("int_sbx", SimulatedBinaryCrossover, dict(prob=1.0, eta=30, var_type=np.int)),
+        ("real_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30, var_type=np.double)),
+        ("int_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30, var_type=np.int)),
         ("real_de", DifferentialEvolutionCrossover),
         ("(real|bin|int)_ux", UniformCrossover),
         ("(bin|int)_hux", HalfUniformCrossover),
@@ -216,7 +221,7 @@ def get_problem_options():
         ('ctp6', CTP6),
         ('ctp7', CTP7),
         ('ctp8', CTP8),
-        ('dtlz1_-1', InvertedDTLZ1),
+        ('dtlz1^-1', InvertedDTLZ1),
         ('dtlz1', DTLZ1),
         ('dtlz2', DTLZ2),
         ('dtlz3', DTLZ3),
@@ -224,6 +229,8 @@ def get_problem_options():
         ('dtlz5', DTLZ5),
         ('dtlz6', DTLZ6),
         ('dtlz7', DTLZ7),
+        ('convex_dtlz2', ConvexDTLZ2),
+        ('convex_dtlz4', ConvexDTLZ4),
         ('sdtlz1', ScaledDTLZ1),
         ('c1dtlz1', C1DTLZ1),
         ('c1dtlz3', C1DTLZ3),
@@ -266,7 +273,11 @@ def get_problem_options():
 
 
 def get_problem(name, *args, d={}, **kwargs):
-    return get_from_list(get_problem_options(), name.lower(), args, {**d, **kwargs})
+    if name.startswith("go-"):
+        from pymoo.vendor.global_opt import get_global_optimization_problem_options
+        return get_from_list(get_global_optimization_problem_options(), name.lower(), args, {**d, **kwargs})
+    else:
+        return get_from_list(get_problem_options(), name.lower(), args, {**d, **kwargs})
 
 
 # =========================================================================================================
@@ -275,9 +286,13 @@ def get_problem(name, *args, d={}, **kwargs):
 
 def get_reference_direction_options():
     from pymoo.util.reference_direction import UniformReferenceDirectionFactory
+    from pymoo.util.reference_direction import ReductionBasedReferenceDirectionFactory
+    from pymoo.util.reference_direction import MultiLayerReferenceDirectionFactory
 
     REFERENCE_DIRECTIONS = [
-        ("uniform", UniformReferenceDirectionFactory)
+        ("(das-dennis|uniform)", UniformReferenceDirectionFactory),
+        ("multi-layer", MultiLayerReferenceDirectionFactory),
+        ("red", ReductionBasedReferenceDirectionFactory)
     ]
 
     return REFERENCE_DIRECTIONS
@@ -293,20 +308,24 @@ def get_reference_directions(name, *args, d={}, **kwargs):
 
 def get_visualization_options():
     from pymoo.visualization.pcp import ParallelCoordinatePlot
-    from pymoo.visualization.petal_width import PetalWidth
+    from pymoo.visualization.petal import PetalDiagram
     from pymoo.visualization.radar import Radar
     from pymoo.visualization.radviz import Radviz
     from pymoo.visualization.scatter import Scatter
-    from pymoo.visualization.star import StarCoordinate
+    from pymoo.visualization.star_coordinate import StarCoordinate
+    from pymoo.visualization.heatmap import Heatmap
+    from pymoo.visualization.fitness_landscape import FitnessLandscape
 
     VISUALIZATION = [
-        ("heat", Scatter),
+        ("scatter", Scatter),
+        ("heatmap", Heatmap),
         ("pcp", ParallelCoordinatePlot),
-        ("petal", PetalWidth),
+        ("petal", PetalDiagram),
         ("radar", Radar),
         ("radviz", Radviz),
         ("scatter", Scatter),
-        ("star", StarCoordinate)
+        ("star", StarCoordinate),
+        ("fitness-landscape", FitnessLandscape)
     ]
 
     return VISUALIZATION
@@ -354,7 +373,7 @@ def get_decomposition_options():
     from pymoo.decomposition.perp_dist import PerpendicularDistance
 
     DECOMPOSITION = [
-        ("weighted_sum", WeightedSum),
+        ("weighted-sum", WeightedSum),
         ("tchebi", Tchebicheff),
         ("pbi", PBI),
         ("asf", ASF),
@@ -367,6 +386,26 @@ def get_decomposition_options():
 
 def get_decomposition(name, *args, d={}, **kwargs):
     return get_from_list(get_decomposition_options(), name, args, {**d, **kwargs})
+
+
+# =========================================================================================================
+# DECOMPOSITION
+# =========================================================================================================
+
+def get_decision_making_options():
+    from pymoo.decision_making.knee_point import HighTradeoffPoints
+    from pymoo.decision_making.pseudo_weights import PseudoWeights
+
+    DECISION_MAKING = [
+        ("high-tradeoff", HighTradeoffPoints),
+        ("pseudo-weights", PseudoWeights)
+    ]
+
+    return DECISION_MAKING
+
+
+def get_decision_making(name, *args, d={}, **kwargs):
+    return get_from_list(get_decision_making_options(), name, args, {**d, **kwargs})
 
 
 # =========================================================================================================
@@ -401,6 +440,8 @@ def options_to_string(l):
 
 
 if Configuration.parse_custom_docs:
+    from pymoo.docs import parse_doc_string
+
     from pymoo.factory import get_algorithm_options, get_selection_options, get_crossover_options, \
         get_mutation_options, get_termination_options, get_algorithm, get_selection, get_crossover, get_mutation, \
         get_termination, get_sampling, get_sampling_options

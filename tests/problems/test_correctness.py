@@ -1,9 +1,8 @@
 import unittest
 
 import autograd.numpy as anp
-from pymop.factory import get_problem
 
-from pymoo.problems import *
+from pymoo.factory import get_problem
 import os
 
 

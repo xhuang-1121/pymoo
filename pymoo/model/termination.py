@@ -8,16 +8,13 @@ class Termination:
 
     def __init__(self) -> None:
         super().__init__()
-        self.flag = True
+        self.force_termination = False
 
     def do_continue(self, D):
-        return self.flag and self._do_continue(D)
+        return (not self.force_termination) and self._do_continue(D)
 
     def has_finished(self, D):
         return not self.do_continue(D)
-
-    def reset(self):
-        pass
 
 
 class MaximumFunctionCallTermination(Termination):
@@ -48,13 +45,7 @@ class ToleranceBasedTermination(Termination):
         self.nth_gen = nth_gen
         self.n_last = n_last
         self.n_max_gen = n_max_gen
-        self.reset()
-
         self.history, self.n_gen = [], None
-
-    def reset(self):
-        self.history = []
-        self.n_gen = None
 
     def _store(self, pop):
         return pop
@@ -165,7 +156,7 @@ class IGDTermination(Termination):
             raise Exception("You can only use IGD termination criteria if the pareto front is known!")
 
         self.obj = IGD(pf)
-        self.igd = min_igd
+        self.igd = min_igdm
 
     def _do_continue(self, algorithm):
         F = algorithm.pop.get("F")

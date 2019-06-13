@@ -73,29 +73,6 @@ class GeneticAlgorithm(Algorithm):
         self.pop = None
         self.off = None
 
-    def _solve(self, problem, termination):
-
-        # generation counter
-        self.n_gen = 1
-
-        # initialize the first population and evaluate it
-        self.pop = self._initialize()
-        self._each_iteration(self, first=True)
-
-        # while termination criterion not fulfilled
-        while termination.do_continue(self):
-            self.n_gen += 1
-
-            # do the next iteration
-            self.pop = self._next(self.pop)
-
-            # execute the callback function in the end of each generation
-            self._each_iteration(self)
-
-        self._finalize()
-
-        return self.pop
-
     def _initialize(self):
         # ! get the initial population - different ways are possible
 
@@ -125,7 +102,10 @@ class GeneticAlgorithm(Algorithm):
 
         return pop
 
-    def _next(self, pop):
+    def _next(self):
+
+        # retrieve the current population
+        pop = self.pop
 
         # do the mating using the current population
         self.off = self._mating(pop)

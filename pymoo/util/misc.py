@@ -153,7 +153,8 @@ def stack(*args, flatten=True):
 def all_combinations(A, B):
     u = np.repeat(A, B.shape[0], axis=0)
     v = np.tile(B, A.shape[0])
-    return np.column_stack([u,v])
+    return np.column_stack([u, v])
+
 
 if __name__ == '__main__':
     x = np.linspace(0, 5, 50)

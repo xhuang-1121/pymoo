@@ -1,10 +1,13 @@
+import copy
+
 from pymoo.factory import get_termination
 from pymoo.model.termination import Termination
 
 
 def minimize(problem,
              method,
-             termination=get_termination('ftol', tol=0.001, n_last=20, n_max_gen=None, nth_gen=5),
+             termination=None,
+             copy_method=True,
              **kwargs):
     """
 
@@ -36,12 +39,22 @@ def minimize(problem,
     """
 
     # create an evaluator defined by the termination criterion
-    if not isinstance(termination, Termination):
+    if termination is None:
+        pass
+    elif not isinstance(termination, Termination):
         if isinstance(termination, str):
             termination = get_termination(termination)
         else:
             termination = get_termination(*termination)
 
+    # create a copy of the algorithm object
+    if copy_method:
+        method = copy.deepcopy(method)
+
+    # use it to solve the problem
     res = method.solve(problem, termination, **kwargs)
+
+    # store the method object in the result
+    res.method = method
 
     return res

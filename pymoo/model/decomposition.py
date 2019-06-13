@@ -5,10 +5,11 @@ from pymoo.util.misc import at_least_2d_array, to_1d_array_if_possible
 
 class Decomposition:
 
-    def __init__(self, eps=1e-10, _type="auto", **kwargs) -> None:
+    def __init__(self, eps=0.0, _type="auto", **kwargs) -> None:
         super().__init__()
         self.eps = eps
         self._type = _type
+        self.ideal_point, self.utopian_point, self.nadir_point = None, None, None
 
     def do(self, F, weights, _type="auto", **kwargs):
 
@@ -36,7 +37,7 @@ class Decomposition:
 
         self.utopian_point = self.ideal_point - self.eps
 
-        # set the nadir point to default to value or default
+        # set the nadir point by default to value or default
         self.nadir_point = kwargs.get("nadir_point")
         if self.nadir_point is None:
             self.nadir_point = np.ones(F.shape[1])

@@ -1,5 +1,3 @@
-import numpy as np
-
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
 from pymoo.operators.default_operators import set_if_none
@@ -57,7 +55,7 @@ class Scatter(Plot):
                 self.set_labels(self.ax, self.get_labels(), True)
 
                 if self.angle is not None:
-                    self.ax.view_init(45, 45)
+                    self.ax.view_init(*self.angle)
 
             else:
                 labels = self.get_labels()

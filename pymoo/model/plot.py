@@ -79,7 +79,7 @@ class Plot:
             self.fig, self.ax = plt.subplots(nrows=n_rows, ncols=n_cols, figsize=self.figsize)
         else:
             importlib.import_module("mpl_toolkits.mplot3d")
-            self.fig = plt.figure()
+            self.fig = plt.figure(figsize=self.figsize)
             self.ax = self.fig.add_subplot(1, 1, 1, projection='3d')
 
         # if there is more than one figure we represent it as a 2D numpy array
@@ -88,14 +88,12 @@ class Plot:
 
     def do(self):
 
-        if len(self.to_plot) == 0:
-            raise Exception("No elements to plot were added yet.")
+        if len(self.to_plot) > 0:
+            unique_dim = np.unique(np.array([e[0].shape[1] for e in self.to_plot]))
+            if len(unique_dim) > 1:
+                raise Exception("Inputs with different dimensions were added: %s" % unique_dim)
 
-        unique_dim = np.unique(np.array([e[0].shape[1] for e in self.to_plot]))
-        if len(unique_dim) > 1:
-            raise Exception("Inputs with different dimensions were added: %s" % unique_dim)
-
-        self.n_dim = unique_dim[0]
+            self.n_dim = unique_dim[0]
 
         # actually call the class
         self._do()

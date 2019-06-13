@@ -1,5 +1,6 @@
 import os
 import sys
+import traceback
 import unittest
 from pathlib import Path
 from subprocess import run, PIPE
@@ -31,6 +32,12 @@ def test_usage(usages):
 
             s = no_plots + s + "\nmatplotlib.pyplot.close()\n"
 
+            try:
+                exec(s, globals())
+            except:
+                raise Exception("Usage %s failed." % fname)
+
+            """
             if os.path.exists(SCRIPT_NAME):
                 os.remove(SCRIPT_NAME)
 
@@ -47,6 +54,8 @@ def test_usage(usages):
             else:
                 print("OK\n")
 
+
+            """
 
 class AllUsageTest(unittest.TestCase):
 

@@ -35,12 +35,12 @@ class RNSGA3(NSGA3):
         kwargs['pop_size'] = ref_points.shape[0] * aspiration_ref_dirs.shape[0] + aspiration_ref_dirs.shape[1]
         super().__init__(**kwargs)
 
-    def _solve(self, problem, termination):
+    def _solve(self, problem):
         if self.survival.ref_points.shape[1] != problem.n_obj:
             raise Exception("Dimensionality of reference points must be equal to the number of objectives: %s != %s" %
                             (self.survival.ref_points.shape[1], problem.n_obj))
 
-        return super()._solve(problem, termination)
+        return super()._solve(problem)
 
 
 class AspirationPointSurvival(Survival):

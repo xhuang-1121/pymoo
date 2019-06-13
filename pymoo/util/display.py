@@ -3,7 +3,7 @@ import numpy as np
 from pymoo.performance_indicator.distance_indicator import IGD, GD
 from pymoo.performance_indicator.hv import Hypervolume
 
-width = 8
+width = 16
 
 
 def format_float(f):
@@ -33,9 +33,6 @@ def disp_single_objective(problem, evaluator, algorithm, pf=None):
     F, CV, feasible = algorithm.pop.get("F", "CV", "feasible")
     feasible = np.where(feasible[:, 0])[0]
 
-    if pf is None:
-        pf = pareto_front_if_possible(problem)
-
     if problem.n_constr > 0:
         attrs.append(disp_cv(CV))
 
@@ -60,8 +57,11 @@ def disp_multi_objective(problem, evaluator, algorithm, pf=None):
     F, CV, feasible = algorithm.pop.get("F", "CV", "feasible")
     feasible = np.where(feasible[:, 0])[0]
 
-    if pf is None:
-        pf = pareto_front_if_possible(problem)
+    if isinstance(pf, bool):
+        if pf:
+            pf = pareto_front_if_possible(problem)
+        else:
+            pf = None
 
     if problem.n_constr > 0:
         attrs.append(disp_cv(CV))

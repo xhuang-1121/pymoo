@@ -5,7 +5,7 @@ from pymoo.model.problem import Problem
 
 class Ackley(Problem):
 
-    def __init__(self, n_var=10, a=20, b=1/5, c=2 * anp.pi):
+    def __init__(self, n_var=2, a=20, b=1/5, c=2 * anp.pi):
         super().__init__(n_var=n_var, n_obj=1, n_constr=0, xl=-32.768, xu=+32.768, type_var=anp.double)
         self.a = a
         self.b = b

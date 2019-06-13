@@ -1,6 +1,27 @@
+import copy
 import os
+import types
 
 import autograd.numpy as anp
+
+
+def decompose(problem, decomposition, weights, return_copy=True):
+
+    if return_copy:
+        problem = copy.deepcopy(problem)
+
+    problem._multi_evaluate = problem._evaluate
+
+    def _evaluate(self, x, out, *args, **kwargs):
+        self._multi_evaluate(x, out, *args, **kwargs)
+        out["F"] = decomposition.do(out["F"], weights, _type="many_to_one")
+
+    problem._evaluate = types.MethodType(_evaluate, problem)
+    problem.n_obj = 1
+
+    return problem
+
+
 
 
 def load_pareto_front_from_file(fname):

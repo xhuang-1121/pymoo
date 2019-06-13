@@ -138,7 +138,7 @@ over the last years.
 
 .. raw:: html
 
-  <div>
+  </div>
 
 
 
@@ -154,14 +154,17 @@ Content
 .. toctree::
    :maxdepth: 2
 
-   news_all
+   news
    installation
    getting_started.ipynb
-   algorithms/index
+   algorithms/index.ipynb
    problems/index.ipynb
-   components/index
+   operators/index.ipynb
+   visualization/index.ipynb
+   decision_making/index.ipynb
+   misc/performance_indicator.ipynb
+   misc/index.ipynb
    tutorial/index
-   visualization/index.rst
    api/index
    versions
    references

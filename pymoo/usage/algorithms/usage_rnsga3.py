@@ -5,7 +5,6 @@ from pymoo.algorithms.rnsga3 import rnsga3
 from pymoo.factory import get_problem
 from pymoo.optimize import minimize
 from pymoo.util import plotting
-
 # Get problem
 from pymoo.util.reference_direction import UniformReferenceDirectionFactory
 
@@ -27,7 +26,7 @@ res = minimize(problem,
                pf=pf,
                disp=False)
 
-reference_directions = res.algorithm.survival.ref_dirs
+reference_directions = res.method.survival.ref_dirs
 plotting.plot(pf, res.F, ref_points, reference_directions, show=True,
               labels=['pf', 'F', 'ref_points', 'ref_dirs'])
 # END rnsga3

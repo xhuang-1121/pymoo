@@ -28,6 +28,7 @@ class Algorithm:
         self.pf = None
         self.opt = None
         self.seed = None
+        self.termination = None
 
         self.history = None
         self.verbose = None
@@ -37,12 +38,12 @@ class Algorithm:
 
     def solve(self,
               problem,
-              termination,
+              termination=None,
               seed=None,
               verbose=False,
               callback=None,
               save_history=False,
-              pf=None,
+              pf=True,
               evaluator=None,
               **kwargs
               ):
@@ -110,9 +111,9 @@ class Algorithm:
 
         self.problem = problem
 
-        self.termination = termination
-        if self.termination is not None:
-            self.termination.reset()
+        # set the termination criterion provided - if provided
+        if termination is not None:
+            self.termination = termination
 
         self.pf = pf
 
@@ -121,7 +122,7 @@ class Algorithm:
         self.save_history = save_history
 
         # call the algorithm to solve the problem
-        pop = self._solve(problem, termination)
+        pop = self._solve(problem)
 
         # get the optimal result by filtering feasible and non-dominated
         if self.opt is None:
@@ -146,7 +147,7 @@ class Algorithm:
             opt = None
 
         res = Result(opt, opt is None, "")
-        res.algorithm, res.problem, res.pf = self, problem, pf
+        res.problem, res.pf = problem, pf
         res.pop = pop
 
         if opt is not None:
@@ -156,11 +157,40 @@ class Algorithm:
 
         return res
 
-    def next(self, pop):
-        return self._next(pop)
+    def _solve(self, problem):
 
-    def initialize(self, pop):
+        # now the termination criterion should be set
+        if self.termination is None:
+            raise Exception("No termination criterion defined and algorithm has no default termination implemented!")
+
+        # generation counter
+        self.n_gen = 1
+
+        # initialize the first population and evaluate it
+        self.pop = self.initialize()
+        self._each_iteration(self, first=True)
+
+        # while termination criterion not fulfilled
+        while self.termination.do_continue(self):
+            self.n_gen += 1
+
+            # do the next iteration
+            self.pop = self.next()
+
+            # execute the callback function in the end of each generation
+            self._each_iteration(self)
+
+        self.finalize()
+        return self.pop
+
+    def initialize(self):
         return self._initialize()
+
+    def next(self):
+        return self._next()
+
+    def finalize(self):
+        return self._finalize()
 
     # method that is called each iteration to call so#me methods regularly
     def _each_iteration(self, D, first=False, **kwargs):
@@ -195,6 +225,11 @@ class Algorithm:
             print("=" * 70)
         print(regex.format(*[str(val).ljust(width) for _, val, width in disp]))
 
-    @abstractmethod
-    def _solve(self, problem, termination):
+    def _finalize(self):
         pass
+
+    def _evaluate_if_not_done_yet(self, pop):
+        # evaluate the values that are not already evaluated
+        I = np.where(pop.get("F") == None)[0]
+        if len(I) > 0:
+            pop[I] = self.evaluator.eval(self.problem, pop[I], algorithm=self)

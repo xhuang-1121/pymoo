@@ -62,7 +62,7 @@ if __name__ == '__main__':
             M = np.array([F[best], CV[best]])
         """
 
-        M = np.column_stack([res.pop.get("F"), res.pop.get("CV")])
+        M = np.column_stack([res.pop.get("F"), res.pop.get("CV"), res.pop.get("X")])
 
         np.savetxt(out, M)
 

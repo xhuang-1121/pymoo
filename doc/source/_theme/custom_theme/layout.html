@@ -28,6 +28,7 @@
     <link rel="stylesheet" type="text/css" href="{{ pathto('_static/css/custom.css', 1) }}">
     <link rel="stylesheet" href="{{ pathto('_static/' + style, 1) }}" type="text/css">
     <link rel="stylesheet" href="{{ pathto('_static/pygments.css', 1) }}" type="text/css">
+    <link rel="stylesheet" href="https://unpkg.com/purecss@1.0.0/build/pure-min.css" integrity="sha384-nn4HPE8lTHyVtfCBi5yW9d20FjT8BJwUXyWZT9InLYax14RDjBj46LmSztkmNP9w" crossorigin="anonymous">
     
     {%- for cssfile in css_files %}
         <link rel="stylesheet" href="{{ pathto(cssfile, 1) }}" type="text/css">
@@ -55,7 +56,8 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
-    <script type="text/javascript" src="{{ pathto('_static/js/copybutton.js', 1) }}"></script>
+
+    <script type="text/javascript" src="{{ pathto('_static/js/custom.js', 1) }}"></script>
     {%- for scriptfile in script_files %}
         <script type="text/javascript" src="{{ pathto(scriptfile, 1) }}"></script>
     {%- endfor %}

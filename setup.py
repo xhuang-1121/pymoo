@@ -1,5 +1,3 @@
-import setuptools
-
 from setup_ext import readme, run_setup
 
 
@@ -19,7 +17,6 @@ kwargs = dict(
     long_description=readme(),
     license='Apache License 2.0',
     keywords="optimization",
-    packages=setuptools.find_packages(exclude=['tests', 'doc', 'experiments', 'experimental']),
     install_requires=['numpy>=1.15', 'scipy>=1.1', 'matplotlib>=3', 'autograd>=1.2'],
     include_package_data=True,
     platforms='any',

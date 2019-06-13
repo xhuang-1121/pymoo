@@ -1,14 +1,35 @@
+import distutils
 import os
+import sys
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
+from distutils.extension import Extension
 
 from setuptools import setup
 from setuptools.command.build_ext import build_ext
 
 ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError)
 
-os.environ['CFLAGS'] = '-stdlib=libc++'
+
+def is_new_osx():
+    name = distutils.util.get_platform()
+    if sys.platform != "darwin":
+        return False
+    elif name.startswith("macosx-10"):
+        minor_version = int(name.split("-")[1].split(".")[1])
+        if minor_version >= 7:
+            return True
+        else:
+            return False
+    else:
+        return False
 
 
+# fix compiling for new macosx!
+if is_new_osx():
+    os.environ['CFLAGS'] = '-stdlib=libc++'
+
+
+# update the readme.rst to be part of setup
 def readme():
     with open('README.rst') as f:
         return f.read()
@@ -18,9 +39,9 @@ class BuildFailed(Exception):
     pass
 
 
+# try to compile, if not possible throw exception
 def construct_build_ext(build_ext):
     class WrappedBuildExt(build_ext):
-        # This class allows C extension building to fail.
         def run(self):
             try:
                 build_ext.run(self)
@@ -37,38 +58,67 @@ def construct_build_ext(build_ext):
 
 
 def run_setup(setup_args):
+    # try to add compilation to the setup - if fails just do default
     try:
+
+        do_cythonize = False
+        if "--cythonize" in sys.argv:
+            do_cythonize = True
+            sys.argv.remove("--cythonize")
 
         # copy the kwargs
         kwargs = dict(setup_args)
         kwargs['cmdclass'] = {}
 
-        # import numpy and cython for compilation
         try:
             import numpy as np
-            from Cython.Build import cythonize
+            kwargs['include_dirs'] = [np.get_include()]
         except:
-            raise BuildFailed("The C extension could not be compiled, speedups are not enabled")
+            raise BuildFailed("NumPy libraries must be installed for compiled extensions! Speedups are not enabled.")
 
+        # return the object for building which allows installation with no compilation
         kwargs['cmdclass']['build_ext'] = construct_build_ext(build_ext)
-        kwargs['ext_modules'] = cythonize("pymoo/cython/*.pyx", language='c')
-        kwargs['include_dirs'] = [np.get_include()]
 
-        setup(**kwargs)
+        # all the modules must be finally added here
+        kwargs['ext_modules'] = []
+        cython_folder = os.path.join(os.path.dirname(os.path.abspath(__file__)), "pymoo", "cython")
+        files = os.listdir(cython_folder)
 
-        print('*' * 75)
-        print("Compilation Successful.")
-        print("Compiled pymoo installation succeeded.")
-        print('*' * 75)
+        if do_cythonize:
+            from Cython.Build import cythonize
+            kwargs['ext_modules'] = cythonize("pymoo/cython/*.pyx")
+        else:
+            cpp_files = [f for f in files if f.endswith(".cpp")]
+            for source in cpp_files:
+                kwargs['ext_modules'].append(
+                    Extension("pymoo.cython.%s" % source[:-4], [os.path.join(cython_folder, source)]))
 
-    except BuildFailed as ex:
+        print("==========================")
+
+        if len(kwargs['ext_modules']) == 0:
+            print('*' * 75)
+            print("WARNING: No modules for compilation available. To compile pyx files, add --cythonize.")
+            print('*' * 75)
+
+        else:
+            print(kwargs['ext_modules'])
+            setup(**kwargs)
+            print('*' * 75)
+            print("Compilation Successful.")
+            print("Compiled pymoo installation succeeded.")
+            print('*' * 75)
+
+    except BaseException as e:
 
         setup(**setup_args)
+        ex_type, ex_value, ex_traceback = sys.exc_info()
 
         print('*' * 75)
-        print("WARNING:", ex)
-        print("WARNING: For the compiled libraries cython and numpy is required. Please make sure they are installed")
-        print("WARNING: pip install cython numpy")
+        print("WARNING: Compilation Failed.")
+        print("WARNING:", ex_type)
+        print("WARNING:", ex_value)
+        print("WARNING: For the compiled libraries numpy is required. Please make sure they are installed")
+        print("WARNING: pip install numpy")
         print("WARNING: Also, make sure you have a compiler for C++!")
         print('*' * 75)
         print("Plain Python installation succeeded.")

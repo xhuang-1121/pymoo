@@ -19,7 +19,7 @@ class Result:
         self.pf = None
 
         # the algorithm that was used for optimization
-        self.algorithm = None
+        self.method = None
 
         # the final population if it applies
         self.pop = None

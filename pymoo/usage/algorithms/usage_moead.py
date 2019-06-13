@@ -1,7 +1,6 @@
 from pymoo.algorithms.moead import moead
-from pymoo.factory import get_problem
+from pymoo.factory import get_problem, get_visualization
 from pymoo.optimize import minimize
-from pymoo.util import plotting
 from pymoo.util.reference_direction import UniformReferenceDirectionFactory
 
 # create the optimization problem
@@ -19,5 +18,4 @@ res = minimize(get_problem("dtlz2"),
                termination=('n_gen', 200)
                )
 
-plotting.plot(res.F)
-
+get_visualization("scatter", angle=(45,45)).add(res.F).show()

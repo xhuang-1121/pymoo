@@ -29,22 +29,16 @@ class NSGA3(GeneticAlgorithm):
         super().__init__(**kwargs)
         self.func_display_attrs = disp_multi_objective
 
-    def _solve(self, problem, termination):
+    def _solve(self, problem):
         if self.ref_dirs is not None and self.ref_dirs.shape[1] != problem.n_obj:
             raise Exception(
                 "Dimensionality of reference points must be equal to the number of objectives: %s != %s" %
                 (self.ref_dirs.shape[1], problem.n_obj))
 
-        return super()._solve(problem, termination)
+        return super()._solve(problem)
 
     def _finalize(self):
         super()._finalize()
-        I = np.where(self.pop.get("rank") == 0)
-        pop = self.pop[I]
-        if len(pop) == 1:
-            self.opt = pop
-        else:
-            self.opt = pop[self.pop.get("is_closest")]
 
 
 def comp_by_cv_then_random(pop, P, **kwargs):
@@ -173,12 +167,21 @@ def get_nadir_point(extreme_points, ideal_point, worst_point, worst_of_front, wo
 
         nadir_point = ideal_point + intercepts
 
-        if not np.allclose(np.dot(M, plane), b) or np.any(intercepts <= 1e-6) or np.any(nadir_point > worst_point):
+        # check if the hyperplane makes sense
+        if not np.allclose(np.dot(M, plane), b) or np.any(intercepts <= 1e-6):
             raise LinAlgError()
 
+        # if the nadir point should be larger than any value discovered so far set it to that value
+        # NOTE: different to the proposed version in the paper
+        b = nadir_point > worst_point
+        nadir_point[b] = worst_point[b]
+
     except LinAlgError:
+
+        # fall back to worst of front otherwise
         nadir_point = worst_of_front
 
+    # if the range is too small set it to worst of population
     b = nadir_point - ideal_point <= 1e-6
     nadir_point[b] = worst_of_population[b]
 
@@ -244,8 +247,7 @@ def associate_to_niches(F, niches, ideal_point, nadir_point, utopian_epsilon=0.0
     N = (F - utopian_point) / denom
     dist_matrix = PerpendicularDistance(eps=0.0).do(N, niches, _type="many_to_many")
 
-    niche_of_individuals\
-        = np.argmin(dist_matrix, axis=1)
+    niche_of_individuals = np.argmin(dist_matrix, axis=1)
     dist_to_niche = dist_matrix[np.arange(F.shape[0]), niche_of_individuals]
 
     return niche_of_individuals, dist_to_niche

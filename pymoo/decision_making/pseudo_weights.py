@@ -1,6 +1,6 @@
 import numpy as np
 
-from pymoo.decision_making.decision_making import DecisionMaking, normalize
+from pymoo.model.decision_making import DecisionMaking, normalize
 
 
 class PseudoWeights(DecisionMaking):
@@ -21,11 +21,8 @@ class PseudoWeights(DecisionMaking):
         # normalize weights to sum up to one
         pseudo_weights = pseudo_weights / np.sum(pseudo_weights, axis=1)[:, None]
 
-        # normalize the provided weights as well
-        weights_norm = self.weights / np.sum(self.weights)
-
         # search for the closest individual having this pseudo weights
-        I = np.argmin(np.sum(np.abs(pseudo_weights - weights_norm), axis=1))
+        I = np.argmin(np.sum(np.abs(pseudo_weights - self.weights), axis=1))
 
         if return_pseudo_weights:
             return I, pseudo_weights

@@ -65,11 +65,13 @@ class Problem:
         else:
             self.xu = xu
 
-        # the pareto front will be calculated only once and is stored here
+        # the pareto set and front will be calculated only once and is stored here
         self._pareto_front = None
-
-        # the pareto set of this problem
         self._pareto_set = None
+        self._ideal_point, self._nadir_point = None, None
+
+        # calculate the boundary points
+        self.pareto_front(exception_if_failing=False)
 
         # actually defines what _evaluate is setting during the evaluation
         if evaluation_of == "auto":
@@ -96,7 +98,7 @@ class Problem:
             If single-objective, it returns the best possible solution which is equal to the ideal point.
 
         """
-        return np.max(self.pareto_front(), axis=0)
+        return self._nadir_point
 
     # return the minimum values of the pareto front
     def ideal_point(self):
@@ -107,9 +109,9 @@ class Problem:
             The ideal point for a multi-objective problem. If single-objective
             it returns the best possible solution.
         """
-        return np.min(self.pareto_front(), axis=0)
+        return self._ideal_point
 
-    def pareto_front(self, *args, use_cache=True, **kwargs):
+    def pareto_front(self, *args, use_cache=True, exception_if_failing=True, **kwargs):
         """
         Returns
         -------
@@ -118,7 +120,13 @@ class Problem:
             For a single-objective problem only one point is returned but still in a two dimensional array.
         """
         if not use_cache or self._pareto_front is None:
-            self._pareto_front = at_least_2d_array(self._calc_pareto_front(*args, **kwargs))
+            try:
+                self._pareto_front = at_least_2d_array(self._calc_pareto_front(*args, **kwargs))
+                self._ideal_point = np.min(self._pareto_front, axis=0)
+                self._nadir_point = np.max(self._pareto_front, axis=0)
+            except Exception as e:
+                if exception_if_failing:
+                    raise e
 
         return self._pareto_front
 
@@ -356,6 +364,9 @@ class Problem:
     @abstractmethod
     def _evaluate(self, x, f, *args, **kwargs):
         pass
+
+    def has_bounds(self):
+        return self.xl is not None and self.xu is not None
 
     def name(self):
         """

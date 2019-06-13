@@ -45,7 +45,10 @@ class DifferentialEvolution(GeneticAlgorithm):
 
         self.func_display_attrs = disp_single_objective
 
-    def _next(self, pop):
+    def _next(self):
+
+        # retrieve the current population
+        pop = self.pop
 
         # get the vectors from the population
         F, CV, feasible = pop.get("F", "CV", "feasible")
