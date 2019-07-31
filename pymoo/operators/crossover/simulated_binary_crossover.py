@@ -5,24 +5,18 @@ from pymoo.operators.repair.out_of_bounds_repair import repair_out_of_bounds
 
 
 class SimulatedBinaryCrossover(Crossover):
-    def __init__(self, eta, prob_per_variable=0.5, var_type=np.double, **kwargs):
+    def __init__(self, eta, prob_per_variable=0.5, **kwargs):
         super().__init__(2, 2, **kwargs)
         self.eta = float(eta)
         self.prob_per_variable = prob_per_variable
-        self.var_type = var_type
 
     def _do(self, problem, X, **kwargs):
 
         X = X.astype(np.float)
         _, n_matings, n_var = X.shape
 
+        # boundaries of the problem
         xl, xu = problem.xl, problem.xu
-
-        # in case of an integer problem we do the same, but change the bounds slightly and
-        # round later on
-        if self.var_type == np.int:
-            xl = problem.xl - 0.5
-            xu = problem.xu + (0.5 - 1e-16)
 
         # crossover mask that will be used in the end
         do_crossover = np.full(X[0].shape, True)
@@ -80,9 +74,5 @@ class SimulatedBinaryCrossover(Crossover):
 
         c[0] = repair_out_of_bounds(problem, c[0])
         c[1] = repair_out_of_bounds(problem, c[1])
-
-        # round to integer if necessary
-        if self.var_type == np.int:
-            c = np.rint(c).astype(np.int)
 
         return c

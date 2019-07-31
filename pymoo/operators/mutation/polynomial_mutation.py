@@ -5,18 +5,18 @@ from pymoo.operators.repair.out_of_bounds_repair import repair_out_of_bounds
 
 
 class PolynomialMutation(Mutation):
-    def __init__(self, eta, prob=None, var_type=np.double):
+    def __init__(self, eta, prob=None):
         super().__init__()
         self.eta = float(eta)
-        self.var_type = var_type
+
         if prob is not None:
             self.prob = float(prob)
         else:
             self.prob = None
 
-    def _do(self, problem, pop, **kwargs):
+    def _do(self, problem, X, **kwargs):
 
-        X = pop.get("X").astype(np.double)
+        X = X.astype(np.float)
         Y = np.full(X.shape, np.inf)
 
         if self.prob is None:
@@ -28,10 +28,6 @@ class PolynomialMutation(Mutation):
 
         xl = np.repeat(problem.xl[None, :], X.shape[0], axis=0)[do_mutation]
         xu = np.repeat(problem.xu[None, :], X.shape[0], axis=0)[do_mutation]
-
-        if self.var_type == np.int:
-            xl -= 0.5
-            xu += (0.5 - 1e-16)
 
         X = X[do_mutation]
 
@@ -69,7 +65,4 @@ class PolynomialMutation(Mutation):
         # in case out of bounds repair (very unlikely)
         Y = repair_out_of_bounds(problem, Y)
 
-        if self.var_type == np.int:
-            Y = np.rint(Y).astype(np.int)
-
-        return pop.new("X", Y)
+        return Y

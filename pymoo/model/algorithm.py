@@ -1,12 +1,11 @@
 import copy
-from abc import abstractmethod
 
 import numpy as np
 
 from pymoo.model.evaluator import Evaluator
+from pymoo.model.population import Population
 from pymoo.model.result import Result
 from pymoo.util.function_loader import FunctionLoader
-
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
 
@@ -18,144 +17,175 @@ class Algorithm:
 
     The solve method provides a wrapper function which does validate the input.
 
+
+    Parameters
+    ----------
+
+    problem: class
+        Problem to be solved by the algorithm
+
+    termination: class
+        Object that tells the algorithm when to terminate.
+
+    seed: int
+        Random seed to be used. Same seed is supposed to return the same result. If set to None, a random seed
+        is chosen randomly and stored in the result object to ensure reproducibility.
+
+    verbose : bool
+        If true information during the algorithm execution are displayed
+
+    callback : func
+        A callback function can be passed that is executed every generation. The parameters for the function
+        are the algorithm itself, the number of evaluations so far and the current population.
+
+            def callback(algorithm):
+                pass
+
+    save_history : bool
+        If true, a current snapshot of each generation is saved.
+
+    pf : np.array
+        The Pareto-front for the given problem. If provided performance metrics are printed during execution.
+
+    evaluator : class
+        The evaluator which can be used to make modifications before calling the evaluate function of a problem.
+
+
     """
 
-    def __init__(self, **kwargs) -> None:
+    def __init__(self,
+                 verbose=False,
+                 callback=None,
+                 save_history=False,
+                 **kwargs):
+
+        # !
+        # Here all algorithm parameters needed no matter what is problem is passed are defined
+        # problem dependent initialization happens in initialize(problem, **kwargs)
+        # !
+
         super().__init__()
-        self.evaluator = None
-        self.problem = None
-        self.termination = None
-        self.pf = None
-        self.opt = None
-        self.seed = None
-        self.termination = None
-
-        self.history = None
-        self.verbose = None
-        self.func_display_attrs = None
-        self.callback = None
-        self.save_history = None
-
-    def solve(self,
-              problem,
-              termination=None,
-              seed=None,
-              verbose=False,
-              callback=None,
-              save_history=False,
-              pf=True,
-              evaluator=None,
-              **kwargs
-              ):
-        """
-
-        Solve a given problem by a given evaluator. The evaluator determines the termination condition and
-        can either have a maximum budget, hypervolume or whatever. The problem can be any problem the algorithm
-        is able to solve.
-
-        Parameters
-        ----------
-
-        problem: class
-            Problem to be solved by the algorithm
-
-        termination: class
-            object that evaluates and saves the number of evaluations and determines the stopping condition
-
-        seed: int
-            Random seed for this run. Before the algorithm starts this seed is set.
-
-        verbose : bool
-            If it is true than information during the algorithm execution are displayed
-
-        callback : func
-            A callback function can be passed that is executed every generation. The parameters for the function
-            are the algorithm itself, the number of evaluations so far and the current population.
-
-                def callback(algorithm):
-                    pass
-
-        save_history : bool
-            If true, a current snapshot of each generation is saved.
-
-        pf : np.array
-            The Pareto-front for the given problem. If provided performance metrics are printed during execution.
-
-        evaluator : class
-            The evaluator which can be used to make modifications before calling the evaluate function of a problem.
-
-        Returns
-        -------
-        res : dict
-            A dictionary that saves all the results of the algorithm. Also, the history if save_history is true.
-
-        """
 
         # prints the compile warning if enabled
         FunctionLoader.get_instance()
 
-        # set the random seed for generator and save if
-        if seed is not None:
-            np.random.seed(seed)
-        else:
-            seed = np.random.randint(0, 10000000)
-            np.random.seed(seed)
-        self.seed = seed
+        # function used to display attributes
 
-        # the evaluator object which is counting the evaluations
-        self.history = []
-
-        self.evaluator = evaluator
-        if self.evaluator is None:
-            self.evaluator = Evaluator()
-
-        self.problem = problem
-
-        # set the termination criterion provided - if provided
-        if termination is not None:
-            self.termination = termination
-
-        self.pf = pf
-
-        self.verbose = verbose
+        # other attributes of the algorithm
         self.callback = callback
         self.save_history = save_history
+        self.func_display_attrs = None
+
+        # !
+        # Attributes to be set later on for each problem run
+        # !
+
+        # the optimization problem as an instance
+        self.problem = None
+        # the termination criterion of the algorithm
+        self.termination = None
+        # the random seed that was used
+        self.seed = None
+        # the pareto-front of the problem - if it exist or passed
+        self.pf = None
+        # the function evaluator object (can be used to inject code)
+        self.evaluator = None
+        # the current number of generation or iteration
+        self.n_gen = None
+        # the history object which contains the list
+        self.history = None
+        # the current solutions stored - here considered as population
+        self.pop = None
+        # the optimum found by the algorithm
+        self.opt = None
+        # whether the algorithm should print output in this run or not
+        self.verbose = None
+
+    # =========================================================================================================
+    # PUBLIC
+    # =========================================================================================================
+
+    def initialize(self,
+                   problem,
+                   termination=None,
+                   seed=None,
+                   pf=True,
+                   evaluator=None,
+                   verbose=False,
+                   **kwargs):
+
+        # if this run should be verbose or not
+        self.verbose = verbose
+
+        # set the problem that is optimized for the current run
+        self.problem = problem
+
+        # the termination criterion to be used to stop the algorithm
+        if self.termination is None:
+            self.termination = termination
+
+        # set the random seed in the algorithm object
+        if seed is None:
+            self.seed = np.random.randint(0, 10000000)
+        np.random.seed(self.seed)
+        self.pf = pf
+
+        # by default make sure an evaluator exists if nothing is passed
+        if evaluator is None:
+            evaluator = Evaluator()
+        self.evaluator = evaluator
+
+        # other run dependent variables that are reset
+        self.n_gen = None
+        self.history = []
+        self.pop = None
+        self.opt = None
+
+    def solve(self):
+
+        # the result object to be finally returned
+        res = Result()
 
         # call the algorithm to solve the problem
-        pop = self._solve(problem)
+        self._solve(self.problem)
 
-        # get the optimal result by filtering feasible and non-dominated
+        # store the resulting population
+        res.pop = self.pop
+
+        # if the algorithm already set the optimum just return it, else filter it by default
         if self.opt is None:
-            opt = pop.copy()
+            opt = filter_optimum(res.pop.copy())
         else:
             opt = self.opt
 
-        opt = opt[opt.collect(lambda ind: ind.feasible)[:, 0]]
+        # get the vectors and matrices
+        res.opt = opt
 
-        # if at least one feasible solution was found
-        if len(opt) > 0:
-
-            if problem.n_obj > 1:
-                I = NonDominatedSorting().do(opt.get("F"), only_non_dominated_front=True)
-                opt = opt[I]
-                X, F, CV, G = opt.get("X", "F", "CV", "G")
-
-            else:
-                opt = opt[np.argmin(opt.get("F"))]
-                X, F, CV, G = opt.X, opt.F, opt.CV, opt.G
+        if isinstance(opt, Population):
+            X, F, CV, G = opt.get("X", "F", "CV", "G")
         else:
-            opt = None
-
-        res = Result(opt, opt is None, "")
-        res.problem, res.pf = problem, pf
-        res.pop = pop
+            X, F, CV, G = opt.X, opt.F, opt.CV, opt.G
 
         if opt is not None:
             res.X, res.F, res.CV, res.G = X, F, CV, G
 
+        # create the result object
+        res.problem, res.pf = self.problem, self.pf
         res.history = self.history
 
         return res
+
+    def next(self):
+        self.n_gen += 1
+        self._next()
+        self._each_iteration(self)
+
+    def finalize(self):
+        return self._finalize()
+
+    # =========================================================================================================
+    # PROTECTED
+    # =========================================================================================================
 
     def _solve(self, problem):
 
@@ -163,36 +193,20 @@ class Algorithm:
         if self.termination is None:
             raise Exception("No termination criterion defined and algorithm has no default termination implemented!")
 
-        # generation counter
-        self.n_gen = 1
-
         # initialize the first population and evaluate it
-        self.pop = self.initialize()
+        self.n_gen = 1
+        self._initialize()
         self._each_iteration(self, first=True)
 
         # while termination criterion not fulfilled
         while self.termination.do_continue(self):
-            self.n_gen += 1
-
             # do the next iteration
-            self.pop = self.next()
+            self.next()
 
-            # execute the callback function in the end of each generation
-            self._each_iteration(self)
-
+        # finalize the algorithm and do postprocessing of desired
         self.finalize()
-        return self.pop
 
-    def initialize(self):
-        return self._initialize()
-
-    def next(self):
-        return self._next()
-
-    def finalize(self):
-        return self._finalize()
-
-    # method that is called each iteration to call so#me methods regularly
+    # method that is called each iteration to call some methods regularly
     def _each_iteration(self, D, first=False, **kwargs):
 
         # display the output if defined by the algorithm
@@ -228,8 +242,25 @@ class Algorithm:
     def _finalize(self):
         pass
 
-    def _evaluate_if_not_done_yet(self, pop):
-        # evaluate the values that are not already evaluated
-        I = np.where(pop.get("F") == None)[0]
-        if len(I) > 0:
-            pop[I] = self.evaluator.eval(self.problem, pop[I], algorithm=self)
+
+def filter_optimum(pop):
+
+    # first only choose feasible solutions
+    pop = pop[pop.collect(lambda ind: ind.feasible)[:, 0]]
+
+    # then check the objective values
+    F = pop.get("F")
+
+    # if at least one feasible solution was found
+    if len(pop) > 0:
+
+        if F.shape[1] > 1:
+            I = NonDominatedSorting().do(pop.get("F"), only_non_dominated_front=True)
+            pop = pop[I]
+
+        else:
+            pop = pop[np.argmin(F)]
+    else:
+        pop = None
+
+    return pop

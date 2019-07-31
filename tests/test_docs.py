@@ -1,12 +1,17 @@
 import os
 import unittest
 
+
 import nbformat
 from nbconvert.preprocessors import CellExecutionError, ExecutePreprocessor
 
 from pymoo.configuration import get_pymoo
 
 OVERWRITE = True
+
+STARTING_AT = None
+
+SKIP = ["parallelization.ipynb"]
 
 
 class DocumentationTest(unittest.TestCase):
@@ -20,12 +25,22 @@ class DocumentationTest(unittest.TestCase):
         # collect all the jupyter ipynb in the documentation
         for root, directories, filenames in os.walk(DOC_DIR):
             for filename in filenames:
-                if filename.endswith(".ipynb") and "checkpoint" not in filename:
+                if filename.endswith(".ipynb") and "checkpoint" not in filename and not any([filename in s for s in SKIP]):
                     ipynb.append(os.path.join(root, filename))
+
+        i = 0
+        if STARTING_AT is not None:
+            for j in range(len(ipynb)):
+                if STARTING_AT not in ipynb[j]:
+                    i += 1
+                else:
+                    break
 
         ep = ExecutePreprocessor(timeout=10000, kernel_name='python3')
 
-        for fname in ipynb:
+        for i in range(i, len(ipynb)):
+
+            fname = ipynb[i]
 
             print(fname.split("/")[-1])
 

@@ -18,8 +18,17 @@ class Problem:
     and ideal point are stored.
     """
 
-    def __init__(self, n_var=-1, n_obj=-1, n_constr=0, xl=None, xu=None, type_var=np.double,
-                 evaluation_of="auto", parallelization=None, elementwise_evaluation=False):
+    def __init__(self,
+                 n_var=-1,
+                 n_obj=-1,
+                 n_constr=0,
+                 xl=None,
+                 xu=None,
+                 type_var=np.double,
+                 evaluation_of="auto",
+                 parallelization=None,
+                 elementwise_evaluation=False,
+                 callback=None):
         """
 
         Parameters
@@ -87,6 +96,9 @@ class Problem:
 
         # only applicable if elementwise_evaluation is true - if, how should the single evaluations be parallelized
         self.parallelization = parallelization
+
+        # store the callback if defined
+        self.callback = callback
 
     # return the maximum objective values of the pareto front
     def nadir_point(self):
@@ -181,6 +193,10 @@ class Problem:
             A dictionary, if return_as_dictionary enabled, or a list of values as defined in return_values_of.
 
         """
+
+        # call the callback of the problem
+        if self.callback is not None:
+            self.callback(X)
 
         # make the array at least 2-d - even if only one row should be evaluated
         only_single_value = len(np.shape(X)) == 1

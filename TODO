@@ -4,7 +4,7 @@
 
 - Write test suite for all algorithms (many problems just run once - no crash should occur)
 - NSGA3 - add non-dom check finally (factor out the algorithm method and reuse)
-- Rewrite integer operation with a wrapper
+- !!! NDS and crowding cast to np.float
 - Add global tests of all optimization methods
 - elementwise function evaluation gradient is not working yet
 - report None of infeasible or feasible
@@ -15,6 +15,7 @@
 ####################################################################
 
 # DONE
+- !!! Rewrite integer operation with a wrapper - check if casting is working for different types
 - copy of algorithm object when minimize is called
 - Add sidebar to homepage
 - Decision Making (Pseudo Weight, ...)

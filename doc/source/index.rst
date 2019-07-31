@@ -31,10 +31,9 @@
    <a href="https://www.coin-laboratory.com" target="_blank">Computational Optimization and Innovation Laboratory (COIN)</a>
 
 
-
-
-
-The framework is available on PyPi and can be installed with:
+Our framework offers state of the art single- and multi-objective algorithms and many
+more features related to multi-objective optimization such as visualization and decision making.
+**pymoo** is available on PyPi and can be installed by:
 
 ::
 

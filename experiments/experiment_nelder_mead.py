@@ -5,6 +5,7 @@ import os
 import pickle
 
 from pymoo.algorithms.so_genetic_algorithm import ga
+from pymoo.algorithms.so_nelder_mead import nelder_mead
 from pymoo.factory import get_problem, get_termination
 from pymoo.operators.crossover.nelder_mead_crossover import NelderMeadCrossover
 
@@ -221,7 +222,7 @@ if __name__ == '__main__':
     prefix = "runs"
 
     # name of the experiment
-    name = "ga-nm-0.3.1"
+    name = "nelder-mead-0.3.1"
 
     # number of runs to execute
     n_runs = 10
@@ -233,9 +234,7 @@ if __name__ == '__main__':
 
         problem = get_problem(_problem)
 
-        method = ga(
-            crossover=NelderMeadCrossover(problem)
-        )
+        method = nelder_mead(n_max_restarts=100)
 
         for run in range(1, n_runs + 1):
             fname = "%s_%s.run" % (_problem, run)
@@ -245,7 +244,6 @@ if __name__ == '__main__':
             data = {
                 'args': [problem, method],
                 'kwargs': {
-                    'termination': get_termination("ftol"),
                     'seed': run,
                 },
                 'in': _in,

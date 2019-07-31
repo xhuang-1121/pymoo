@@ -2,7 +2,7 @@ from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinary
 from pymoo.operators.crossover.uniform_crossover import UniformCrossover
 from pymoo.operators.mutation.bitflip_mutation import BinaryBitflipMutation
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
-from pymoo.operators.sampling.random_sampling import RandomSampling
+from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.operators.selection.random_selection import RandomSelection
 
 
@@ -25,11 +25,11 @@ def set_default_if_none(var_type, kwargs):
 
     # values for mating
     if var_type == "real":
-        set_if_none(kwargs, 'sampling', RandomSampling())
+        set_if_none(kwargs, 'sampling', FloatRandomSampling())
         set_if_none(kwargs, 'crossover', SimulatedBinaryCrossover(prob=0.9, eta=20))
         set_if_none(kwargs, 'mutation', PolynomialMutation(prob=None, eta=15))
     elif var_type == "binary":
-        set_if_none(kwargs, 'sampling', RandomSampling())
+        set_if_none(kwargs, 'sampling', FloatRandomSampling())
         set_if_none(kwargs, 'crossover', UniformCrossover())
         set_if_none(kwargs, 'mutation', BinaryBitflipMutation())
         set_if_none(kwargs, 'eliminate_duplicates', True)

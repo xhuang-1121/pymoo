@@ -27,7 +27,7 @@ class NoErrorRandomSamplingProblemTest(unittest.TestCase):
 
             problem = get_problem(name)
 
-            X = get_sampling("real_random").sample(problem, Population(), 100).get("X")
+            X = get_sampling("real_random").do(problem, Population(), 100).get("X")
 
             out = problem.evaluate(X)
 

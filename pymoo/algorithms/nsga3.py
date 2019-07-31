@@ -10,7 +10,7 @@ from pymoo.model.individual import Individual
 from pymoo.model.survival import Survival
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
-from pymoo.operators.sampling.random_sampling import RandomSampling
+from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.operators.selection.tournament_selection import TournamentSelection, compare
 from pymoo.util.display import disp_multi_objective
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
@@ -149,6 +149,7 @@ def get_extreme_points_c(F, ideal_point, extreme_points=None):
 
     # update the extreme points for the normalization having the highest asf value each
     F_asf = np.max(__F * weights[:, None, :], axis=2)
+
     I = np.argmin(F_asf, axis=1)
     extreme_points = _F[I, :]
 
@@ -267,7 +268,7 @@ def calc_niche_count(n_niches, niche_of_individuals):
 def nsga3(
         ref_dirs,
         pop_size=None,
-        sampling=RandomSampling(),
+        sampling=FloatRandomSampling(),
         selection=TournamentSelection(func_comp=comp_by_cv_then_random),
         crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
         mutation=PolynomialMutation(eta=20, prob=None),

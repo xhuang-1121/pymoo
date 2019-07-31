@@ -6,10 +6,9 @@ from pymoo.model.decision_making import DecisionMaking, normalize
 
 class HighTradeoffPoints(DecisionMaking):
 
-    def __init__(self, epsilon=0.125, no_extreme_points=False, **kwargs) -> None:
+    def __init__(self, epsilon=0.125, **kwargs) -> None:
         super().__init__(**kwargs)
         self.epsilon = epsilon
-        self.no_extreme_points = no_extreme_points
 
     def _do(self, F, **kwargs):
 
@@ -56,10 +55,6 @@ class HighTradeoffPoints(DecisionMaking):
 
         if len(S) == 0 and deviation.max() > 1:
             S = I[np.argmax(mu)]
-
-        # check for every solution if it is an extreme point
-        if self.no_extreme_points:
-            S = [s for s in S if np.all(np.logical_and(F[s] > 0.05, F[s] < 0.95))]
 
         if len(S) == 0:
             return None

@@ -23,7 +23,7 @@ def get_problem_func(n_var, xl, xu, type_var):
 
 def sample(sampling, n_samples, n_var, xl=0, xu=1, type_var=np.double, **kwargs):
     problem = get_problem_func(n_var, xl, xu, type_var)(**kwargs)
-    return sampling.sample(problem, Population(), n_samples, **kwargs).get("X")
+    return sampling.do(problem, Population(), n_samples, **kwargs).get("X")
 
 
 def crossover(crossover, a, b, c=None, xl=0, xu=1, type_var=np.double, **kwargs):

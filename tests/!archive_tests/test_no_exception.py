@@ -27,7 +27,7 @@ class NoExceptionTest(unittest.TestCase):
 
                 try:
                     minimize(problem,
-                             method=algorithm['name'],
+                             algorithm=algorithm['name'],
                              method_args={**algorithm, 'ref_dirs': UniformReferenceDirectionFactory(n_dim=problem.n_obj, n_points=100).do()},
                              termination=('n_eval', algorithm['n_eval']),
                              seed=2,

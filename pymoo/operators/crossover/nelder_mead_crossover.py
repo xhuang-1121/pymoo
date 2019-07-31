@@ -1,5 +1,6 @@
 import numpy as np
 
+from pymoo.algorithms.so_nelder_mead import max_expansion_factor
 from pymoo.model.crossover import Crossover
 
 
@@ -18,9 +19,6 @@ class NelderMeadCrossover(Crossover):
         # the array to fill
         _X = np.full((len(X), problem.n_var), np.nan)
 
-        # the boundaries in an array
-        bounds = np.column_stack([problem.xl, problem.xu])
-
         for k, P in enumerate(parents):
             # sort the x values by their corresponding F values
             x = X[k, :][np.argsort(F[k])]
@@ -31,9 +29,8 @@ class NelderMeadCrossover(Crossover):
             # calculate the vector from the worst to the centroid
             v = centroid - x[n + 1]
 
-            # calculate the max factor to be not out of bounds
-            max_factor = (bounds - x[n + 1][:, None]) / v[:, None]
-            max_factor = max_factor[max_factor > 0].min()
+            # maximum factor until the boundaries are hit
+            max_factor = max_expansion_factor(centroid, v, problem)
 
             # randomly chose the extension, expansion or contraction through a factor
             factor = np.random.random() * min(3, max_factor)

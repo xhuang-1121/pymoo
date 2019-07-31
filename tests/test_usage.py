@@ -1,15 +1,11 @@
 import os
-import sys
-import traceback
 import unittest
 from pathlib import Path
-from subprocess import run, PIPE
 
 from pymoo.configuration import get_pymoo
 
 
 def test_usage(usages):
-    SCRIPT_NAME = "test.py"
     usages = [f for f in usages if f != "__init__.py"]
 
     print(usages)
@@ -37,32 +33,12 @@ def test_usage(usages):
             except:
                 raise Exception("Usage %s failed." % fname)
 
-            """
-            if os.path.exists(SCRIPT_NAME):
-                os.remove(SCRIPT_NAME)
-
-            with open(SCRIPT_NAME, 'a') as out:
-                out.write(s)
-
-            command = ["python", "test.py"]
-            result = run(command, stdout=PIPE, stderr=PIPE, universal_newlines=True)
-            os.remove(SCRIPT_NAME)
-
-            if result.returncode == 1:
-                print(result.stderr, file=sys.stderr)
-                raise Exception("Error")
-            else:
-                print("OK\n")
-
-
-            """
 
 class AllUsageTest(unittest.TestCase):
 
     def test_usages(self):
         folder = os.path.join(get_pymoo(), "pymoo", "usage")
         test_usage([os.path.join(folder, fname) for fname in Path(folder).glob('**/*.py')])
-
 
 
 if __name__ == '__main__':

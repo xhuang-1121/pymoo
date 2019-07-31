@@ -31,7 +31,7 @@ class Scatter(Plot):
 
             # copy the arguments and set the default color
             _kwargs = kwargs.copy()
-            set_if_none(_kwargs, "color", self.colors[k])
+            set_if_none(_kwargs, "color", self.colors[k % len(self.colors)])
 
             # determine the plotting type - scatter or line
             _type = _kwargs.get("plot_type")

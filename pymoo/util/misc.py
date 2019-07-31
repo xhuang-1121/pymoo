@@ -2,6 +2,9 @@ import numpy as np
 import scipy
 import scipy.spatial
 
+from pymoo.model.population import Population
+from pymoo.model.sampling import Sampling
+
 
 def parameter_less(F, CV):
     val = np.copy(F)
@@ -73,7 +76,11 @@ def get_duplicates(M):
 
 
 def euclidean_distance(a, b):
-    return np.sqrt((a - b) ** 2)
+    return np.sqrt(((a - b) ** 2).sum(axis=1))
+
+
+def norm_euclidean_distance(problem):
+    return lambda a, b: np.sqrt((((a - b) / (problem.xu - problem.xl)) ** 2).sum(axis=1))
 
 
 def cdist(A, B, **kwargs):
@@ -154,6 +161,36 @@ def all_combinations(A, B):
     u = np.repeat(A, B.shape[0], axis=0)
     v = np.tile(B, A.shape[0])
     return np.column_stack([u, v])
+
+
+def pop_from_sampling(problem, sampling, n_initial_samples, pop=None):
+    # the population type can be different - (different type of individuals)
+    if pop is None:
+        pop = Population()
+
+    # provide a whole population object - (individuals might be already evaluated)
+    if isinstance(sampling, Population):
+        pop = sampling
+
+    else:
+        # if just an X array create a pop
+        if isinstance(sampling, np.ndarray):
+            pop = pop.new("X", sampling)
+
+        elif isinstance(sampling, Sampling):
+            # use the sampling
+            pop = sampling.do(problem, pop, n_initial_samples)
+
+        else:
+            return None
+
+    return pop
+
+
+def evaluate_if_not_done_yet(evaluator, problem, pop, algorithm=None):
+    I = np.where(pop.get("F") == None)[0]
+    if len(I) > 0:
+        pop[I] = evaluator.eval(problem, pop[I], algorithm=algorithm)
 
 
 if __name__ == '__main__':

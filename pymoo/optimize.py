@@ -5,9 +5,8 @@ from pymoo.model.termination import Termination
 
 
 def minimize(problem,
-             method,
+             algorithm,
              termination=None,
-             copy_method=True,
              **kwargs):
     """
 
@@ -21,15 +20,15 @@ def minimize(problem,
     Parameters
     ----------
 
-    problem : pymop.problem
-        A problem object defined using the pymop framework. Either existing test single or custom single
-        can be provided. please have a look at the documentation.
+    problem : pymoo.problem
+        A problem object which is defined using pymoo.
 
-    method : :class:`~pymoo.model.algorithm.Algorithm`
+    algorithm : :class:`~pymoo.model.algorithm.Algorithm`
         The algorithm object that should be used for the optimization.
 
-    termination : tuple
-        The termination criterium that is used to stop the algorithm when the result is satisfying.
+    termination : class or tuple
+        The termination criterion that is used to stop the algorithm.
+
 
     Returns
     -------
@@ -38,23 +37,27 @@ def minimize(problem,
 
     """
 
-    # create an evaluator defined by the termination criterion
+    # create a copy of the algorithm object to ensure no side-effects
+    algorithm = copy.deepcopy(algorithm)
+
+    # set the termination criterion and store it in the algorithm object
     if termination is None:
-        pass
+        termination = None
     elif not isinstance(termination, Termination):
         if isinstance(termination, str):
             termination = get_termination(termination)
         else:
             termination = get_termination(*termination)
 
-    # create a copy of the algorithm object
-    if copy_method:
-        method = copy.deepcopy(method)
+    # initialize the method given a problem
+    algorithm.initialize(problem,
+                         termination=termination,
+                         **kwargs)
 
-    # use it to solve the problem
-    res = method.solve(problem, termination, **kwargs)
+    # actually execute the algorithm
+    res = algorithm.solve()
 
-    # store the method object in the result
-    res.method = method
+    # store the copied algorithm in the result object
+    res.algorithm = algorithm
 
     return res

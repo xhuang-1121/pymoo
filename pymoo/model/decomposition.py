@@ -11,7 +11,13 @@ class Decomposition:
         self._type = _type
         self.ideal_point, self.utopian_point, self.nadir_point = None, None, None
 
-    def do(self, F, weights, _type="auto", **kwargs):
+    def do(self, F,
+           weights,
+           _type="auto",
+           ideal_point=None,
+           utopian_point=None,
+           nadir_point=None,
+           **kwargs):
 
         _F, _weights = to_1d_array_if_possible(F), to_1d_array_if_possible(weights)
 
@@ -31,16 +37,18 @@ class Decomposition:
         # get the number of points and weights
         n_points, n_weights = F.shape[0], weights.shape[0]
 
-        self.ideal_point = kwargs.get("ideal_point")
+        self.ideal_point = ideal_point
         if self.ideal_point is None:
             self.ideal_point = np.zeros(F.shape[1])
 
-        self.utopian_point = self.ideal_point - self.eps
+        self.utopian_point = utopian_point
+        if self.utopian_point is None:
+            self.utopian_point = self.ideal_point - self.eps
 
         # set the nadir point by default to value or default
-        self.nadir_point = kwargs.get("nadir_point")
+        self.nadir_point = nadir_point
         if self.nadir_point is None:
-            self.nadir_point = np.ones(F.shape[1])
+            self.nadir_point = self.utopian_point + np.ones(F.shape[1])
 
         if _type == "one_to_one":
             D = self._do(F, weights=weights, **kwargs).flatten()

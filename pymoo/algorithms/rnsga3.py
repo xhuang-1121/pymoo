@@ -6,7 +6,7 @@ from pymoo.docs import parse_doc_string
 from pymoo.model.survival import Survival
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
-from pymoo.operators.sampling.random_sampling import RandomSampling
+from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.operators.selection.tournament_selection import TournamentSelection
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.normalization import denormalize
@@ -210,7 +210,7 @@ def rnsga3(ref_points,
            pop_per_ref_point,
            mu=0.05,
            pop_size=None,
-           sampling=RandomSampling(),
+           sampling=FloatRandomSampling(),
            selection=TournamentSelection(func_comp=comp_by_cv_then_random),
            crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
            mutation=PolynomialMutation(eta=20, prob=None),

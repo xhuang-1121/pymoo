@@ -9,7 +9,7 @@ method = ga(
 res = minimize(get_problem("g01"),
                method,
                termination=('n_gen', 50),
-               disp=False)
+               verbose=False)
 
 print("Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 

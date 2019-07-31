@@ -22,7 +22,7 @@ class CustomObjectTest(unittest.TestCase):
                 self.cr = 0
 
         class CustomObjectFloatRandomSampling(Sampling):
-            def sample(self, problem, n_samples, **kwargs):
+            def do(self, problem, n_samples, **kwargs):
                 l = []
                 for i in range(n_samples):
                     obj = CustomObject()
@@ -32,7 +32,7 @@ class CustomObjectTest(unittest.TestCase):
 
         try:
             minimize(problem,
-                     method="nsga2",
+                     algorithm="nsga2",
                      method_args={'pop_size': 100, 'sampling': CustomObjectFloatRandomSampling()},
                      termination=('n_eval', 500),
                      seed=2,
@@ -63,7 +63,7 @@ class CustomObjectTest(unittest.TestCase):
 
         try:
             res = minimize(problem,
-                           method="nsga2",
+                           algorithm="nsga2",
                            method_args={'pop_size': 100},
                            termination=('n_eval', 500),
                            seed=2,

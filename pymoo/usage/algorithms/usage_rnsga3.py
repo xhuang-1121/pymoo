@@ -5,8 +5,8 @@ from pymoo.algorithms.rnsga3 import rnsga3
 from pymoo.factory import get_problem
 from pymoo.optimize import minimize
 from pymoo.util import plotting
-# Get problem
 from pymoo.util.reference_direction import UniformReferenceDirectionFactory
+from pymoo.visualization.scatter import scatter
 
 problem = get_problem("zdt1")
 pf = problem.pareto_front()
@@ -21,18 +21,23 @@ method = rnsga3(
     mu=0.1)
 
 res = minimize(problem,
-               method=method,
+               algorithm=method,
                termination=('n_gen', 300),
                pf=pf,
-               disp=False)
+               verbose=False)
 
-reference_directions = res.method.survival.ref_dirs
-plotting.plot(pf, res.F, ref_points, reference_directions, show=True,
-              labels=['pf', 'F', 'ref_points', 'ref_dirs'])
+reference_directions = res.algorithm.survival.ref_dirs
+
+plot = scatter()
+plot.add(pf, label="pf")
+plot.add(res.F, label="F")
+plot.add(ref_points, label="ref_points")
+plot.add(reference_directions, label="ref_dirs")
+plot.show()
+
 # END rnsga3
 
 # START rnsga3_3d
-import matplotlib.pyplot as plt
 
 # Get problem
 problem = get_problem("dtlz4", n_var=12, n_obj=3)
@@ -49,14 +54,16 @@ method = rnsga3(
     mu=0.1)
 
 res = minimize(problem,
-               method=method,
+               algorithm=method,
                termination=('n_gen', 300),
                pf=pf,
-               disp=False)
+               verbose=False)
 
-ax = plotting.plot(res.F, pf, ref_points, show=False,
-              labels=['F', 'pf', 'ref_points'])
-ax.view_init(45, 45)
-plt.legend()
-plt.show()
+
+plot = scatter(angle=(45, 45))
+plot.add(pf, label="pf")
+plot.add(res.F, label="F")
+plot.add(ref_points, label="ref_points")
+plot.show()
+
 # END rnsga3_3d

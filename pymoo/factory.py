@@ -9,7 +9,6 @@ import re
 
 from pymoo.configuration import Configuration
 
-
 from pymoo.problems.many import *
 from pymoo.problems.multi import *
 from pymoo.problems.single import *
@@ -18,7 +17,6 @@ from pymoo.problems.single import *
 # =========================================================================================================
 # Generic
 # =========================================================================================================
-
 
 
 def get_from_list(l, name, args, kwargs):
@@ -93,13 +91,15 @@ def get_algorithm(name, *args, d={}, **kwargs):
 
 def get_sampling_options():
     from pymoo.operators.sampling.latin_hypercube_sampling import LatinHypercubeSampling
-    from pymoo.operators.sampling.random_sampling import RandomSampling
+    from pymoo.operators.sampling.random_sampling import FloatRandomSampling
+    from pymoo.operators.integer_from_float_operator import IntegerFromFloatSampling
+    from pymoo.operators.sampling.random_sampling import BinaryRandomSampling
 
     SAMPLING = [
-        ("real_random", RandomSampling, {'var_type': np.real}),
+        ("real_random", FloatRandomSampling),
         ("real_lhs", LatinHypercubeSampling),
-        ("bin_random", RandomSampling, {'var_type': np.bool}),
-        ("int_random", RandomSampling, {'var_type': np.int})
+        ("bin_random", BinaryRandomSampling),
+        ("int_random", IntegerFromFloatSampling, {'clazz': FloatRandomSampling})
     ]
 
     return SAMPLING
@@ -140,10 +140,11 @@ def get_crossover_options():
     from pymoo.operators.crossover.point_crossover import PointCrossover
     from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
     from pymoo.operators.crossover.uniform_crossover import UniformCrossover
+    from pymoo.operators.integer_from_float_operator import IntegerFromFloatCrossover
 
     CROSSOVER = [
-        ("real_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30, var_type=np.double)),
-        ("int_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30, var_type=np.int)),
+        ("real_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30)),
+        ("int_sbx", IntegerFromFloatCrossover, dict(clazz=SimulatedBinaryCrossover, prob=0.9, eta=30)),
         ("real_de", DifferentialEvolutionCrossover),
         ("(real|bin|int)_ux", UniformCrossover),
         ("(bin|int)_hux", HalfUniformCrossover),
@@ -167,10 +168,11 @@ def get_crossover(name, *args, d={}, **kwargs):
 def get_mutation_options():
     from pymoo.operators.mutation.bitflip_mutation import BinaryBitflipMutation
     from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
+    from pymoo.operators.integer_from_float_operator import IntegerFromFloatMutation
 
     MUTATION = [
-        ("real_pm", PolynomialMutation),
-        ("int_pm", PolynomialMutation, dict(var_type=np.int)),
+        ("real_pm", PolynomialMutation, dict(eta=20)),
+        ("int_pm", IntegerFromFloatMutation, dict(clazz=PolynomialMutation, eta=20)),
         ("bin_bitflip", BinaryBitflipMutation)
     ]
 
@@ -393,7 +395,7 @@ def get_decomposition(name, *args, d={}, **kwargs):
 # =========================================================================================================
 
 def get_decision_making_options():
-    from pymoo.decision_making.knee_point import HighTradeoffPoints
+    from pymoo.decision_making.high_tradeoff import HighTradeoffPoints
     from pymoo.decision_making.pseudo_weights import PseudoWeights
 
     DECISION_MAKING = [

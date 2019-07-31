@@ -6,7 +6,7 @@ from pymoo.model.individual import Individual
 from pymoo.model.survival import Survival
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
-from pymoo.operators.sampling.random_sampling import RandomSampling
+from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.operators.selection.tournament_selection import compare, TournamentSelection
 from pymoo.util.display import disp_multi_objective
 from pymoo.util.dominator import Dominator
@@ -88,7 +88,7 @@ class RankAndCrowdingSurvival(Survival):
     def _do(self, problem, pop, n_survive, D=None, **kwargs):
 
         # get the objective space values and objects
-        F = pop.get("F")
+        F = pop.get("F").astype(np.float)
 
         # the final indices of surviving individuals
         survivors = []
@@ -286,7 +286,7 @@ def calc_crowding_distance_vectorized(F, same_crowding_if_same_objective_value=F
 
 def nsga2(
         pop_size=100,
-        sampling=RandomSampling(),
+        sampling=FloatRandomSampling(),
         selection=TournamentSelection(func_comp=binary_tournament),
         crossover=SimulatedBinaryCrossover(eta=15, prob=0.9),
         mutation=PolynomialMutation(prob=None, eta=20),

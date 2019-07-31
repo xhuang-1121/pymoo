@@ -5,7 +5,7 @@ import numpy as np
 from pymoo.util.function_loader import load_function
 
 
-class DecompositionTest(unittest.TestCase):
+class FastNonDominatedSortTest(unittest.TestCase):
 
     def test_non_dominated_sorting(self):
         F = np.random.random((100,2))

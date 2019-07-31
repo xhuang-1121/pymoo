@@ -1,6 +1,15 @@
 Contact
 ==============================================================================
 
+
+.. |blankjul| raw:: html
+
+   <a href="http://www.cse.msu.edu/~blankjul/" target="_blank">here</a>
+
+
+
+My personal homepage: |blankjul|
+
 Feel free to contact me if you have any question:
 
 ::

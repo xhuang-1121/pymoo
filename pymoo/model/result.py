@@ -3,12 +3,12 @@ class Result:
     The resulting object of an optimization run.
     """
 
-    def __init__(self, opt, success, message=None) -> None:
+    def __init__(self) -> None:
         super().__init__()
 
-        self.opt = opt
-        self.success = success
-        self.message = message
+        self.opt = None
+        self.success = None
+        self.message = None
 
         # ! other attributes to be set as well
 

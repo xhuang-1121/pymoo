@@ -18,4 +18,4 @@ res = minimize(get_problem("dtlz2"),
                termination=('n_gen', 200)
                )
 
-get_visualization("scatter", angle=(45,45)).add(res.F).show()
+get_visualization("scatter", angle=(45, 45)).add(res.F).show()

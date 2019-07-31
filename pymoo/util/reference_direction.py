@@ -226,7 +226,7 @@ class MultiLayerReferenceDirectionFactory:
     def do(self):
         ref_dirs = []
         for factory in self.layers:
-            ref_dirs.append(factory.do())
+            ref_dirs.append(factory)
         ref_dirs = np.concatenate(ref_dirs, axis=0)
         is_duplicate = filter_duplicate(ref_dirs)
         return ref_dirs[np.logical_not(is_duplicate)]
