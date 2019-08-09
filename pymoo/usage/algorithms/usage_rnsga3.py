@@ -15,13 +15,13 @@ pf = problem.pareto_front()
 ref_points = np.array([[0.3, 0.4], [0.8, 0.5]])
 
 # Get Algorithm
-method = rnsga3(
+algorithm = rnsga3(
     ref_points=ref_points,
     pop_per_ref_point=50,
     mu=0.1)
 
 res = minimize(problem,
-               algorithm=method,
+               algorithm=algorithm,
                termination=('n_gen', 300),
                pf=pf,
                verbose=False)
@@ -48,13 +48,13 @@ ref_dirs = UniformReferenceDirectionFactory(3, n_points=91).do()
 pf = problem.pareto_front(ref_dirs)
 
 # Get Algorithm
-method = rnsga3(
+algorithm = rnsga3(
     ref_points=ref_points,
     pop_per_ref_point=91,
     mu=0.1)
 
 res = minimize(problem,
-               algorithm=method,
+               algorithm,
                termination=('n_gen', 300),
                pf=pf,
                verbose=False)

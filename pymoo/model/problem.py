@@ -16,6 +16,7 @@ class Problem:
     as the number of variables, number of objectives or constraints.
     Also, the lower and upper bounds are stored. If available the Pareto-front, nadir point
     and ideal point are stored.
+
     """
 
     def __init__(self,
@@ -125,11 +126,23 @@ class Problem:
 
     def pareto_front(self, *args, use_cache=True, exception_if_failing=True, **kwargs):
         """
+        Parameters
+        ----------
+
+        args : Same problem implementation need some more information to create the Pareto front. For instance
+                the DTLZ problem suite generates the Pareto front by usage of the reference directions.
+                We refer to the corresponding problem for more information.
+        exception_if_failing : bool
+                Whether to throw an exception when generating the Pareto front has failed.
+        use_cache : bool
+                Whether to use the cache if the Pareto front has been generated beforehand.
+
         Returns
         -------
         P : np.array
             The Pareto front of a given problem. It is only loaded or calculate the first time and then cached.
             For a single-objective problem only one point is returned but still in a two dimensional array.
+
         """
         if not use_cache or self._pareto_front is None:
             try:
@@ -310,7 +323,7 @@ class Problem:
         def func(_x):
             _out = {}
             if calc_gradient:
-                _out["__autograd__"], _ = run_and_trace(self._evaluate, _x, *[_out])
+                _out["dF"], _ = run_and_trace(self._evaluate, _x, *[_out])
             else:
                 self._evaluate(_x, _out, *args, **kwargs)
             return _out
@@ -343,28 +356,18 @@ class Problem:
 
         elif _type == "dask":
 
-            if len(_params) == 0:
-                raise Exception("A distributed client objective is need for using dask.")
+            if len(_params) != 2:
+                raise Exception("A distributed client objective is need for using dask. parallelization=(dask, "
+                                "<client>, <function>).")
             else:
-                client = _params[0]
+                client, fun = _params
 
-            # client.upload_file('/Users/blankjul/workspace/pymoo/tests/problems/test_parallel.py')
-
-            self.parallelization = None
-
-            def wrapper(obj, x, args, kwargs):
-                self.evaluate()
-                out = {}
-                obj(x, out, *args, **kwargs)
-                return out
-
-            ret = []
+            jobs = []
             for k in range(len(X)):
-                # ret = client.submit(evaluate_in_parallel_object, X[k], calc_gradient, self, args, kwargs)
-                ret.append(client.submit(wrapper, self, X[k], args, kwargs))
-                # ret.append(client.submit(test_in_parallel))
+                jobs.append(client.submit(fun, X[k]))
 
-            ret = [e.result() for e in ret]
+            ret = [job.result() for job in jobs]
+
 
         else:
             raise Exception("Unknown parallelization method: %s (None, threads, dask)" % self.parallelization)
@@ -372,7 +375,6 @@ class Problem:
         # stack all the single outputs together
         out = {}
         for key in ret[0].keys():
-            # out["_" + key] = [_out[key] for _out in ret]
             out[key] = anp.row_stack([ret[i][key] for i in range(len(ret))])
 
         return out

@@ -5,13 +5,12 @@ from pymoo.docs import parse_doc_string
 from pymoo.operators.crossover.differental_evolution_crossover import DifferentialEvolutionCrossover
 from pymoo.operators.crossover.exponential_crossover import ExponentialCrossover
 from pymoo.operators.crossover.uniform_crossover import UniformCrossover
-from pymoo.operators.default_operators import set_if_none
 from pymoo.operators.repair.bounds_back_repair import BoundsBackRepair
 from pymoo.operators.sampling.latin_hypercube_sampling import LatinHypercubeSampling
 from pymoo.operators.selection.random_selection import RandomSelection
 
 from pymoo.util.display import disp_single_objective
-from pymoo.util.misc import parameter_less
+from pymoo.util.misc import parameter_less, set_if_none
 
 
 # =========================================================================================================
@@ -139,7 +138,7 @@ def de(
 
     jitter : bool
         Another strategy for adaptive weights (F). Here, only a very small value is added or
-        substracted to the weight used for the crossover for each individual.
+        subtracted to the weight used for the crossover for each individual.
 
 
     Returns

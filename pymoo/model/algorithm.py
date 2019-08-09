@@ -54,9 +54,7 @@ class Algorithm:
     """
 
     def __init__(self,
-                 verbose=False,
                  callback=None,
-                 save_history=False,
                  **kwargs):
 
         # !
@@ -73,7 +71,6 @@ class Algorithm:
 
         # other attributes of the algorithm
         self.callback = callback
-        self.save_history = save_history
         self.func_display_attrs = None
 
         # !
@@ -92,6 +89,8 @@ class Algorithm:
         self.evaluator = None
         # the current number of generation or iteration
         self.n_gen = None
+        # whether the history should be saved or not
+        self.save_history = None
         # the history object which contains the list
         self.history = None
         # the current solutions stored - here considered as population
@@ -112,6 +111,7 @@ class Algorithm:
                    pf=True,
                    evaluator=None,
                    verbose=False,
+                   save_history=False,
                    **kwargs):
 
         # if this run should be verbose or not
@@ -125,7 +125,8 @@ class Algorithm:
             self.termination = termination
 
         # set the random seed in the algorithm object
-        if seed is None:
+        self.seed = seed
+        if self.seed is None:
             self.seed = np.random.randint(0, 10000000)
         np.random.seed(self.seed)
         self.pf = pf
@@ -134,6 +135,9 @@ class Algorithm:
         if evaluator is None:
             evaluator = Evaluator()
         self.evaluator = evaluator
+
+        # whether the history should be stored or not
+        self.save_history = save_history
 
         # other run dependent variables that are reset
         self.n_gen = None
@@ -248,11 +252,11 @@ def filter_optimum(pop):
     # first only choose feasible solutions
     pop = pop[pop.collect(lambda ind: ind.feasible)[:, 0]]
 
-    # then check the objective values
-    F = pop.get("F")
-
     # if at least one feasible solution was found
     if len(pop) > 0:
+
+        # then check the objective values
+        F = pop.get("F")
 
         if F.shape[1] > 1:
             I = NonDominatedSorting().do(pop.get("F"), only_non_dominated_front=True)
@@ -260,6 +264,7 @@ def filter_optimum(pop):
 
         else:
             pop = pop[np.argmin(F)]
+
     else:
         pop = None
 

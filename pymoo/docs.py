@@ -36,7 +36,7 @@ algorithms = {
                     This object defines the mating selection to be used. 
                     In an evolutionary algorithm each generation parents need to be selected to produce new offsprings using 
                     different recombination and mutation operators. Different strategies for selecting parents are possible e.g. 
-                    selecting them just randomly, only in the neighbourhood, using a tournament selection to introduce some seletion 
+                    selecting them just randomly, only in the neighborhood, using a tournament selection to introduce some selection 
                     pressure, ... 
                     """,
     "crossover": """:class:`~pymoo.model.crossover.Crossover`

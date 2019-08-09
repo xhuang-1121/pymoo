@@ -53,10 +53,10 @@ class DecompositionTest(unittest.TestCase):
         weights = np.random.random((10, 3))
 
         D = PerpendicularDistance(_type="python").do(F, weights, _type="many_to_many")
-        self.assertTrue(np.all(np.abs(np.loadtxt("resources/perp_dist") - D) < 1e-6))
+        self.assertTrue(np.all(np.abs(np.loadtxt("../resources/perp_dist") - D) < 1e-6))
 
         D = PerpendicularDistance(_type="cython").do(F, weights, _type="many_to_many")
-        self.assertTrue(np.all(np.abs(np.loadtxt("resources/perp_dist") - D) < 1e-6))
+        self.assertTrue(np.all(np.abs(np.loadtxt("../resources/perp_dist") - D) < 1e-6))
 
 
 

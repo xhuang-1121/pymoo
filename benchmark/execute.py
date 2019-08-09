@@ -20,7 +20,7 @@ if __name__ == '__main__':
     import pymop
     from pymoo.optimize import minimize
 
-    # load the data for the experiments
+    # load the data for the benchmark
     fname = sys.argv[1]
 
     with open(fname, 'rb') as f:

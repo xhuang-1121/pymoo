@@ -2,7 +2,7 @@ from pymoo.visualization.util import plot_circle, plot_radar_line, plot_axis_lab
     get_uniform_points_around_circle
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
-from pymoo.operators.default_operators import set_if_none, set_if_none_from_tuples
+from pymoo.util.misc import set_if_none, set_if_none_from_tuples
 
 
 class Radviz(Plot):

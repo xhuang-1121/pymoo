@@ -10,6 +10,9 @@ clean-ext:
 compile:
 	python setup.py build_ext --inplace
 
+compile-with-cython:
+	python setup.py build_ext --inplace --cythonize
+
 dist:
 	python setup.py sdist
 

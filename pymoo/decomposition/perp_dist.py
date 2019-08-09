@@ -9,5 +9,5 @@ class PerpendicularDistance(Decomposition):
         self.theta = theta
 
     def _do(self, F, weights, **kwargs):
-        _, d2 = load_function("calc_distance_to_weights")(F, weights, self.utopian_point)
+        _, d2 = load_function("calc_distance_to_weights")(F, weights)
         return d2

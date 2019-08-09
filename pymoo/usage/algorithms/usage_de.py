@@ -3,7 +3,7 @@ from pymoo.factory import get_problem
 from pymoo.operators.sampling.latin_hypercube_sampling import LatinHypercubeSampling
 from pymoo.optimize import minimize
 
-method = de(
+algorithm = de(
     pop_size=100,
     sampling=LatinHypercubeSampling(iterations=100, criterion="maxmin"),
     variant="DE/rand/1/bin",
@@ -14,7 +14,7 @@ method = de(
 )
 
 res = minimize(get_problem("ackley", n_var=10),
-               method,
+               algorithm,
                termination=('n_gen', 250),
                seed=1)
 

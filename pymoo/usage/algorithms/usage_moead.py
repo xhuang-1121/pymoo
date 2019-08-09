@@ -1,12 +1,10 @@
 from pymoo.algorithms.moead import moead
-from pymoo.factory import get_problem, get_visualization
+from pymoo.factory import get_problem, get_visualization, get_reference_directions
 from pymoo.optimize import minimize
-from pymoo.util.reference_direction import UniformReferenceDirectionFactory
 
-# create the optimization problem
-ref_dirs = UniformReferenceDirectionFactory(3, n_points=100).do()
+ref_dirs = get_reference_directions("das-dennis", 3, n_partitions=12)
 
-method = moead(
+algorithm = moead(
     ref_dirs=ref_dirs,
     n_neighbors=15,
     decomposition="pbi",
@@ -14,7 +12,7 @@ method = moead(
 )
 
 res = minimize(get_problem("dtlz2"),
-               method,
+               algorithm,
                termination=('n_gen', 200)
                )
 

@@ -89,9 +89,19 @@ def run_setup(setup_args):
             kwargs['ext_modules'] = cythonize("pymoo/cython/*.pyx")
         else:
             cpp_files = [f for f in files if f.endswith(".cpp")]
-            for source in cpp_files:
-                kwargs['ext_modules'].append(
-                    Extension("pymoo.cython.%s" % source[:-4], [os.path.join(cython_folder, source)]))
+
+            if len(cpp_files) == 0:
+                print('*' * 75)
+                print("WARNING: No modules for compilation available. To compile pyx files, execute:")
+                print("make compile-with-cython")
+                print('*' * 75)
+                return
+
+            else:
+
+                for source in cpp_files:
+                    kwargs['ext_modules'].append(
+                        Extension("pymoo.cython.%s" % source[:-4], [os.path.join(cython_folder, source)]))
 
         print("==========================")
 

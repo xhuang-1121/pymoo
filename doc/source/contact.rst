@@ -4,11 +4,11 @@ Contact
 
 .. |blankjul| raw:: html
 
-   <a href="http://www.cse.msu.edu/~blankjul/" target="_blank">here</a>
+   <a href="http://www.cse.msu.edu/~blankjul/" target="_blank">My personal homepage</a>
 
 
 
-My personal homepage: |blankjul|
+|blankjul|
 
 Feel free to contact me if you have any question:
 

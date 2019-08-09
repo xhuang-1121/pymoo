@@ -6,6 +6,7 @@ from pymoo.configuration import Configuration
 def get_functions():
     from pymoo.util.nds.fast_non_dominated_sort import fast_non_dominated_sort
     from pymoo.decomposition.util import calc_distance_to_weights
+    from pymoo.util.misc import calc_perpendicular_distance
 
     FUNCTIONS = {
         "fast_non_dominated_sort": {
@@ -13,6 +14,9 @@ def get_functions():
         },
         "calc_distance_to_weights": {
             "python": calc_distance_to_weights, "cython": "pymoo.cython.decomposition"
+        },
+        "calc_perpendicular_distance": {
+            "python": calc_perpendicular_distance, "cython": "pymoo.cython.calc_perpendicular_distance"
         }
     }
 

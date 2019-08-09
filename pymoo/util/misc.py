@@ -113,14 +113,15 @@ def covert_to_type(problem, X):
         return X < (problem.xu - problem.xl) / 2
 
 
-def filter_duplicate(X, epsilon=1e-16):
-    # value to finally return
-    is_duplicate = np.full(len(X), False)
-
-    # check for duplicates in pop itself
+def find_duplicates(X, epsilon=1e-16):
+    # calculate the distance matrix from each point to another
     D = cdist(X, X)
+
+    # set the diagonal to infinity
     D[np.triu_indices(len(X))] = np.inf
-    is_duplicate = np.logical_or(is_duplicate, np.any(D < epsilon, axis=1))
+
+    # set as duplicate if a point is really close to this one
+    is_duplicate = np.any(D < epsilon, axis=1)
 
     return is_duplicate
 
@@ -203,3 +204,34 @@ if __name__ == '__main__':
     M[10, :] = M[55, :]
 
     print(get_duplicates(M))
+
+
+def set_if_none(kwargs, str, val):
+    if str not in kwargs:
+        kwargs[str] = val
+
+
+def set_if_none_from_tuples(kwargs, *args):
+    for key, val in args:
+        if key not in kwargs:
+            kwargs[key] = val
+
+
+def calc_perpendicular_distance(N, ref_dirs):
+    u = np.tile(ref_dirs, (len(N), 1))
+    v = np.repeat(N, len(ref_dirs), axis=0)
+
+    norm_u = np.linalg.norm(u, axis=1)
+
+    scalar_proj = np.sum(v * u, axis=1) / norm_u
+    proj = scalar_proj[:, None] * u / norm_u[:, None]
+    val = np.linalg.norm(proj - v, axis=1)
+    matrix = np.reshape(val, (len(N), len(ref_dirs)))
+
+    return matrix
+
+
+def distance_of_closest_points_to_others(X):
+    D = vectorized_cdist(X, X)
+    np.fill_diagonal(D, np.inf)
+    return D.argmin(axis=1), D.min(axis=1)

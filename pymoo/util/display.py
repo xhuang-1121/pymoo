@@ -3,7 +3,7 @@ import numpy as np
 from pymoo.performance_indicator.distance_indicator import IGD, GD
 from pymoo.performance_indicator.hv import Hypervolume
 
-width = 16
+width = 12
 
 
 def format_float(f):

@@ -61,9 +61,8 @@
                                 <a href="problems/index.html#Single-Objective">Single-objective</a>,
                                 <a href="problems/index.html#Multi-Objective">Multi-objective</a>,
                                 <a href="problems/index.html#Many-Objective">Many-objective</a></br>
-                                <a href="problems/custom.html">Custom Problem</a>,
-                                <a href="problems/gradients.html">Gradients</a>,
-                                <a href="problems/parallelization.html">Parallelization</a>
+                                <a href="problems/custom.html">Problem Definition</a>,
+                                <a href="problems/gradients.html">Gradients</a>
                         </div>
                     </div>
             </div>
@@ -82,25 +81,18 @@
                     <div class="desc col-10">
                             <h4>Operators</h4>
                             <a href="operators/sampling.html">Sampling:</a>
-                                <a href="operators/sampling.html#nb-sampling-random">Random</a>,
-                                <a href="operators/sampling.html#nb-sampling-lhs">LHS</a>
+                                Random, LHS
                                 </br>
                             <a href="operators/selection.html">Selection:</a>
-                                <a href="operators/sampling.html#nb-selection-random">Random</a>,
-                                <a href="operators/sampling.html#nb-selection-tournament">Binary Tournament</a>
+                                Random, Binary Tournament
+
                                 </br>
                             <a href="operators/crossover.html">Crossover:</a>
-                                <a href="operators/crossover.html#nb-crossover-random">SBX</a>,
-                                <a href="operators/crossover.html#nb-crossover-tournament">UX</a>,
-                                <a href="operators/crossover.html#nb-crossover-random">HUX</a>,
-                                <a href="operators/crossover.html#nb-crossover-tournament">DE</a>,
-                                <a href="operators/crossover.html#nb-crossover-tournament">Point</a>,
-                                <a href="operators/crossover.html#nb-crossover-tournament">Exponential</a>
+                                SBX, UX, HUX, DE Point, Exponential
                                 </br>
                             
                             <a href="operators/mutation.html">Mutation:</a>
-                                <a href="operators/crossover.html#nb-mutation-tournament">Polynomial</a>,
-                                <a href="operators/crossover.html#nb-crossover-tournament">Bitflip</a>
+                                Polynomial, Bitlfip
                                 </br>
 
                     </div>
@@ -205,6 +197,29 @@
                 </div>
             </div>
 
+        </div>
+
+
+
+        <div class="row row-eq-height">
+
+            <div class="entry col" onclick="location.href='tutorial/index.html';">
+                <div class="d-flex flex-row">
+                    <div class="icon col-1">
+                        <i class="fas fa-book-open fa-2x"></i>
+                    </div>
+                    <div class="desc col-10">
+                            <h4>Tutorials</h4>
+                            Other Variable Types:
+                            <a href="tutorial/binary_problem.html">Binary</a>,
+                            <a href="tutorial/discrete_problem.html">Discrete</a>,
+                            <a href="tutorial/mixed_variable_problem.html">Mixed</a>
+                            </br>
+                            More: <a href="problems/parallelization.html">Parallelization of Function Evaluations</a>
+                    </div>
+
+                </div>
+            </div>
         </div>
 
 

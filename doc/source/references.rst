@@ -3,7 +3,7 @@ References
 
 We are currently working on a paper.
 Meanwhile, if you have used our framework for research purposes, you can cite us with:
-å
+
 ::
 
     @misc{pymoo,

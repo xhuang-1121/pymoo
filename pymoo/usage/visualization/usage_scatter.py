@@ -8,7 +8,7 @@ scatter().add(F).show()
 
 
 # START scatter2d_custom
-F = get_problem("zdt3").pareto_front(flatten=False)
+F = get_problem("zdt3").pareto_front(use_cache=False, flatten=False)
 plot = scatter()
 plot.add(F, s=30, facecolors='none', edgecolors='r')
 plot.add(F, plot_type="line", color="black", linewidth=2)

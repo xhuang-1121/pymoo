@@ -5,6 +5,7 @@ import unittest
 import numpy as np
 
 from pymoo.algorithms.nsga2 import calc_crowding_distance
+from pymoo.configuration import get_pymoo
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
 
@@ -17,9 +18,8 @@ class NSGA2Test(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls):
-        with open(os.path.join("resources", "cnsga2_run_zdt4.dat"), 'rb') as f:
+        with open(os.path.join(get_pymoo(), "tests", "resources", "cnsga2_run_zdt4.dat"), 'rb') as f:
             cls.data = pickle.load(f)
-
 
     def test_rank_and_crowding_distance(self):
         for i, D in enumerate(self.data):
@@ -34,6 +34,7 @@ class NSGA2Test(unittest.TestCase):
             _crowding = np.full(len(F), np.nan)
             for front in fronts:
                 _crowding[front] = calc_crowding_distance(F[front])
+            _crowding[np.isinf(_crowding)] = 1e14
 
             is_equal = np.all(rank == _rank)
             if not is_equal:

@@ -3,7 +3,7 @@ import numpy as np
 
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
-from pymoo.operators.default_operators import set_if_none, set_if_none_from_tuples
+from pymoo.util.misc import set_if_none, set_if_none_from_tuples
 from pymoo.visualization.util import parse_bounds, normalize
 
 

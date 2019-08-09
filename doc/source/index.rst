@@ -40,8 +40,8 @@ more features related to multi-objective optimization such as visualization and 
     pip install -U pymoo
 
 
-Please note, that some modules can be compiled to speed up compuations (optional). By using the command
-above, an attempt is made to compile the modules, however, if unsucessful the
+Please note, that some modules can be compiled to speed up computations (optional). By using the command
+above, an attempt is made to compile the modules, however, if unsuccessful the
 plain python version is installed. More information are available in our 
 :ref:`Installation Guide <installation>`.
 
@@ -59,7 +59,7 @@ getting started guide:
 Features
 ------------------------------------------------------------------------------
 
-Furthermore, our frameworks offers a variety of different features which cover various facets of multi-objecitve optimization:
+Furthermore, our frameworks offers a variety of different features which cover various facets of multi-objective optimization:
 
 .. include:: portfolio.rst
 
@@ -128,6 +128,7 @@ happy if somebody wants to contribute by developing code. You can see it as a
 win-win situations, because your development will be linked to your publication(s) which
 can significantly increase the awareness of your work. Please note that, we aim to keep 
 a high-level of code quality and some refactorings might be suggested. 
+
 
 **(iii)** You like our framework and you would like to use it for profit-making purposes?
 We are always searching for industrial collaborations because they help to direct research to meet 

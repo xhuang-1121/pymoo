@@ -102,7 +102,7 @@ class AspirationPointSurvival(Survival):
         self.ref_dirs = denormalize(ref_dirs, self.ideal_point, self.nadir_point)
 
         # associate individuals to niches
-        niche_of_individuals, dist_to_niche = associate_to_niches(F, ref_dirs, self.ideal_point, self.nadir_point)
+        niche_of_individuals, dist_to_niche, _ = associate_to_niches(F, ref_dirs, self.ideal_point, self.nadir_point)
         pop.set('rank', rank, 'niche', niche_of_individuals, 'dist_to_niche', dist_to_niche)
 
         # if we need to select individuals to survive

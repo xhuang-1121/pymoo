@@ -39,7 +39,7 @@ class MaximumGenerationTermination(Termination):
 
 class ToleranceBasedTermination(Termination):
 
-    def __init__(self, tol=0.001, n_last=20, n_max_gen=None, nth_gen=5) -> None:
+    def __init__(self, tol=0.001, n_last=20, n_max_gen=1000, nth_gen=5) -> None:
         super().__init__()
         self.tol = tol
         self.nth_gen = nth_gen
@@ -59,7 +59,7 @@ class ToleranceBasedTermination(Termination):
         self.n_gen = algorithm.n_gen
 
         # if the fallback stop in generation is enabled check it
-        if self.n_max_gen is not None and self.n_gen > self.n_max_gen:
+        if self.n_max_gen is not None and self.n_gen >= self.n_max_gen:
             return False
 
         # store the current data in the history
@@ -156,7 +156,7 @@ class IGDTermination(Termination):
             raise Exception("You can only use IGD termination criteria if the pareto front is known!")
 
         self.obj = IGD(pf)
-        self.igd = min_igdm
+        self.igd = min_igd
 
     def _do_continue(self, algorithm):
         F = algorithm.pop.get("F")

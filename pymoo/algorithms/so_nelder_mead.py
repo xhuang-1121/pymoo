@@ -55,12 +55,13 @@ class NelderAndMeadTermination(Termination):
         else:
             xtol = np.abs(X[1:] - X[0]).max() <= self.xtol
 
-        # degenerated simplex
+        # degenerated simplex - get all edges and minimum and maximum length
         D = vectorized_cdist(X, X)
-
         val = D[np.triu_indices(len(pop), 1)]
         min_e, max_e = val.min(), val.max()
-        is_degenerated = min_e / max_e < 1e-16
+
+        # either if the maximum length is very small or the ratio is degenerated
+        is_degenerated = max_e < 1e-16 or min_e / max_e < 1e-16
 
         max_iter = algorithm.n_gen > self.n_max_iter
         max_evals = algorithm.evaluator.n_eval > self.n_max_evals
@@ -71,12 +72,14 @@ class NelderAndMeadTermination(Termination):
         return self.has_finished(algorithm)
 
 
-def max_expansion_factor(point, direction, problem):
+def max_expansion_factor(point, direction, xl, xu):
     bounds = []
-    if problem.xl is not None:
-        bounds.append(problem.xl)
-    if problem.xu is not None:
-        bounds.append(problem.xu)
+
+    if xl is not None:
+        bounds.append(xl)
+
+    if xu is not None:
+        bounds.append(xu)
 
     if len(bounds) == 0:
         return np.inf
@@ -93,7 +96,7 @@ def max_expansion_factor(point, direction, problem):
 
     # remove nan and less than 0 values
     val = val[np.logical_not(np.isnan(val))]
-    val = val[val > 0]
+    val = val[val >= 0]
 
     # if no value there - no bound exist
     if len(val) == 0:
@@ -264,7 +267,7 @@ class NelderMead(Algorithm):
         # -------------------------------------------------------------------------------------------
 
         # check the maximum alpha until the bounds are hit
-        max_alpha = max_expansion_factor(centroid, (centroid - pop[n + 1].X), self.problem)
+        max_alpha = max_expansion_factor(centroid, (centroid - pop[n + 1].X), self.problem.xl, self.problem.xu)
 
         # reflect the point, consider factor if bounds are there, make sure in bounds (floating point) evaluate
         x_reflect = centroid + min(self.alpha, max_alpha) * (centroid - pop[n + 1].X)
@@ -286,7 +289,7 @@ class NelderMead(Algorithm):
             # -------------------------------------------------------------------------------------------
 
             # the maximum expansion until the bounds are hit
-            max_beta = max_expansion_factor(centroid, (x_reflect - centroid), self.problem)
+            max_beta = max_expansion_factor(centroid, (x_reflect - centroid), self.problem.xl, self.problem.xu)
 
             # expand using the factor, consider bounds, make sure in case of floating point issues
             x_expand = centroid + min(self.beta, max_beta) * (x_reflect - centroid)

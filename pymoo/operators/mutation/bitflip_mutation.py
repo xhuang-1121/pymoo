@@ -17,9 +17,9 @@ class BinaryBitflipMutation(Mutation):
         _X = np.full(X.shape, np.inf)
 
         M = np.random.random(X.shape)
-        flip, not_flip = M < self.prob, M > self.prob
+        flip, no_flip = M < self.prob, M >= self.prob
 
         _X[flip] = np.logical_not(X[flip])
-        _X[not_flip] = X[not_flip]
+        _X[no_flip] = X[no_flip]
 
         return _X.astype(np.bool)

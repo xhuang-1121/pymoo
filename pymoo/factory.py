@@ -99,7 +99,8 @@ def get_sampling_options():
         ("real_random", FloatRandomSampling),
         ("real_lhs", LatinHypercubeSampling),
         ("bin_random", BinaryRandomSampling),
-        ("int_random", IntegerFromFloatSampling, {'clazz': FloatRandomSampling})
+        ("int_random", IntegerFromFloatSampling, {'clazz': FloatRandomSampling}),
+        ("int_lhs", IntegerFromFloatSampling, {'clazz': LatinHypercubeSampling})
     ]
 
     return SAMPLING
@@ -195,8 +196,8 @@ def get_termination_options():
         ("n_eval", MaximumFunctionCallTermination),
         ("n_gen", MaximumGenerationTermination),
         ("igd", IGDTermination),
-        ("xtol", DesignSpaceToleranceTermination),
-        ("ftol", ObjectiveSpaceToleranceTermination)
+        ("x_tol", DesignSpaceToleranceTermination),
+        ("f_tol", ObjectiveSpaceToleranceTermination)
     ]
 
     return TERMINATION
@@ -309,25 +310,24 @@ def get_reference_directions(name, *args, d={}, **kwargs):
 # =========================================================================================================
 
 def get_visualization_options():
-    from pymoo.visualization.pcp import ParallelCoordinatePlot
-    from pymoo.visualization.petal import PetalDiagram
-    from pymoo.visualization.radar import Radar
-    from pymoo.visualization.radviz import Radviz
-    from pymoo.visualization.scatter import Scatter
-    from pymoo.visualization.star_coordinate import StarCoordinate
-    from pymoo.visualization.heatmap import Heatmap
-    from pymoo.visualization.fitness_landscape import FitnessLandscape
+    from pymoo.visualization.pcp import pcp
+    from pymoo.visualization.petal import petal
+    from pymoo.visualization.radar import radar
+    from pymoo.visualization.radviz import radviz
+    from pymoo.visualization.scatter import scatter
+    from pymoo.visualization.star_coordinate import star_coordinate
+    from pymoo.visualization.heatmap import heatmap
+    from pymoo.visualization.fitness_landscape import fitness_landscape
 
     VISUALIZATION = [
-        ("scatter", Scatter),
-        ("heatmap", Heatmap),
-        ("pcp", ParallelCoordinatePlot),
-        ("petal", PetalDiagram),
-        ("radar", Radar),
-        ("radviz", Radviz),
-        ("scatter", Scatter),
-        ("star", StarCoordinate),
-        ("fitness-landscape", FitnessLandscape)
+        ("scatter", scatter),
+        ("heatmap", heatmap),
+        ("pcp", pcp),
+        ("petal", petal),
+        ("radar", radar),
+        ("radviz", radviz),
+        ("star", star_coordinate),
+        ("fitness-landscape", fitness_landscape)
     ]
 
     return VISUALIZATION
@@ -417,7 +417,7 @@ def get_decision_making(name, *args, d={}, **kwargs):
 
 def dummy(name, kwargs):
     """
-    A convenience method to get an {type} object just by providing a string.
+    A convenience method to get a {type} object just by providing a string.
 
     Parameters
     ----------
@@ -430,7 +430,7 @@ def dummy(name, kwargs):
 
     Returns
     -------
-    algorithm : {clazz}
+    class : {clazz}
         An {type} object based on the string. `None` if the {type} was not found.
 
     """

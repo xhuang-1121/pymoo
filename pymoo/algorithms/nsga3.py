@@ -4,15 +4,17 @@ import numpy as np
 from numpy.linalg import LinAlgError
 
 from pymoo.algorithms.genetic_algorithm import GeneticAlgorithm
-from pymoo.decomposition.perp_dist import PerpendicularDistance
 from pymoo.docs import parse_doc_string
+from pymoo.model.algorithm import filter_optimum
 from pymoo.model.individual import Individual
+from pymoo.model.population import Population
 from pymoo.model.survival import Survival
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
 from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.operators.selection.tournament_selection import TournamentSelection, compare
 from pymoo.util.display import disp_multi_objective
+from pymoo.util.function_loader import load_function
 from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 
 
@@ -39,6 +41,29 @@ class NSGA3(GeneticAlgorithm):
 
     def _finalize(self):
         super()._finalize()
+        opt = filter_optimum(self.pop.copy())
+
+        # if population object then only keep closest to reference lines
+        if isinstance(opt, Population):
+
+            # find the closest individual to each niche
+            niches, ideal_point, nadir_point = self.survival.ref_dirs, self.survival.ideal_point, self.survival.nadir_point
+
+            # now find the non-empty niches - only those we used during optimization
+            non_empty_niches = niches[np.unique(opt.get("niche"))]
+
+            # calculate the distance matrix - perp dist of each solution to all those niches
+            _, _, dist_matrix = associate_to_niches(opt.get("F"), non_empty_niches,
+                                                    ideal_point, nadir_point, utopian_epsilon=0.0)
+
+            # find the solution closest to the niche
+            I = np.unique(dist_matrix.argmin(axis=0))
+
+            # filter out all others
+            if len(I) > 0:
+                opt = opt[I]
+
+        self.opt = opt
 
 
 def comp_by_cv_then_random(pop, P, **kwargs):
@@ -105,9 +130,12 @@ class ReferenceDirectionSurvival(Survival):
         last_front = fronts[-1]
 
         # associate individuals to niches
-        niche_of_individuals, dist_to_niche = associate_to_niches(F, self.ref_dirs, self.ideal_point, self.nadir_point)
-        pop.set('rank', rank, 'niche', niche_of_individuals, 'dist_to_niche',
-                dist_to_niche, "is_closest", np.full(len(pop), False))
+        niche_of_individuals, dist_to_niche, dist_matrix = \
+            associate_to_niches(F, self.ref_dirs, self.ideal_point, self.nadir_point)
+
+        pop.set('rank', rank,
+                'niche', niche_of_individuals,
+                'dist_to_niche', dist_to_niche)
 
         # if we need to select individuals to survive
         if len(pop) > n_survive:
@@ -163,6 +191,7 @@ def get_nadir_point(extreme_points, ideal_point, worst_point, worst_of_front, wo
         M = extreme_points - ideal_point
         b = np.ones(extreme_points.shape[1])
         plane = np.linalg.solve(M, b)
+
         warnings.simplefilter("ignore")
         intercepts = 1 / plane
 
@@ -221,15 +250,12 @@ def niching(pop, n_remaining, niche_count, niche_of_individuals, dist_to_niche):
 
             if niche_count[next_niche] == 0:
                 next_ind = next_ind[np.argmin(dist_to_niche[next_ind])]
-                is_closest = True
             else:
                 # already randomized through shuffling
                 next_ind = next_ind[0]
-                is_closest = False
 
             # add the selected individual to the survivors
             mask[next_ind] = False
-            pop[next_ind].data["is_closest"] = is_closest
             survivors.append(int(next_ind))
 
             # increase the corresponding niche count
@@ -246,12 +272,12 @@ def associate_to_niches(F, niches, ideal_point, nadir_point, utopian_epsilon=0.0
 
     # normalize by ideal point and intercepts
     N = (F - utopian_point) / denom
-    dist_matrix = PerpendicularDistance(eps=0.0).do(N, niches, _type="many_to_many")
+    dist_matrix = load_function("calc_perpendicular_distance")(N, niches)
 
     niche_of_individuals = np.argmin(dist_matrix, axis=1)
     dist_to_niche = dist_matrix[np.arange(F.shape[0]), niche_of_individuals]
 
-    return niche_of_individuals, dist_to_niche
+    return niche_of_individuals, dist_to_niche, dist_matrix
 
 
 def calc_niche_count(n_niches, niche_of_individuals):
@@ -282,7 +308,7 @@ def nsga3(
     ref_dirs : {ref_dirs}
     pop_size : int (default = None)
         By default the population size is set to None which means that it will be equal to the number of reference
-        line. However, if desired this can be overwritten by providing a positve number.
+        line. However, if desired this can be overwritten by providing a positive number.
     sampling : {sampling}
     selection : {selection}
     crossover : {crossover}

@@ -5,7 +5,7 @@ from pymoo.algorithms.genetic_algorithm import GeneticAlgorithm
 from pymoo.docs import parse_doc_string
 from pymoo.factory import get_decomposition
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
-from pymoo.operators.default_operators import set_if_none
+from pymoo.util.misc import set_if_none
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
 from pymoo.operators.sampling.random_sampling import FloatRandomSampling
 from pymoo.util.display import disp_multi_objective
@@ -91,6 +91,10 @@ class MOEAD(GeneticAlgorithm):
             off = self.crossover.do(self.problem, pop, parents[None, :])
             off = self.mutation.do(self.problem, off)
             off = off[np.random.randint(0, len(off))]
+
+            # repair first in case it is necessary
+            if self.repair:
+                off = self.repair.do(self.problem, off, algorithm=self)
 
             # evaluate the offspring
             self.evaluator.eval(self.problem, off)

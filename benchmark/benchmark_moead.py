@@ -1,7 +1,7 @@
 import os
 import pickle
 
-from experiments.experiment_nsga3 import setup
+from benchmark.benchmark_nsga3 import setup
 from pymoo.algorithms.moead import moead
 
 if __name__ == '__main__':

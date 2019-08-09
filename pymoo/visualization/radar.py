@@ -4,7 +4,7 @@ from pymoo.visualization.util import plot_axes_lines, plot_axis_labels, plot_pol
     plot_radar_line, equal_axis, no_ticks, parse_bounds, normalize
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
-from pymoo.operators.default_operators import set_if_none_from_tuples
+from pymoo.util.misc import set_if_none_from_tuples
 
 
 class Radar(Plot):

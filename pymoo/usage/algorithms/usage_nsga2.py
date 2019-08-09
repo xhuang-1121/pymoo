@@ -5,11 +5,11 @@ from pymoo.visualization.scatter import scatter
 
 problem = get_problem("zdt3")
 
-method = nsga2(pop_size=100, elimate_duplicates=True)
+algorithm = nsga2(pop_size=100, elimate_duplicates=True)
 
 # execute the optimization
 res = minimize(problem,
-               method,
+               algorithm,
                ('n_gen', 200),
                seed=1,
                verbose=False)

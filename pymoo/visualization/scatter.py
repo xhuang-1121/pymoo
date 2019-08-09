@@ -1,12 +1,12 @@
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
-from pymoo.operators.default_operators import set_if_none
+from pymoo.util.misc import set_if_none
 
 
 class Scatter(Plot):
 
     def __init__(self,
-                 angle=None,
+                 angle=(45, 45),
                  **kwargs):
 
         super().__init__(**kwargs)
