@@ -1,12 +1,11 @@
 # START rnsga3
 import numpy as np
 
-from pymoo.algorithms.rnsga3 import rnsga3
+from pymoo.algorithms.rnsga3 import RNSGA3
 from pymoo.factory import get_problem
 from pymoo.optimize import minimize
-from pymoo.util import plotting
 from pymoo.util.reference_direction import UniformReferenceDirectionFactory
-from pymoo.visualization.scatter import scatter
+from pymoo.visualization.scatter import Scatter
 
 problem = get_problem("zdt1")
 pf = problem.pareto_front()
@@ -15,7 +14,7 @@ pf = problem.pareto_front()
 ref_points = np.array([[0.3, 0.4], [0.8, 0.5]])
 
 # Get Algorithm
-algorithm = rnsga3(
+algorithm = RNSGA3(
     ref_points=ref_points,
     pop_per_ref_point=50,
     mu=0.1)
@@ -28,7 +27,7 @@ res = minimize(problem,
 
 reference_directions = res.algorithm.survival.ref_dirs
 
-plot = scatter()
+plot = Scatter()
 plot.add(pf, label="pf")
 plot.add(res.F, label="F")
 plot.add(ref_points, label="ref_points")
@@ -48,7 +47,7 @@ ref_dirs = UniformReferenceDirectionFactory(3, n_points=91).do()
 pf = problem.pareto_front(ref_dirs)
 
 # Get Algorithm
-algorithm = rnsga3(
+algorithm = RNSGA3(
     ref_points=ref_points,
     pop_per_ref_point=91,
     mu=0.1)
@@ -60,7 +59,7 @@ res = minimize(problem,
                verbose=False)
 
 
-plot = scatter(angle=(45, 45))
+plot = Scatter()
 plot.add(pf, label="pf")
 plot.add(res.F, label="F")
 plot.add(ref_points, label="ref_points")

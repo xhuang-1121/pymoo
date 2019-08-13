@@ -17,19 +17,58 @@ from pymoo.util.normalization import normalize
 # Implementation
 # =========================================================================================================
 
+def comp_by_cv_and_fitness(pop, P, **kwargs):
+    S = np.full(P.shape[0], np.nan)
 
-class SingleObjectiveGeneticAlgorithm(GeneticAlgorithm):
+    for i in range(P.shape[0]):
+        a, b = P[i, 0], P[i, 1]
 
-    def __init__(self, **kwargs):
-        set_if_none(kwargs, 'pop_size', 100)
-        set_if_none(kwargs, 'sampling', FloatRandomSampling())
-        set_if_none(kwargs, 'selection', TournamentSelection(func_comp=comp_by_cv_and_fitness))
-        set_if_none(kwargs, 'crossover', SimulatedBinaryCrossover(prob=0.9, eta=3))
-        set_if_none(kwargs, 'mutation', PolynomialMutation(prob=None, eta=5))
-        set_if_none(kwargs, 'survival', FitnessSurvival())
-        set_if_none(kwargs, 'eliminate_duplicates', True)
+        # if at least one solution is infeasible
+        if pop[a].CV > 0.0 or pop[b].CV > 0.0:
+            S[i] = compare(a, pop[a].CV, b, pop[b].CV, method='smaller_is_better', return_random_if_equal=True)
 
-        super().__init__(**kwargs)
+        # both solutions are feasible just set random
+        else:
+            S[i] = compare(a, pop[a].F, b, pop[b].F, method='smaller_is_better', return_random_if_equal=True)
+
+    return S[:, None].astype(np.int)
+
+
+class GA(GeneticAlgorithm):
+
+    def __init__(self,
+                 pop_size=100,
+                 sampling=FloatRandomSampling(),
+                 selection=TournamentSelection(func_comp=comp_by_cv_and_fitness),
+                 crossover=SimulatedBinaryCrossover(prob=0.9, eta=3),
+                 mutation=PolynomialMutation(prob=None, eta=5),
+                 eliminate_duplicates=True,
+                 n_offsprings=None,
+                 **kwargs):
+        """
+
+        Parameters
+        ----------
+        pop_size : {pop_size}
+        sampling : {sampling}
+        selection : {selection}
+        crossover : {crossover}
+        mutation : {mutation}
+        eliminate_duplicates : {eliminate_duplicates}
+        n_offsprings : {n_offsprings}
+
+        """
+
+        super().__init__(pop_size=pop_size,
+                         sampling=sampling,
+                         selection=selection,
+                         crossover=crossover,
+                         mutation=mutation,
+                         survival=FitnessSurvival(),
+                         eliminate_duplicates=eliminate_duplicates,
+                         n_offsprings=n_offsprings,
+                         **kwargs)
+
         self.func_display_attrs = disp_single_objective
 
 
@@ -142,66 +181,14 @@ class ConstraintHandlingSurvival(Survival):
             return pop[np.argsort(_F[:, 0])[:n_survive]]
 
 
-def comp_by_cv_and_fitness(pop, P, **kwargs):
-    S = np.full(P.shape[0], np.nan)
-
-    for i in range(P.shape[0]):
-        a, b = P[i, 0], P[i, 1]
-
-        # if at least one solution is infeasible
-        if pop[a].CV > 0.0 or pop[b].CV > 0.0:
-            S[i] = compare(a, pop[a].CV, b, pop[b].CV, method='smaller_is_better', return_random_if_equal=True)
-
-        # both solutions are feasible just set random
-        else:
-            S[i] = compare(a, pop[a].F, b, pop[b].F, method='smaller_is_better', return_random_if_equal=True)
-
-    return S[:, None].astype(np.int)
-
-
 # =========================================================================================================
 # Interface
 # =========================================================================================================
 
 
-def ga(
-        pop_size=100,
-        sampling=FloatRandomSampling(),
-        selection=TournamentSelection(func_comp=comp_by_cv_and_fitness),
-        crossover=SimulatedBinaryCrossover(prob=0.9, eta=3),
-        mutation=PolynomialMutation(prob=None, eta=5),
-        eliminate_duplicates=True,
-        n_offsprings=None,
-        **kwargs):
-    """
-
-    Parameters
-    ----------
-    pop_size : {pop_size}
-    sampling : {sampling}
-    selection : {selection}
-    crossover : {crossover}
-    mutation : {mutation}
-    eliminate_duplicates : {eliminate_duplicates}
-    n_offsprings : {n_offsprings}
-
-    Returns
-    -------
-    ga : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an SingleObjectiveGeneticAlgorithm algorithm object.
+def ga(*args, **kwargs):
+    return GA(*args, **kwargs)
 
 
-    """
+parse_doc_string(GA.__init__)
 
-    return SingleObjectiveGeneticAlgorithm(pop_size=pop_size,
-                                           sampling=sampling,
-                                           selection=selection,
-                                           crossover=crossover,
-                                           mutation=mutation,
-                                           survival=FitnessSurvival(),
-                                           eliminate_duplicates=eliminate_duplicates,
-                                           n_offsprings=n_offsprings,
-                                           **kwargs)
-
-
-parse_doc_string(ga)

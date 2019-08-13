@@ -7,12 +7,38 @@ from pymoo.visualization.util import get_circle_points, plot_axes_lines, \
     plot_axis_labels, plot_circle, plot_polygon, parse_bounds, normalize, equal_axis, no_ticks
 
 
-class PetalDiagram(Plot):
+class Petal(Plot):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
+    def __init__(self,
+                 bounds=None,
+                 **kwargs):
+        """
 
-        if "bounds" not in kwargs:
+        Petal Diagram
+
+
+        Parameters
+        ----------------
+        bounds : tuple
+            The boundaries for each objective. Necessary to be provided for this plot!
+        axis_style : {axis_style}
+        reverse : bool
+            Default false. Otherwise, larger area means smaller value.
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
+
+        super().__init__(bounds=bounds, **kwargs)
+
+        if bounds is None:
             raise Exception("Boundaries must be provided for Petal Width. Otherwise, no trade-offs can be calculated.")
 
         set_if_none(self.axis_style, "color", "black")
@@ -62,46 +88,4 @@ class PetalDiagram(Plot):
                 self._plot(self.ax[k, j], _F)
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def petal(bounds=None,
-          **kwargs):
-    """
-
-    Petal Width Plot
-
-
-    Parameters
-    ----------------
-
-    bounds : The boundaries for each objectives. Necessary to be provided for this plot!
-
-    axis_style : {axis_style}
-
-    reverse : bool
-        Default false. Otherwise, larger area means smaller value.
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-
-    Returns
-    -------
-    PetalDiagram : :class:`~pymoo.model.analytics.visualization.petal.PetalDiagram`
-
-    """
-
-    return PetalDiagram(bounds=bounds, **kwargs)
-
-
-parse_doc_string(petal)
+parse_doc_string(Petal.__init__)

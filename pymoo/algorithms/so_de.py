@@ -18,29 +18,64 @@ from pymoo.util.misc import parameter_less, set_if_none
 # =========================================================================================================
 
 
-class DifferentialEvolution(GeneticAlgorithm):
+class DE(GeneticAlgorithm):
     def __init__(self,
-                 variant,
-                 CR,
-                 F,
-                 dither,
-                 jitter,
-                 **kwargs):
+                 pop_size=100,
+                 sampling=LatinHypercubeSampling(iterations=100, criterion="maxmin"),
+                 variant="DE/rand/1/bin",
+                 CR=0.5,
+                 F=0.3,
+                 dither="vector",
+                 jitter=False,
+                 **kwargs
+                 ):
+
+        """
+
+        Parameters
+        ----------
+
+        pop_size : {pop_size}
+
+        sampling : {sampling}
+
+        variant : {{DE/(rand|best)/1/(bin/exp)}}
+         The different variants of DE to be used. DE/x/y/z where x how to select individuals to be pertubed,
+         y the number of difference vector to be used and z the crossover type. One of the most common variant
+         is DE/rand/1/bin.
+
+        F : float
+         The weight to be used during the crossover.
+
+        CR : float
+         The probability the individual exchanges variable values from the donor vector.
+
+        dither : {{'no', 'scalar', 'vector'}}
+         One strategy to introduce adaptive weights (F) during one run. The option allows
+         the same dither to be used in one iteration ('scalar') or a different one for
+         each individual ('vector).
+
+        jitter : bool
+         Another strategy for adaptive weights (F). Here, only a very small value is added or
+         subtracted to the weight used for the crossover for each individual.
+
+
+        """
 
         _, self.var_selection, self.var_n, self.var_mutation, = variant.split("/")
 
-        set_if_none(kwargs, 'pop_size', 200)
-        set_if_none(kwargs, 'sampling', LatinHypercubeSampling(criterion="maxmin", iterations=100))
-        set_if_none(kwargs, 'crossover', DifferentialEvolutionCrossover(weight=F, dither=dither, jitter=jitter))
-        set_if_none(kwargs, 'selection', RandomSelection())
-
         if self.var_mutation == "exp":
-            set_if_none(kwargs, 'mutation', ExponentialCrossover(CR))
+            mutation = ExponentialCrossover(CR)
         elif self.var_mutation == "bin":
-            set_if_none(kwargs, 'mutation', UniformCrossover(CR))
+            mutation = UniformCrossover(CR)
 
-        set_if_none(kwargs, 'survival', None)
-        super().__init__(**kwargs)
+        super().__init__(pop_size=pop_size,
+                         sampling=sampling,
+                         selection=RandomSelection(),
+                         crossover=DifferentialEvolutionCrossover(weight=F, dither=dither, jitter=jitter),
+                         mutation=mutation,
+                         survival=None,
+                         **kwargs)
 
         self.func_display_attrs = disp_single_objective
 
@@ -101,64 +136,8 @@ class DifferentialEvolution(GeneticAlgorithm):
 # Interface
 # =========================================================================================================
 
-
-def de(
-        pop_size=100,
-        sampling=LatinHypercubeSampling(iterations=100, criterion="maxmin"),
-        variant="DE/rand/1/bin",
-        CR=0.5,
-        F=0.3,
-        dither="vector",
-        jitter=False,
-        **kwargs):
-    """
-
-    Parameters
-    ----------
-
-    pop_size : {pop_size}
-
-    sampling : {sampling}
-
-    variant : {{DE/(rand|best)/1/(bin/exp)}}
-        The different variants of DE to be used. DE/x/y/z where x how to select individuals to be pertubed,
-        y the number of difference vector to be used and z the crossover type. One of the most common variant
-        is DE/rand/1/bin.
-
-    F : float
-        The weight to be used during the crossover.
-
-    CR : float
-        The probability the individual exchanges variable values from the donor vector.
-
-    dither : {{'no', 'scalar', 'vector'}}
-        One strategy to introduce adaptive weights (F) during one run. The option allows
-        the same dither to be used in one iteration ('scalar') or a different one for
-        each individual ('vector).
-
-    jitter : bool
-        Another strategy for adaptive weights (F). Here, only a very small value is added or
-        subtracted to the weight used for the crossover for each individual.
+def de(*args, **kwargs):
+    return DE(*args, **kwargs)
 
 
-    Returns
-    -------
-    de : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an DifferentialEvolution algorithm object.
-
-    """
-
-    _, _selection, _n, _mutation, = variant.split("/")
-
-    return DifferentialEvolution(
-        variant,
-        CR,
-        F,
-        dither,
-        jitter,
-        pop_size=pop_size,
-        sampling=sampling,
-        **kwargs)
-
-
-parse_doc_string(de)
+parse_doc_string(DE.__init__)

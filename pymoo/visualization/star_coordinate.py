@@ -8,10 +8,34 @@ from pymoo.model.plot import Plot
 
 class StarCoordinate(Plot):
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 axis_extension=1.03,
+                 **kwargs):
+        """
+
+        Star Coordinate Plot
+
+        Parameters
+        ----------------
+
+        axis_style : {axis_style}
+        labels : {labels}
+        endpoint_style : dict
+            Endpoints are drawn at each extreme point of an objective. This style can be modified.
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
         super().__init__(**kwargs)
 
-        self.axis_extension = kwargs["axis_extension"]
+        self.axis_extension = axis_extension
 
         if "arrow_style" not in kwargs:
             self.arrow_style = {
@@ -48,42 +72,4 @@ class StarCoordinate(Plot):
             self.ax.scatter(N[:, 0], N[:, 1], **kwargs)
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def star_coordinate(axis_extension=1.03, **kwargs):
-    """
-
-    Star Coordinate Plot
-
-    Parameters
-    ----------------
-
-    axis_style : {axis_style}
-
-    endpoint_style : dict
-        Endpoints are drawn at each extreme point of an objective. This style can be modified.
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    StarCoordinate : :class:`~pymoo.model.analytics.visualization.star.StarCoordinate`
-
-    """
-
-    return StarCoordinate(axis_extension=axis_extension, **kwargs)
-
-
-parse_doc_string(star_coordinate)
+parse_doc_string(StarCoordinate.__init__)

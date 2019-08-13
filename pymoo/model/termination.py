@@ -1,6 +1,7 @@
 import numpy as np
 
-from pymoo.performance_indicator.distance_indicator import IGD, IGDPlus
+from pymoo.performance_indicator.igd import IGD
+from pymoo.performance_indicator.igd_plus import IGDPlus
 from pymoo.util.normalization import normalize
 
 

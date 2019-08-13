@@ -7,13 +7,52 @@ from pymoo.util.misc import set_if_none, set_if_none_from_tuples
 from pymoo.visualization.util import parse_bounds, normalize
 
 
-class ParallelCoordinatePlot(Plot):
+class PCP(Plot):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.show_bounds = kwargs["show_bounds"]
-        self.n_ticks = kwargs["n_ticks"]
-        self.normalize_each_axis = kwargs["normalize_each_axis"]
+    def __init__(self,
+                 bounds=None,
+                 show_bounds=True,
+                 n_ticks=5,
+                 normalize_each_axis=True,
+                 **kwargs):
+        """
+
+        Parallel Coordinate Plot
+
+
+        Parameters
+        ----------------
+
+        bounds : {bounds}
+
+        axis_style : {axis_style}
+
+        labels : {labels}
+
+        n_ticks : int
+            Number of ticks to be shown on each parallel axis.
+
+        show_bounds : bool
+            Whether the value of the boundaries are shown in the plot or not.
+
+        normalize_each_axis : bool
+            Whether the values should be normalized either by bounds or implictly.
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
+
+        super().__init__(bounds=bounds, **kwargs)
+        self.show_bounds = show_bounds
+        self.n_ticks = n_ticks
+        self.normalize_each_axis = normalize_each_axis
 
         set_if_none_from_tuples(self.axis_style, ("color", "red"), ("linewidth", 2), ("alpha", 0.75))
 
@@ -73,61 +112,4 @@ class ParallelCoordinatePlot(Plot):
         return self
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def pcp(bounds=None,
-        show_bounds=True,
-        n_ticks=5,
-        normalize_each_axis=True,
-        **kwargs):
-    """
-
-    Parallel Coordinate Plot
-
-
-    Parameters
-    ----------------
-
-    bounds : {bounds}
-
-    axis_style : {axis_style}
-
-    labels : {labels}
-
-    n_ticks : int
-        Number of ticks to be shown on each parallel axis.
-
-    show_bounds : bool
-        Whether the value of the boundaries are shown in the plot or not.
-
-    normalize_each_axis : bool
-        Whether the values should be normalized either by bounds or implictly.
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-
-    Returns
-    -------
-    ParallelCoordinatePlot : :class:`~pymoo.model.analytics.visualization.ParallelCoordinatePlot`
-
-    """
-
-    return ParallelCoordinatePlot(bounds=bounds,
-                                  show_bounds=show_bounds,
-                                  n_ticks=n_ticks,
-                                  normalize_each_axis=normalize_each_axis,
-                                  **kwargs)
-
-
-parse_doc_string(pcp)
+parse_doc_string(PCP.__init__)

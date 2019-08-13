@@ -23,17 +23,59 @@ class RNSGA3(NSGA3):
     def __init__(self,
                  ref_points,
                  pop_per_ref_point,
-                 mu,
+                 mu=0.05,
+                 sampling=FloatRandomSampling(),
+                 selection=TournamentSelection(func_comp=comp_by_cv_then_random),
+                 crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
+                 mutation=PolynomialMutation(eta=20, prob=None),
+                 eliminate_duplicates=True,
+                 n_offsprings=None,
                  **kwargs):
+        """
+
+        Parameters
+        ----------
+
+        ref_points : {ref_points}
+        pop_per_ref_point : int
+            Size of the population used for each reference point.
+
+        mu : float
+            Defines the scaling of the reference lines used during survival selection. Increasing mu will result
+            having solutions with a larger spread.
+
+        Other Parameters
+        -------
+
+        n_offsprings : {n_offsprings}
+        sampling : {sampling}
+        selection : {selection}
+        crossover : {crossover}
+        mutation : {mutation}
+        eliminate_duplicates : {eliminate_duplicates}
+
+        """
+
+        # number of objectives the reference lines have
         n_obj = ref_points.shape[1]
 
         # add the aspiration point lines
         aspiration_ref_dirs = UniformReferenceDirectionFactory(n_dim=n_obj, n_points=pop_per_ref_point).do()
 
-        kwargs['survival'] = AspirationPointSurvival(ref_points, aspiration_ref_dirs, mu=mu)
-        kwargs['ref_dirs'] = None
-        kwargs['pop_size'] = ref_points.shape[0] * aspiration_ref_dirs.shape[0] + aspiration_ref_dirs.shape[1]
-        super().__init__(**kwargs)
+        survival = AspirationPointSurvival(ref_points, aspiration_ref_dirs, mu=mu)
+        pop_size = ref_points.shape[0] * aspiration_ref_dirs.shape[0] + aspiration_ref_dirs.shape[1]
+        ref_dirs = None
+
+        super().__init__(ref_dirs,
+                         pop_size=pop_size,
+                         sampling=sampling,
+                         selection=selection,
+                         crossover=crossover,
+                         mutation=mutation,
+                         survival=survival,
+                         eliminate_duplicates=eliminate_duplicates,
+                         n_offsprings=n_offsprings,
+                         **kwargs)
 
     def _solve(self, problem):
         if self.survival.ref_points.shape[1] != problem.n_obj:
@@ -206,59 +248,9 @@ def line_plane_intersection(l0, l1, p0, p_no, epsilon=1e-6):
 # Interface
 # =========================================================================================================
 
-def rnsga3(ref_points,
-           pop_per_ref_point,
-           mu=0.05,
-           pop_size=None,
-           sampling=FloatRandomSampling(),
-           selection=TournamentSelection(func_comp=comp_by_cv_then_random),
-           crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
-           mutation=PolynomialMutation(eta=20, prob=None),
-           eliminate_duplicates=True,
-           n_offsprings=None,
-           **kwargs):
-    """
 
-    Parameters
-    ----------
-    ref_points : {ref_points}
-    pop_per_ref_point : int
-        Size of the population used for each reference point.
-
-    mu : float
-        Defines the scaling of the reference lines used during survival selection. Increasing mu will result
-        having solutions with a larger spread.
-
-    Other Parameters
-    -------
-    n_offsprings : {n_offsprings}
-    sampling : {sampling}
-    selection : {selection}
-    crossover : {crossover}
-    mutation : {mutation}
-    eliminate_duplicates : {eliminate_duplicates}
+def rnsga3(*args, **kwargs):
+    return RNSGA3(*args, **kwargs)
 
 
-    Returns
-    -------
-    nsga3 : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an NSGA3 algorithm object.
-
-
-    """
-
-    return RNSGA3(
-        ref_points,
-        pop_per_ref_point,
-        mu,
-        pop_size=pop_size,
-        sampling=sampling,
-        selection=selection,
-        crossover=crossover,
-        mutation=mutation,
-        eliminate_duplicates=eliminate_duplicates,
-        n_offsprings=n_offsprings,
-        **kwargs)
-
-
-parse_doc_string(rnsga3)
+parse_doc_string(RNSGA3.__init__)

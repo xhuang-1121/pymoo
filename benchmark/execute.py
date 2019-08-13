@@ -12,12 +12,9 @@ if __name__ == '__main__':
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__)))))
 
     import sys
-
-    sys.path.insert(0, "/home/blankjul/workspace/pymop/")
-    sys.path.insert(0, "/Users/julesy/workspace/pymop/")
     sys.path.insert(0, "/home/blankjul/workspace/pymoo/")
     sys.path.insert(0, "/Users/julesy/workspace/pymoo/")
-    import pymop
+
     from pymoo.optimize import minimize
 
     # load the data for the benchmark

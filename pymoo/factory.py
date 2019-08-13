@@ -310,24 +310,24 @@ def get_reference_directions(name, *args, d={}, **kwargs):
 # =========================================================================================================
 
 def get_visualization_options():
-    from pymoo.visualization.pcp import pcp
-    from pymoo.visualization.petal import petal
-    from pymoo.visualization.radar import radar
-    from pymoo.visualization.radviz import radviz
-    from pymoo.visualization.scatter import scatter
-    from pymoo.visualization.star_coordinate import star_coordinate
-    from pymoo.visualization.heatmap import heatmap
-    from pymoo.visualization.fitness_landscape import fitness_landscape
+    from pymoo.visualization.pcp import PCP
+    from pymoo.visualization.petal import Petal
+    from pymoo.visualization.radar import Radar
+    from pymoo.visualization.radviz import Radviz
+    from pymoo.visualization.scatter import Scatter
+    from pymoo.visualization.star_coordinate import StarCoordinate
+    from pymoo.visualization.heatmap import Heatmap
+    from pymoo.visualization.fitness_landscape import FitnessLandscape
 
     VISUALIZATION = [
-        ("scatter", scatter),
-        ("heatmap", heatmap),
-        ("pcp", pcp),
-        ("petal", petal),
-        ("radar", radar),
-        ("radviz", radviz),
-        ("star", star_coordinate),
-        ("fitness-landscape", fitness_landscape)
+        ("scatter", Scatter),
+        ("heatmap", Heatmap),
+        ("pcp", PCP),
+        ("petal", Petal),
+        ("radar", Radar),
+        ("radviz", Radviz),
+        ("star", StarCoordinate),
+        ("fitness-landscape", FitnessLandscape)
     ]
 
     return VISUALIZATION
@@ -343,7 +343,10 @@ def get_visualization(name, *args, d={}, **kwargs):
 
 
 def get_performance_indicator_options():
-    from pymoo.performance_indicator.distance_indicator import GD, GDPlus, IGD, IGDPlus
+    from pymoo.performance_indicator.gd import GD
+    from pymoo.performance_indicator.gd_plus import GDPlus
+    from pymoo.performance_indicator.igd import IGD
+    from pymoo.performance_indicator.igd_plus import IGDPlus
     from pymoo.performance_indicator.hv import Hypervolume
     from pymoo.performance_indicator.rmetric import RMetric
 

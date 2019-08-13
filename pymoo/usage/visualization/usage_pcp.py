@@ -7,13 +7,13 @@ F = get_problem("dtlz1").pareto_front(ref_dirs)
 # END load_data
 
 # START pcp
-from pymoo.visualization.pcp import pcp
-pcp().add(F).show()
+from pymoo.visualization.pcp import PCP
+PCP().add(F).show()
 # END pcp
 
 
 # START pcp_highlight
-plot = pcp()
+plot = PCP()
 plot.set_axis_style(color="grey", alpha=0.5)
 plot.add(F, color="grey", alpha=0.3)
 plot.add(F[50], linewidth=5, color="red")
@@ -23,7 +23,7 @@ plot.show()
 
 
 # START pcp_other
-plot = pcp(title=("Run", {'pad': 30}),
+plot = PCP(title=("Run", {'pad': 30}),
            n_ticks=10,
            legend=(True, {'loc': "upper left"}),
            labels=["profit", "cost", "sustainability", "environment", "satisfaction", "time"]

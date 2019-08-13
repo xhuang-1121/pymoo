@@ -9,7 +9,7 @@ Versions
   - Added Visualization
   - Added Decision Making
   - Added GD+ and IGD+
-  - New Termination Criteria "xtol" and "ftol"
+  - New Termination Criteria "x_tol" and "f_tol"
   - Added Mixed Variable Operators and Tutorial
   - Refactored Float to Integer Operators
   - Fixed NSGA-III Normalization Variable Swap
@@ -18,7 +18,7 @@ Versions
 
 
 .. _version_0_3_0:
-* 0.3.0
+* 0.3.0 [`Documentation <https://www.egr.msu.edu/coinlab/blankjul/pymoo/pymoo-0.3.0-doc.zip>`_]
 
   - New documentation and global interface
   - New crossovers: Point, HUX

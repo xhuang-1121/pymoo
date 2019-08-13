@@ -15,21 +15,6 @@ from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 from pymoo.util.randomized_argsort import randomized_argsort
 
 
-# =========================================================================================================
-# Implementation
-# =========================================================================================================
-
-
-class NSGA2(GeneticAlgorithm):
-
-    def __init__(self, **kwargs):
-        kwargs['individual'] = Individual(rank=np.inf, crowding=-1)
-        super().__init__(**kwargs)
-
-        self.tournament_type = 'comp_by_dom_and_crowding'
-        self.func_display_attrs = disp_multi_objective
-
-
 # ---------------------------------------------------------------------------------------------------------
 # Binary Tournament Selection Function
 # ---------------------------------------------------------------------------------------------------------
@@ -73,6 +58,51 @@ def binary_tournament(pop, P, algorithm, **kwargs):
                                method='larger_is_better', return_random_if_equal=True)
 
     return S[:, None].astype(np.int, copy=False)
+
+
+# =========================================================================================================
+# Implementation
+# =========================================================================================================
+
+
+class NSGA2(GeneticAlgorithm):
+
+    def __init__(self,
+                 pop_size=100,
+                 sampling=FloatRandomSampling(),
+                 selection=TournamentSelection(func_comp=binary_tournament),
+                 crossover=SimulatedBinaryCrossover(eta=15, prob=0.9),
+                 mutation=PolynomialMutation(prob=None, eta=20),
+                 eliminate_duplicates=True,
+                 n_offsprings=None,
+                 **kwargs):
+        """
+
+        Parameters
+        ----------
+        pop_size : {pop_size}
+        sampling : {sampling}
+        selection : {selection}
+        crossover : {crossover}
+        mutation : {mutation}
+        eliminate_duplicates : {eliminate_duplicates}
+        n_offsprings : {n_offsprings}
+
+        """
+
+        kwargs['individual'] = Individual(rank=np.inf, crowding=-1)
+        super().__init__(pop_size=pop_size,
+                         sampling=sampling,
+                         selection=selection,
+                         crossover=crossover,
+                         mutation=mutation,
+                         survival=RankAndCrowdingSurvival(),
+                         eliminate_duplicates=eliminate_duplicates,
+                         n_offsprings=n_offsprings,
+                         **kwargs)
+
+        self.tournament_type = 'comp_by_dom_and_crowding'
+        self.func_display_attrs = disp_multi_objective
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -168,7 +198,7 @@ def calc_crowding_distance(F, filter_out_duplicates=True):
         crowding = np.zeros(n_points)
         crowding[is_unique] = _cd
 
-    crowding[np.isinf(crowding)] = 1e+16
+    crowding[np.isinf(crowding)] = 1e+14
     return crowding
 
 
@@ -176,45 +206,8 @@ def calc_crowding_distance(F, filter_out_duplicates=True):
 # Interface
 # =========================================================================================================
 
-
-def nsga2(
-        pop_size=100,
-        sampling=FloatRandomSampling(),
-        selection=TournamentSelection(func_comp=binary_tournament),
-        crossover=SimulatedBinaryCrossover(eta=15, prob=0.9),
-        mutation=PolynomialMutation(prob=None, eta=20),
-        eliminate_duplicates=True,
-        n_offsprings=None,
-        **kwargs):
-    """
-
-    Parameters
-    ----------
-    pop_size : {pop_size}
-    sampling : {sampling}
-    selection : {selection}
-    crossover : {crossover}
-    mutation : {mutation}
-    eliminate_duplicates : {eliminate_duplicates}
-    n_offsprings : {n_offsprings}
-
-    Returns
-    -------
-    nsga2 : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an NSGA2 algorithm object.
+def nsga2(*args, **kwargs):
+    return NSGA2(*args, **kwargs)
 
 
-    """
-
-    return NSGA2(pop_size=pop_size,
-                 sampling=sampling,
-                 selection=selection,
-                 crossover=crossover,
-                 mutation=mutation,
-                 survival=RankAndCrowdingSurvival(),
-                 eliminate_duplicates=eliminate_duplicates,
-                 n_offsprings=n_offsprings,
-                 **kwargs)
-
-
-parse_doc_string(nsga2)
+parse_doc_string(NSGA2.__init__)

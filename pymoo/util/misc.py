@@ -95,11 +95,11 @@ def cdist(A, B, **kwargs):
         return D
 
 
-def vectorized_cdist(A, B, func_dist=euclidean_distance):
+def vectorized_cdist(A, B, func_dist=euclidean_distance, **kwargs):
     u = np.repeat(A, B.shape[0], axis=0)
     v = np.tile(B, (A.shape[0], 1))
 
-    D = func_dist(u, v)
+    D = func_dist(u, v, **kwargs)
     M = np.reshape(D, (A.shape[0], B.shape[0]))
     return M
 

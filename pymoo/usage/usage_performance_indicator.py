@@ -1,7 +1,7 @@
 # START load_data
 import numpy as np
 from pymoo.factory import get_problem
-from pymoo.visualization.scatter import scatter
+from pymoo.visualization.scatter import Scatter
 
 # The pareto front of a scaled zdt1 problem
 pf = get_problem("zdt1").pareto_front()
@@ -10,7 +10,7 @@ pf = get_problem("zdt1").pareto_front()
 A = pf[::10] * 1.1
 
 # plot the result
-scatter(legend=True).add(pf, label="Pareto-front").add(A, label="Result").show()
+Scatter(legend=True).add(pf, label="Pareto-front").add(A, label="Result").show()
 # END load_data
 
 

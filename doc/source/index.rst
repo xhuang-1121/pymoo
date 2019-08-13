@@ -127,7 +127,8 @@ popular by being listed with a higher rank regarding specific keywords.
 happy if somebody wants to contribute by developing code. You can see it as a 
 win-win situations, because your development will be linked to your publication(s) which
 can significantly increase the awareness of your work. Please note that, we aim to keep 
-a high-level of code quality and some refactorings might be suggested. 
+a high-level of code quality and some refactorings might be suggested. We have prepared
+a list of `suggested contributions <contributions.html>`_.
 
 
 **(iii)** You like our framework and you would like to use it for profit-making purposes?
@@ -167,9 +168,11 @@ Content
    tutorial/index
    api/index
    versions
+   contributions.ipynb
    references
    contact
    license
+
 
 
 
@@ -179,4 +182,5 @@ Indices and tables
 * :ref:`genindex`
 * :ref:`modindex`
 * :ref:`search`
+
 

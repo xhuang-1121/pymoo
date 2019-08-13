@@ -1,13 +1,13 @@
 import numpy as np
 
-from pymoo.algorithms.nsga3 import nsga3
-from pymoo.docs import parse_doc_string
+from pymoo.algorithms.nsga3 import NSGA3
 from pymoo.operators.selection.tournament_selection import TournamentSelection, compare
 
 
 # =========================================================================================================
 # Implementation
 # =========================================================================================================
+
 
 def comp_by_rank_and_ref_line_dist(pop, P, **kwargs):
     S = np.full(P.shape[0], np.nan)
@@ -38,24 +38,20 @@ def comp_by_rank_and_ref_line_dist(pop, P, **kwargs):
     return S[:, None].astype(np.int)
 
 
+class UNSGA3(NSGA3):
+
+    def __init__(self,
+                 ref_dirs,
+                 selection=TournamentSelection(func_comp=comp_by_rank_and_ref_line_dist),
+                 **kwargs):
+
+        super().__init__(ref_dirs, selection=selection, **kwargs)
+
+
 # =========================================================================================================
 # Interface
 # =========================================================================================================
 
-def unsga3(**kwargs):
-    """
-    This is an implementation of the Unified NSGA3 algorithm :cite:`unsga3`. The same options as for
-    :class:`pymoo.algorithms.nsga3.nsga3` are available.
+def unsga3(*args, **kwargs):
+    return UNSGA3(*args, **kwargs)
 
-    Returns
-    -------
-    unsga3 : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an UNSGA3 algorithm object.
-
-
-    """
-
-    return nsga3(selection=TournamentSelection(func_comp=comp_by_rank_and_ref_line_dist), **kwargs)
-
-
-parse_doc_string(unsga3)

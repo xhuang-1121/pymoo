@@ -1,8 +1,8 @@
 __all__ = ["heatmap",
            "pcp",
-           "petal.py",
+           "petal",
            "radar",
            "radviz",
            "scatter",
-           "star_coordinate.py"
+           "star_coordinate"
            ]

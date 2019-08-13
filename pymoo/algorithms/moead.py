@@ -16,12 +16,31 @@ from pymoo.util.display import disp_multi_objective
 # =========================================================================================================
 
 class MOEAD(GeneticAlgorithm):
+
     def __init__(self,
                  ref_dirs,
                  n_neighbors=20,
                  decomposition='auto',
                  prob_neighbor_mating=0.9,
                  **kwargs):
+        """
+
+        Parameters
+        ----------
+        ref_dirs : {ref_dirs}
+
+        decomposition : {{ 'auto', 'tchebi', 'pbi' }}
+            The decomposition approach that should be used. If set to `auto` for two objectives `tchebi` and for more than
+            two `pbi` will be used.
+
+        n_neighbors : int
+            Number of neighboring reference lines to be used for selection.
+
+        prob_neighbor_mating : float
+            Probability of selecting the parents in the neighborhood.
+
+
+        """
 
         self.n_neighbors = n_neighbors
         self.prob_neighbor_mating = prob_neighbor_mating
@@ -115,43 +134,8 @@ class MOEAD(GeneticAlgorithm):
 # Interface
 # =========================================================================================================
 
-
-def moead(
-        ref_dirs,
-        n_neighbors=15,
-        decomposition='auto',
-        prob_neighbor_mating=0.7,
-        **kwargs):
-    r"""
-
-    Parameters
-    ----------
-    ref_dirs : {ref_dirs}
-
-    decomposition : {{ 'auto', 'tchebi', 'pbi' }}
-        The decomposition approach that should be used. If set to `auto` for two objectives `tchebi` and for more than
-        two `pbi` will be used.
-
-    n_neighbors : int
-        Number of neighboring reference lines to be used for selection.
-
-    prob_neighbor_mating : float
-        Probability of selecting the parents in the neighborhood.
+def moead(*args, **kwargs):
+    return MOEAD(*args, **kwargs)
 
 
-    Returns
-    -------
-    moead : :class:`~pymoo.model.algorithm.MOEAD`
-        Returns an MOEAD algorithm object.
-
-
-    """
-
-    return MOEAD(ref_dirs,
-                 n_neighbors=n_neighbors,
-                 decomposition=decomposition,
-                 prob_neighbor_mating=prob_neighbor_mating,
-                 **kwargs)
-
-
-parse_doc_string(moead)
+parse_doc_string(MOEAD.__init__)

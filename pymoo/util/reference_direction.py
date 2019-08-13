@@ -13,7 +13,7 @@ from pymoo.util.misc import cdist, find_duplicates
 
 class ReferenceDirectionFactory:
 
-    def __init__(self, n_dim, scaling=None, lexsort=False) -> None:
+    def __init__(self, n_dim, scaling=None, lexsort=True) -> None:
         super().__init__()
         self.n_dim = n_dim
         self.scaling = scaling

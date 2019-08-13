@@ -1,21 +1,57 @@
 import numpy as np
 
-from pymoo.visualization.util import plot_axes_lines, plot_axis_labels, plot_polygon, get_circle_points, \
-    plot_radar_line, equal_axis, no_ticks, parse_bounds, normalize
 from pymoo.docs import parse_doc_string
 from pymoo.model.plot import Plot
 from pymoo.util.misc import set_if_none_from_tuples
+from pymoo.visualization.util import plot_axes_lines, plot_axis_labels, plot_polygon, get_circle_points, \
+    plot_radar_line, equal_axis, no_ticks, parse_bounds, normalize
 
 
 class Radar(Plot):
 
-    def __init__(self, **kwargs):
+    def __init__(self,
+                 normalize_each_objective=True,
+                 n_partitions=3,
+                 point_style={},
+                 **kwargs):
+
+        """
+
+        Radar Plot
+
+        Parameters
+        ----------------
+        normalize_each_objective : bool
+            Whether each objective is normalized. Otherwise the inner and outer bound is plotted.
+
+        point_style : dict
+            The style being used to visualize the points
+
+        n_partitions : int
+            Number of partitions to show in the radar.
+
+        reverse : {reverse}
+            Reverses the plotting. Larger area is better. Works only when normalize_each_objective is set to true.
+
+        axis_style : {axis_style}
+        labels : {labels}
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
 
         super().__init__(**kwargs)
-        self.normalize_each_objective = kwargs["normalize_each_objective"]
-        self.n_partitions = kwargs["n_partitions"]
+        self.normalize_each_objective = normalize_each_objective
+        self.n_partitions = n_partitions
 
-        self.point_style = kwargs["point_style"]
+        self.point_style = point_style
         set_if_none_from_tuples(self.point_style, ("s", 15))
 
         set_if_none_from_tuples(self.axis_style, ("color", "black"), ("linewidth", 0.5), ("alpha", 0.75))
@@ -77,56 +113,4 @@ class Radar(Plot):
                 self._plot(self.ax[k, j], _F, inner, outer, kwargs)
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def radar(normalize_each_objective=True,
-          n_partitions=3,
-          point_style={},
-          **kwargs):
-    """
-
-    Radar Plot
-
-    Parameters
-    ----------------
-    normalize_each_objective : bool
-        Whether each objective is normalized. Otherwise the inner and outer bound is plotted.
-
-    point_style : dict
-        The style being used to visualize the points
-
-    n_partitions : int
-        Number of partitions to show in the radar.
-
-    reverse : {reverse}
-        Reverses the plotting. Larger area is better. Works only when normalize_each_objective is set to true.
-
-    axis_style : {axis_style}
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    Radar : :class:`~pymoo.model.analytics.visualization.radar.Radar`
-
-    """
-
-    return Radar(normalize_each_objective=normalize_each_objective,
-                 n_partitions=n_partitions,
-                 point_style=point_style,
-                 **kwargs)
-
-
-parse_doc_string(radar)
+parse_doc_string(Radar.__init__)

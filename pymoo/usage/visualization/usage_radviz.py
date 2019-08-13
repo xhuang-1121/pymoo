@@ -7,12 +7,12 @@ F = get_problem("dtlz1").pareto_front(ref_dirs)
 # END load_data
 
 # START radviz
-from pymoo.visualization.radviz import radviz
-radviz().add(F).show()
+from pymoo.visualization.radviz import Radviz
+Radviz().add(F).show()
 # END radviz
 
 # START radviz_custom
-plot = radviz(title="Optimization",
+plot = Radviz(title="Optimization",
               legend=(True, {'loc': "upper left", 'bbox_to_anchor': (-0.1, 1.08, 0, 0)}),
               labels=["profit", "cost", "sustainability", "environment", "satisfaction", "time"],
               endpoint_style={"s": 70, "color": "green"})

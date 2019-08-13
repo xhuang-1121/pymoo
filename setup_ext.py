@@ -1,10 +1,10 @@
 import distutils
 import os
 import sys
+import traceback
 from distutils.errors import CCompilerError, DistutilsExecError, DistutilsPlatformError
-from distutils.extension import Extension
 
-from setuptools import setup
+from setuptools import setup, Extension
 from setuptools.command.build_ext import build_ext
 
 ext_errors = (CCompilerError, DistutilsExecError, DistutilsPlatformError, IOError)
@@ -111,11 +111,11 @@ def run_setup(setup_args):
             print('*' * 75)
 
         else:
-            print(kwargs['ext_modules'])
+            #print(kwargs['ext_modules'])
             setup(**kwargs)
             print('*' * 75)
             print("Compilation Successful.")
-            print("Compiled pymoo installation succeeded.")
+            print("Installation with Compilation succeeded.")
             print('*' * 75)
 
     except BaseException as e:
@@ -127,6 +127,11 @@ def run_setup(setup_args):
         print("WARNING: Compilation Failed.")
         print("WARNING:", ex_type)
         print("WARNING:", ex_value)
+        print()
+        print("=" * 75)
+        traceback.print_exc()
+        print("=" * 75)
+        print()
         print("WARNING: For the compiled libraries numpy is required. Please make sure they are installed")
         print("WARNING: pip install numpy")
         print("WARNING: Also, make sure you have a compiler for C++!")

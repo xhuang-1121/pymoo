@@ -17,7 +17,7 @@ kwargs = dict(
     long_description=readme(),
     license='Apache License 2.0',
     keywords="optimization",
-    install_requires=['numpy>=1.15', 'scipy>=1.1', 'matplotlib>=3', 'autograd>=1.2'],
+    install_requires=['numpy>=1.15', 'scipy>=1.1', 'matplotlib>=3', 'autograd>=1.3'],
     include_package_data=True,
     platforms='any',
     classifiers=[

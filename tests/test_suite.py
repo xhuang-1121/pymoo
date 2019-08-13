@@ -8,18 +8,14 @@ if __name__ == "__main__":
     sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 
     testmodules = [
-        'tests.test_nsga2',
-        'tests.test_algorithms',
-        'tests.test_problems',
-        'tests.test_crossover',
-        'tests.test_performance_indicator',
-        'tests.test_visualization',
+        'tests.algorithms.test_nsga2',
+        'tests.algorithms.test_algorithms',
+        'tests.problems.test_problems',
+        'tests.operators.test_crossover',
+        'tests.performance_indicator.test_performance_indicator',
+        'tests.visualization.test_visualization',
         'tests.problems.test_correctness',
-        'tests.test_termination_criterion'
-        #'tests.problems.test_gradient',
-        #'tests.problems.test_hessian',
-        #'tests.problems.test_usage'
-        #'pymoo.usage.test_usage'
+        'tests.termination_criterion.test_termination_criterion'
     ]
 
     suite = unittest.TestSuite()

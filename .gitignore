@@ -5,14 +5,11 @@
 __pycache__/
 *.py[cod]
 *$py.class
-*.c
-*.cpp
 *.run
 *.so
 
 
 # files which are in tests
-tests/resources/*
 tests/!archive/*
 tests/!archive_tests/*
 tests/!experimental/*

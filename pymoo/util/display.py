@@ -1,6 +1,7 @@
 import numpy as np
 
-from pymoo.performance_indicator.distance_indicator import IGD, GD
+from pymoo.performance_indicator.gd import GD
+from pymoo.performance_indicator.igd import IGD
 from pymoo.performance_indicator.hv import Hypervolume
 
 width = 12

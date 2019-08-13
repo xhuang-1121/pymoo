@@ -8,6 +8,28 @@ class Scatter(Plot):
     def __init__(self,
                  angle=(45, 45),
                  **kwargs):
+        """
+
+        Scatter Plot
+
+        Parameters
+        ----------------
+
+        axis_style : {axis_style}
+        endpoint_style : dict
+            Endpoints are drawn at each extreme point of an objective. This style can be modified.
+        labels : {labels}
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
 
         super().__init__(**kwargs)
         self.angle = angle
@@ -103,41 +125,4 @@ class Scatter(Plot):
             ax.set_zlabel(labels[2])
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def scatter(**kwargs):
-    """
-
-    Scatter Plot
-
-    Parameters
-    ----------------
-
-    axis_style : {axis_style}
-    endpoint_style : dict
-        Endpoints are drawn at each extreme point of an objective. This style can be modified.
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    Scattr : :class:`~pymoo.model.analytics.visualization.scatter.Scatter`
-
-    """
-
-    return Scatter(**kwargs)
-
-
-parse_doc_string(scatter)
+parse_doc_string(Scatter.__init__)

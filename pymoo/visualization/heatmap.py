@@ -8,10 +8,51 @@ from pymoo.util.misc import set_if_none_from_tuples
 
 class Heatmap(Plot):
 
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.order_by_objectives = kwargs["order_by_objectives"]
-        self.solution_labels = kwargs["solution_labels"]
+    def __init__(self,
+                 cmap="Blues",
+                 order_by_objectives=False,
+                 reverse=True,
+                 solution_labels=True,
+                 **kwargs):
+        """
+
+        Heatmap
+
+        Parameters
+        ----------------
+
+        cmap : str
+            The color map to be used.
+
+        order_by_objectives : int or list
+            Whether the result should be ordered by an objective. If false no order.
+            Otherwise, either supply just the objective or a list. (it is lexicographically sorted).
+
+        reverse : bool
+            If true large values are white and small values the corresponding color. Otherwise, the other way around.
+
+        solution_labels : bool or list
+            If False no labels are plotted in the y axis. If true just the corresponding index. Otherwise the label provided.
+
+        bounds : {bounds}
+
+        labels : {labels}
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+
+        """
+
+        super().__init__(cmap=cmap, reverse=reverse, **kwargs)
+        self.order_by_objectives = order_by_objectives
+        self.solution_labels = solution_labels
 
         # set default style
         set_if_none_from_tuples(self.axis_style, ("interpolation", "nearest"), ("vmin", 0), ("vmax", 1))
@@ -79,61 +120,4 @@ class Heatmap(Plot):
             self.ax.set_yticklabels(self.solution_labels)
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def heatmap(cmap="Blues",
-            order_by_objectives=False,
-            reverse=True,
-            solution_labels=True,
-            **kwargs):
-    """
-
-    Heatmap
-
-    Parameters
-    ----------------
-
-    cmap : str
-        The color map to be used.
-
-    order_by_objectives : int or list
-        Whether the result should be ordered by an objective. If false no order.
-        Otherwise, either supply just the objective or a list. (it is lexicographically sorted).
-
-    reverse : bool
-        If true large values are white and small values the corresponding color. Otherwise, the other way around.
-
-    solution_labels : bool or list
-        If False no labels are plotted in the y axis. If true just the corresponding index. Otherwise the label provided.
-
-    bounds : {bounds}
-
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    Heatmap : :class:`~pymoo.model.analytics.visualization.heatmap.Heatmap`
-
-    """
-
-    return Heatmap(cmap=cmap,
-                   order_by_objectives=order_by_objectives,
-                   reverse=reverse,
-                   solution_labels=solution_labels,
-                   **kwargs)
-
-
-parse_doc_string(heatmap)
+parse_doc_string(Heatmap.__init__)

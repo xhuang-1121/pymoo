@@ -6,12 +6,12 @@ F = np.random.random((4, 6))
 # END load_data
 
 # START heatmap
-from pymoo.visualization.heatmap import heatmap
-heatmap().add(F).show()
+from pymoo.visualization.heatmap import Heatmap
+Heatmap().add(F).show()
 # END heatmap
 
 # START heatmap_custom
-plot = heatmap(title=("Optimization", {'pad': 15}),
+plot = Heatmap(title=("Optimization", {'pad': 15}),
                cmap="Oranges_r",
                y_labels=["Solution A", "Solution B", "Solution C", "Solution D"],
                labels=["profit", "cost", "sustainability", "environment", "satisfaction", "time"])
@@ -22,7 +22,7 @@ plot.show()
 # START heatmap_custom_more
 F = np.random.random((30, 6))
 
-plot = heatmap(figsize=(10,30),
+plot = Heatmap(figsize=(10,30),
                bound=[0,1],
                order_by_objectives=0,
                y_labels=None,

@@ -7,13 +7,36 @@ from pymoo.util.misc import set_if_none, set_if_none_from_tuples
 
 class Radviz(Plot):
 
-    def __init__(self, **kwargs):
+    def __init__(self, endpoint_style={}, **kwargs):
+        """
+
+        Radviz Plot
+
+        Parameters
+        ----------------
+
+        axis_style : {axis_style}
+        endpoint_style : dict
+            Endpoints are drawn at each extreme point of an objective. This style can be modified.
+        labels : {labels}
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+        """
+
         super().__init__(**kwargs)
 
         # set the default axis style
         set_if_none_from_tuples(self.axis_style, ("color", "black"), ("linewidth", 1), ("alpha", 0.75))
 
-        self.endpoint_style = kwargs["endpoint_style"]
+        self.endpoint_style = endpoint_style
         set_if_none_from_tuples(self.endpoint_style, ("color", "black"), ("s", 70), ("alpha", 0.3))
 
     def _do(self):
@@ -42,41 +65,4 @@ class Radviz(Plot):
             self.ax.scatter(N[:, 0], N[:, 1], **kwargs)
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def radviz(endpoint_style={}, **kwargs):
-    """
-
-    Radviz Plot
-
-    Parameters
-    ----------------
-
-    axis_style : {axis_style}
-    endpoint_style : dict
-        Endpoints are drawn at each extreme point of an objective. This style can be modified.
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    Radviz : :class:`~pymoo.model.analytics.visualization.radviz.Radviz`
-
-    """
-
-    return Radviz(endpoint_style=endpoint_style, **kwargs)
-
-
-parse_doc_string(radviz)
+parse_doc_string(Radviz.__init__)

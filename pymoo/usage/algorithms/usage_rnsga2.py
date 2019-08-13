@@ -1,9 +1,9 @@
 import numpy as np
 
-from pymoo.algorithms.rnsga2 import rnsga2
+from pymoo.algorithms.rnsga2 import RNSGA2
 from pymoo.factory import get_problem
 from pymoo.optimize import minimize
-from pymoo.visualization.scatter import scatter
+from pymoo.visualization.scatter import Scatter
 
 problem = get_problem("zdt1", n_var=30)
 pf = problem.pareto_front()
@@ -12,7 +12,7 @@ pf = problem.pareto_front()
 ref_points = np.array([[0.5, 0.2], [0.1, 0.6]])
 
 # Get Algorithm
-algorithm = rnsga2(
+algorithm = RNSGA2(
     ref_points=ref_points,
     pop_size=40,
     epsilon=0.01,
@@ -29,4 +29,4 @@ res = minimize(problem,
                disp=False)
 
 
-scatter().add(pf, label="pf").add(res.F, label="F").add(ref_points, label="ref_points").show()
+Scatter().add(pf, label="pf").add(res.F, label="F").add(ref_points, label="ref_points").show()

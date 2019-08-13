@@ -86,59 +86,54 @@ algorithms = {
 
 visualization = {
     "figsize": """tuple
-        The figure size. Default (figsize=(8, 6)). For some plots changing the size might have side-effects for position.
-        """,
+                The figure size. Default (figsize=(8, 6)). For some plots changing the size might have side-effects for position.
+                """,
 
     "title": """str or tuple
-        The title of the figure. If some additional kwargs should be provided this can be achieved by providing a tuple
-        ("name", {"key" : val}).
-        """,
+                The title of the figure. If some additional kwargs should be provided this can be achieved by providing a tuple
+                ("name", {"key" : val}).
+                """,
 
     "legend": """str
-        Whether a legend should be shown or not.
-        """,
+                Whether a legend should be shown or not.
+                """,
 
     "tight_layout": """bool
-        Whether tight layout should be used.
-        """,
+                        Whether tight layout should be used.
+                        """,
 
     "bounds": """tuple
-        If plot requires normalization, it might be necessary to supply the boundaries. (Otherwise they might be
-        approximate by the minimum and maximum of the provided data). The boundaries should be provided as a list/tuple or
-        2D numpy array, where the first element represents the minimum, second the second the maximum values.
-        If only an integer or float is supplied, the boundaries apply for each variable.
-        """,
+                If plot requires normalization, it might be necessary to supply the boundaries. (Otherwise they might be
+                approximate by the minimum and maximum of the provided data). The boundaries should be provided as a list/tuple or
+                2D numpy array, where the first element represents the minimum, second the second the maximum values.
+                If only an integer or float is supplied, the boundaries apply for each variable.
+                """,
 
     "reverse": """bool
-        If plot requires normalization, then the reverse values can be plotted (1 - Input). For some plots
-        it can be useful to interpret a larger area as better regarding a value. If minimization applies, a smaller
-        area means better, which can be misleading.
-        """,
-
-    "cmap": """colormap
-        For some plots different kind of colors are used. The colormap can be changed to modify the color sequence
-        for the plots.
-        """,
+                    If plot requires normalization, then the reverse values can be plotted (1 - Input). For some plots
+                    it can be useful to interpret a larger area as better regarding a value. If minimization applies, a smaller
+                    area means better, which can be misleading.
+                    """,
 
     "axis_style": """dict
-        Most of the plots consists of an axis. The style of the axis, e.g. color, alpha, ..., can be changed to
-        further modify the plot appealing.
-        """,
+                        Most of the plots consists of an axis. The style of the axis, e.g. color, alpha, ..., can be changed to
+                        further modify the plot appealing.
+                        """,
 
     "cmap": """colormap
-        For some plots different kind of colors are used. The colormap can be changed to modify the color sequence
-        for the plots.
-        """,
+                    For some plots different kind of colors are used. The colormap can be changed to modify the color sequence
+                    for the plots.
+                    """,
 
     "labels": """str or list
-        The labels to be used for each variable provided in the plot. If a string is used, then they will
-        be enumerated. Otherwise, a list equal to the number of variables can be provided directly.
-        """,
+                    The labels to be used for each variable provided in the plot. If a string is used, then they will
+                    be enumerated. Otherwise, a list equal to the number of variables can be provided directly.
+                    """,
 
     "func_number_to_text": """func
-        A function which defines how numerical values should be represented if present in the plot 
-        for instance scientific notation, rounding and so on.
-        """,
+                                A function which defines how numerical values should be represented if present in the plot 
+                                for instance scientific notation, rounding and so on.
+                                """,
 
 }
 
@@ -150,7 +145,6 @@ docs = {**algorithms, **visualization}
 # =========================================================================================================
 
 def parse_doc_string(source, dest=None, other={}):
-
     if not Configuration.parse_custom_docs:
         return
 
@@ -181,5 +175,3 @@ def parse_doc_string(source, dest=None, other={}):
     signature = signature.strip()
 
     dest.__doc__ = signature + "\n" + _doc
-
-

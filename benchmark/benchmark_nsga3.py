@@ -2,34 +2,39 @@ import os
 import pickle
 
 from pymoo.algorithms.nsga3 import nsga3
-from pymoo.factory import get_problem
+from pymoo.factory import get_problem, get_reference_directions
 from pymoo.operators.crossover.simulated_binary_crossover import SimulatedBinaryCrossover
 from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
-from pymoo.util.reference_direction import MultiLayerReferenceDirectionFactory, UniformReferenceDirectionFactory
 
 
 def get_setup(n_obj):
     if n_obj == 3:
         pop_size = 92
-        ref_dirs = UniformReferenceDirectionFactory(n_obj, n_partitions=12).do()
+        ref_dirs = get_reference_directions("das-dennis", n_obj, n_partitions=12)
     elif n_obj == 5:
         pop_size = 212
-        ref_dirs = UniformReferenceDirectionFactory(n_obj, n_partitions=6).do()
+        ref_dirs = get_reference_directions("das-dennis", n_obj, n_partitions=6)
     elif n_obj == 8:
         pop_size = 156
-        ref_dirs = MultiLayerReferenceDirectionFactory(
-            UniformReferenceDirectionFactory(n_obj, n_partitions=3, scaling=1.0).do(),
-            UniformReferenceDirectionFactory(n_obj, n_partitions=2, scaling=0.5).do()).do()
+        ref_dirs = get_reference_directions(
+            "multi-layer",
+            get_reference_directions("das-dennis", n_obj, n_partitions=3, scaling=1.0),
+            get_reference_directions("das-dennis", n_obj, n_partitions=2, scaling=0.5)
+        )
     elif n_obj == 10:
         pop_size = 276
-        ref_dirs = MultiLayerReferenceDirectionFactory(
-            UniformReferenceDirectionFactory(n_obj, n_partitions=3, scaling=1.0).do(),
-            UniformReferenceDirectionFactory(n_obj, n_partitions=2, scaling=0.5).do()).do()
+        ref_dirs = get_reference_directions(
+            "multi-layer",
+            get_reference_directions("das-dennis", n_obj, n_partitions=3, scaling=1.0),
+            get_reference_directions("das-dennis", n_obj, n_partitions=2, scaling=0.5)
+        )
     elif n_obj == 15:
         pop_size = 136
-        ref_dirs = MultiLayerReferenceDirectionFactory(
-            UniformReferenceDirectionFactory(n_obj, n_partitions=2, scaling=1.0).do(),
-            UniformReferenceDirectionFactory(n_obj, n_partitions=1, scaling=0.5).do()).do()
+        ref_dirs = get_reference_directions(
+            "multi-layer",
+            get_reference_directions("das-dennis", n_obj, n_partitions=2, scaling=1.0),
+            get_reference_directions("das-dennis", n_obj, n_partitions=1, scaling=0.5)
+        )
 
     return {
         'ref_dirs': ref_dirs,
@@ -201,7 +206,7 @@ if __name__ == '__main__':
     prefix = "runs"
 
     # name of the experiment
-    name = "pynsga3-0.3.1"
+    name = "pynsga3-sortedrefdirs-0.3.1"
 
     # number of runs to execute
     n_runs = 50

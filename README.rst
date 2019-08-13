@@ -78,11 +78,11 @@ However, for instance executing NSGA2:
 
     problem = get_problem("zdt3")
 
-    method = nsga2(pop_size=100, elimate_duplicates=True)
+    algorithm = nsga2(pop_size=100, elimate_duplicates=True)
 
     # execute the optimization
     res = minimize(problem,
-                   method,
+                   algorithm,
                    ('n_gen', 200),
                    seed=1,
                    verbose=False)
@@ -96,25 +96,10 @@ However, for instance executing NSGA2:
 
 Contact
 ====================================================================
-Contact
-==============================================================================
-
-
-.. |blankjul| raw:: html
-
-   <a href="http://www.cse.msu.edu/~blankjul/" target="_blank">here</a>
-
-
-
-My personal homepage: |blankjul|
 
 Feel free to contact me if you have any question:
 
-::
-
-    Julian Blank (blankjul [at] egr.msu.edu)
-    Michigan State University
-    Computational Optimization and Innovation Laboratory (COIN)
-    East Lansing, MI 48824, USA
-
-
+| Julian Blank (blankjul [at] egr.msu.edu)
+| Michigan State University
+| Computational Optimization and Innovation Laboratory (COIN)
+| East Lansing, MI 48824, USA

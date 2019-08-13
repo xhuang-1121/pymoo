@@ -6,8 +6,9 @@
 
 # START ackley
 import numpy as np
+
 from pymoo.factory import get_problem
-from pymoo.util.plotting import plot_problem_surface, plot
+from pymoo.util.plotting import plot_problem_surface
 
 problem = get_problem("ackley", n_var=2, a=20, b=1/5, c=2 * np.pi)
 plot_problem_surface(problem, 100, plot_type="wireframe+contour")
@@ -165,9 +166,6 @@ p = get_problem("ackley")
 
 # also input parameter can be provided directly
 p = get_problem("dtlz1_-1", n_var=20, n_obj=5)
-
-# in case several test single should be loaded with a prefix this is possible as well
-# p = get_problem("dtlz", return_list=True)
 
 # END from_string
 

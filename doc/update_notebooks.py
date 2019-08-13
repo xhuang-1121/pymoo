@@ -96,8 +96,16 @@ if __name__ == "__main__":
     #files = glob.glob('source/components/performance_indicator.ipynb')
     #files = glob.glob('source/components/termination_criterion.ipynb')
 
+    STARTING_AT = None
+    # STARTING_AT = "source/decision_making/index.ipynb"
+
     # files = ['source/problems/zdt.ipynb','source/problems/single.ipynb']
 
     for fname in files:
-        print(fname)
-        update_and_run_notebook(fname, execute=True)
+
+        if STARTING_AT is not None and fname in STARTING_AT:
+            STARTING_AT = None
+
+        if STARTING_AT is None:
+            print(fname)
+            update_and_run_notebook(fname, execute=True)

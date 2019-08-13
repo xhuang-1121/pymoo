@@ -11,7 +11,7 @@ OVERWRITE = True
 
 STARTING_AT = None
 
-SKIP = ["parallelization.ipynb"]
+SKIP = []
 
 
 class DocumentationTest(unittest.TestCase):

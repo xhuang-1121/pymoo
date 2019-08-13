@@ -1,19 +1,21 @@
 # START unsga3
 import numpy as np
 
-from pymoo.factory import get_algorithm, get_problem
+from pymoo.algorithms.nsga3 import NSGA3
+from pymoo.algorithms.unsga3 import UNSGA3
+from pymoo.factory import get_problem
 from pymoo.optimize import minimize
+
+problem = get_problem("ackley", n_var=30)
 
 # create the reference directions to be used for the optimization - just a single one here
 ref_dirs = np.array([[1.0]])
 
 # create the algorithm object
-algorithm = get_algorithm("unsga3",
-                          pop_size=100,
-                          ref_dirs=ref_dirs)
+algorithm = UNSGA3(ref_dirs, pop_size=100)
 
 # execute the optimization
-res = minimize(get_problem("ackley", n_var=30),
+res = minimize(problem,
                algorithm,
                termination=('n_gen', 150),
                save_history=True,
@@ -24,8 +26,8 @@ print("UNSGA3: Best solution found: \nX = %s\nF = %s" % (res.X, res.F))
 
 
 # START no_unsga3
-_res = minimize(get_problem("ackley", n_var=30),
-                get_algorithm("nsga3", pop_size=100, ref_dirs=ref_dirs),
+_res = minimize(problem,
+                NSGA3(ref_dirs, pop_size=100),
                 termination=('n_gen', 150),
                 save_history=True,
                 seed=1)

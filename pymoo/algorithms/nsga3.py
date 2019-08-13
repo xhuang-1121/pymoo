@@ -22,16 +22,80 @@ from pymoo.util.nds.non_dominated_sorting import NonDominatedSorting
 # Implementation
 # =========================================================================================================
 
+def comp_by_cv_then_random(pop, P, **kwargs):
+    S = np.full(P.shape[0], np.nan)
+
+    for i in range(P.shape[0]):
+        a, b = P[i, 0], P[i, 1]
+
+        # if at least one solution is infeasible
+        if pop[a].CV > 0.0 or pop[b].CV > 0.0:
+            S[i] = compare(a, pop[a].CV, b, pop[b].CV, method='smaller_is_better', return_random_if_equal=True)
+
+        # both solutions are feasible just set random
+        else:
+            S[i] = np.random.choice([a, b])
+
+    return S[:, None].astype(np.int)
+
 
 class NSGA3(GeneticAlgorithm):
 
-    def __init__(self, ref_dirs, **kwargs):
+    def __init__(self,
+                 ref_dirs,
+                 pop_size=None,
+                 sampling=FloatRandomSampling(),
+                 selection=TournamentSelection(func_comp=comp_by_cv_then_random),
+                 crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
+                 mutation=PolynomialMutation(eta=20, prob=None),
+                 eliminate_duplicates=True,
+                 n_offsprings=None,
+                 **kwargs):
+        """
+
+        Parameters
+        ----------
+
+        ref_dirs : {ref_dirs}
+        pop_size : int (default = None)
+            By default the population size is set to None which means that it will be equal to the number of reference
+            line. However, if desired this can be overwritten by providing a positive number.
+        sampling : {sampling}
+        selection : {selection}
+        crossover : {crossover}
+        mutation : {mutation}
+        eliminate_duplicates : {eliminate_duplicates}
+        n_offsprings : {n_offsprings}
+
+        """
+
         self.ref_dirs = ref_dirs
+
+        if pop_size is None:
+            pop_size = len(ref_dirs)
+
         kwargs['individual'] = Individual(rank=np.inf, niche=-1, dist_to_niche=np.inf)
-        super().__init__(**kwargs)
+
+        if 'survival' in kwargs:
+            survival = kwargs['survival']
+            del kwargs['survival']
+        else:
+            survival = ReferenceDirectionSurvival(ref_dirs)
+
+        super().__init__(pop_size=pop_size,
+                         sampling=sampling,
+                         selection=selection,
+                         crossover=crossover,
+                         mutation=mutation,
+                         survival=survival,
+                         eliminate_duplicates=eliminate_duplicates,
+                         n_offsprings=n_offsprings,
+                         **kwargs)
+
         self.func_display_attrs = disp_multi_objective
 
     def _solve(self, problem):
+
         if self.ref_dirs is not None and self.ref_dirs.shape[1] != problem.n_obj:
             raise Exception(
                 "Dimensionality of reference points must be equal to the number of objectives: %s != %s" %
@@ -66,24 +130,8 @@ class NSGA3(GeneticAlgorithm):
         self.opt = opt
 
 
-def comp_by_cv_then_random(pop, P, **kwargs):
-    S = np.full(P.shape[0], np.nan)
-
-    for i in range(P.shape[0]):
-        a, b = P[i, 0], P[i, 1]
-
-        # if at least one solution is infeasible
-        if pop[a].CV > 0.0 or pop[b].CV > 0.0:
-            S[i] = compare(a, pop[a].CV, b, pop[b].CV, method='smaller_is_better', return_random_if_equal=True)
-
-        # both solutions are feasible just set random
-        else:
-            S[i] = np.random.choice([a, b])
-
-    return S[:, None].astype(np.int)
-
-
 class ReferenceDirectionSurvival(Survival):
+
     def __init__(self, ref_dirs):
         super().__init__(True)
         self.ref_dirs = ref_dirs
@@ -291,52 +339,8 @@ def calc_niche_count(n_niches, niche_of_individuals):
 # Interface
 # =========================================================================================================
 
-def nsga3(
-        ref_dirs,
-        pop_size=None,
-        sampling=FloatRandomSampling(),
-        selection=TournamentSelection(func_comp=comp_by_cv_then_random),
-        crossover=SimulatedBinaryCrossover(eta=30, prob=1.0),
-        mutation=PolynomialMutation(eta=20, prob=None),
-        eliminate_duplicates=True,
-        n_offsprings=None,
-        **kwargs):
-    """
-
-    Parameters
-    ----------
-    ref_dirs : {ref_dirs}
-    pop_size : int (default = None)
-        By default the population size is set to None which means that it will be equal to the number of reference
-        line. However, if desired this can be overwritten by providing a positive number.
-    sampling : {sampling}
-    selection : {selection}
-    crossover : {crossover}
-    mutation : {mutation}
-    eliminate_duplicates : {eliminate_duplicates}
-    n_offsprings : {n_offsprings}
-
-    Returns
-    -------
-    nsga3 : :class:`~pymoo.model.algorithm.Algorithm`
-        Returns an NSGA3 algorithm object.
+def nsga3(*args, **kwargs):
+    return NSGA3(*args, **kwargs)
 
 
-    """
-
-    if pop_size is None:
-        pop_size = len(ref_dirs)
-
-    return NSGA3(ref_dirs,
-                 pop_size=pop_size,
-                 sampling=sampling,
-                 selection=selection,
-                 crossover=crossover,
-                 mutation=mutation,
-                 survival=ReferenceDirectionSurvival(ref_dirs),
-                 eliminate_duplicates=eliminate_duplicates,
-                 n_offsprings=n_offsprings,
-                 **kwargs)
-
-
-parse_doc_string(nsga3)
+parse_doc_string(NSGA3.__init__)

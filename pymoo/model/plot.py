@@ -21,7 +21,7 @@ class Plot:
                  cmap="tab10",
                  axis_style=None,
                  func_number_to_text=default_number_to_text,
-                 axis_labels="f",
+                 labels="f",
                  **kwargs):
 
         super().__init__()
@@ -50,7 +50,7 @@ class Plot:
         self.reverse = reverse
 
         # the labels for each axis
-        self.axis_labels = axis_labels
+        self.axis_labels = labels
 
         # the data to plot
         self.to_plot = []

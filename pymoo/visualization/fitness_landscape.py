@@ -18,6 +18,34 @@ class FitnessLandscape(Plot):
                  kwargs_contour_labels=None,
                  **kwargs):
 
+        """
+
+        Fitness Landscape
+
+        Parameters
+        ----------------
+
+        problem : The problem to be plotted
+        _type : str
+            Either "contour", "surface" or "contour+surface"
+        labels : {labels}
+
+        Other Parameters
+        ----------------
+
+        figsize : {figsize}
+        title : {title}
+        legend : {legend}
+        tight_layout : {tight_layout}
+        cmap : {cmap}
+
+
+        Returns
+        -------
+        FitnessLandscape : :class:`~pymoo.model.analytics.visualization.fitness_landscape.FitnessLandscape`
+
+        """
+
         super().__init__(**kwargs)
         self.problem = problem
         self.n_samples = n_samples
@@ -91,41 +119,4 @@ class FitnessLandscape(Plot):
                 plot_contour()
 
 
-# =========================================================================================================
-# Interface
-# =========================================================================================================
-
-
-def fitness_landscape(problem, _type="surface", **kwargs):
-    """
-
-    Fitness Landscape
-
-    Parameters
-    ----------------
-
-    problem : The problem to be plotted
-    _type : str
-        Either "contour", "surface" or "contour+surface"
-    labels : {labels}
-
-    Other Parameters
-    ----------------
-
-    figsize : {figsize}
-    title : {title}
-    legend : {legend}
-    tight_layout : {tight_layout}
-    cmap : {cmap}
-
-
-    Returns
-    -------
-    FitnessLandscape : :class:`~pymoo.model.analytics.visualization.fitness_landscape.FitnessLandscape`
-
-    """
-
-    return FitnessLandscape(problem, _type=_type, **kwargs)
-
-
-parse_doc_string(fitness_landscape)
+parse_doc_string(FitnessLandscape.__init__)

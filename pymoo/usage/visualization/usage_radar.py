@@ -12,16 +12,16 @@ print(F)
 
 
 # START radar
-from pymoo.visualization.radar import radar
+from pymoo.visualization.radar import Radar
 
-plot = radar(bounds=[ideal_point, nadir_point], normalize_each_objective=False)
+plot = Radar(bounds=[ideal_point, nadir_point], normalize_each_objective=False)
 plot.add(F)
 plot.show()
 # END radar
 
 
 # START radar_norm
-plot = radar(bounds=[ideal_point, nadir_point])
+plot = Radar(bounds=[ideal_point, nadir_point])
 plot.add(F)
 plot.show()
 # END radar_norm
@@ -29,7 +29,7 @@ plot.show()
 # START radar_custom
 F = np.random.random((6, 5)) * (nadir_point - ideal_point) + ideal_point
 
-plot = radar(bounds=[ideal_point, nadir_point],
+plot = Radar(bounds=[ideal_point, nadir_point],
              axis_style={"color": 'blue'},
              point_style={"color": 'red', 's': 30})
 plot.add(F[:3], color="red", alpha=0.8)

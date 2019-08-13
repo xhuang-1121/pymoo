@@ -35,7 +35,12 @@ def adaptive_params(problem):
 
 class NelderAndMeadTermination(Termination):
 
-    def __init__(self, xtol=1e-6, ftol=1e-6, n_max_iter=1e6, n_max_evals=1e6):
+    def __init__(self,
+                 xtol=1e-6,
+                 ftol=1e-6,
+                 n_max_iter=1e6,
+                 n_max_evals=1e6):
+
         super().__init__()
         self.xtol = xtol
         self.ftol = ftol

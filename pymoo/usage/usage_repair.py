@@ -1,9 +1,9 @@
 import numpy as np
 
-from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling
+from pymoo.algorithms.so_genetic_algorithm import GA
+from pymoo.factory import get_algorithm, get_crossover, get_mutation, get_sampling, create_random_knapsack_problem
 from pymoo.model.repair import Repair
 from pymoo.optimize import minimize
-from pymop import create_random_knapsack_problem
 
 
 class ConsiderMaximumWeightRepair(Repair):
@@ -41,15 +41,17 @@ class ConsiderMaximumWeightRepair(Repair):
         return pop
 
 
-method = get_algorithm("ga",
-                       pop_size=200,
-                       sampling=get_sampling("bin_random"),
-                       crossover=get_crossover("bin_hux"),
-                       mutation=get_mutation("bin_bitflip"),
-                       repair=ConsiderMaximumWeightRepair(),
-                       elimate_duplicates=True)
+problem = create_random_knapsack_problem(30)
 
-res = minimize(create_random_knapsack_problem(30),
-               method,
+algorithm = GA(
+    pop_size=200,
+    sampling=get_sampling("bin_random"),
+    crossover=get_crossover("bin_hux"),
+    mutation=get_mutation("bin_bitflip"),
+    repair=ConsiderMaximumWeightRepair(),
+    elimate_duplicates=True)
+
+res = minimize(problem,
+               algorithm,
                termination=('n_gen', 10),
                disp=True)
