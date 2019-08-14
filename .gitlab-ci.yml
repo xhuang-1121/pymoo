@@ -1,3 +1,4 @@
+image: continuumio/miniconda3:latest
 
 default:
 
@@ -7,6 +8,9 @@ default:
 
   script:
     - python setup.py sdist
-    - pwd
     - pip install dist/*
     - python tests/test_suite.py
+
+  after_script:
+      - conda remove --all -y -n test
+      - rm -rf builds
