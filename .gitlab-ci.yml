@@ -11,7 +11,7 @@ default:
     - pip install dist/*
     - python tests/test_suite.py
 
-  after_scriptdsdfsdf:
+  after_script:
       - conda remove --all -y -n test
       - make clean
 
