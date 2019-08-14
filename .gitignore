@@ -14,7 +14,10 @@ tests/!archive/*
 tests/!archive_tests/*
 tests/!experimental/*
 
-benchmark/runs/*
+benchmark/runs
+benchmark/results
+
+builds
 
 # any video or other output file
 *.mp4
