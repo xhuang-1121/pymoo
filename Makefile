@@ -18,4 +18,6 @@ dist:
 
 install:
 	python setup.py install
-	
+
+test:
+    gitlab-runner exec shell default

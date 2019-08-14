@@ -22,7 +22,6 @@ builds
 # any video or other output file
 *.mp4
 *.out
-*.dat
 
 # pycharm folder
 .idea/

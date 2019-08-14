@@ -42,7 +42,7 @@ class NSGA2Test(unittest.TestCase):
                 print(index)
                 print(D['rank'][index])
                 print(D['F'][index])
-
+ 
             self.assertTrue(is_equal)
 
             is_equal = np.all(np.abs(_crowding - crowding) < 0.001)

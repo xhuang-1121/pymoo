@@ -6,7 +6,7 @@ problem = get_problem("zdt3")
 algorithm = NSGA2(pop_size=100)
 termination = get_termination("n_eval", 300)
 
-res = minimize2(problem,
+res = minimize(problem,
                algorithm,
                termination,
                pf=problem.pareto_front(),
