@@ -29,5 +29,4 @@ class HalfUniformCrossover(Crossover):
                 _I = I[np.random.permutation(len(I))[:n]]
                 M[i, _I] = True
 
-        _X = crossover_mask(X, M)
-        return _X
+        return crossover_mask(X, M)

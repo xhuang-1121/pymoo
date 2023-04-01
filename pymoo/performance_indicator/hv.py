@@ -67,5 +67,4 @@ class Hypervolume(Indicator):
         else:
             hv = _HyperVolume(self.ref_point)
 
-        val = hv.compute(_F)
-        return val
+        return hv.compute(_F)

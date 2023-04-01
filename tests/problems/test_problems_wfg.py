@@ -7,16 +7,21 @@ from pymoo.factory import get_problem, WFG1, WFG2, WFG3, WFG4, WFG5, WFG6, WFG7,
 
 
 def load(name, n_obj):
-    path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources", "WFG", "%sobj" % n_obj)
+    path = os.path.join(
+        os.path.dirname(os.path.realpath(__file__)),
+        "resources",
+        "WFG",
+        f"{n_obj}obj",
+    )
 
-    X = anp.loadtxt(os.path.join(path, "%s.x" % name))
+    X = anp.loadtxt(os.path.join(path, f"{name}.x"))
 
     try:
-        F = anp.loadtxt(os.path.join(path, "%s.f" % name))
+        F = anp.loadtxt(os.path.join(path, f"{name}.f"))
 
         CV = None
-        if os.path.exists(os.path.join(path, "%s.cv" % name)):
-            CV = anp.loadtxt(os.path.join(path, "%s.cv" % name))
+        if os.path.exists(os.path.join(path, f"{name}.cv")):
+            CV = anp.loadtxt(os.path.join(path, f"{name}.cv"))
 
     except:
         return X, None, None
@@ -46,7 +51,7 @@ class CorrectnessTest(unittest.TestCase):
 
             for problem in problems:
                 name = str(problem.__class__.__name__)
-                print("Testing: " + name + "-" + str(n_obj))
+                print(f"Testing: {name}-{str(n_obj)}")
 
                 X, F, CV = load(name, n_obj)
 
@@ -54,7 +59,7 @@ class CorrectnessTest(unittest.TestCase):
                 # F = np.row_stack([other.objective_function(x) for x in X])
 
                 if F is None:
-                    print("Warning: No correctness check for %s" % name)
+                    print(f"Warning: No correctness check for {name}")
                     continue
 
                 _F, _G, _CV = problem.evaluate(X, return_values_of=["F", "G", "CV"])

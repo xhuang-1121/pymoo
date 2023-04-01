@@ -38,7 +38,7 @@ if __name__ == '__main__':
             problem = data['args'][0]
 
         elapsed = (time.time() - start_time)
-        print(fname, "in --- %s seconds ---" % elapsed)
+        print(fname, f"in --- {elapsed} seconds ---")
 
         # create directory if necessary
         out = sys.argv[2]
@@ -63,10 +63,10 @@ if __name__ == '__main__':
         M = res.pop.get("F")
         np.savetxt(out, M)
 
-        # np.savetxt(out + ".gen", np.array([res.algorithm.n_gen]))
+            # np.savetxt(out + ".gen", np.array([res.algorithm.n_gen]))
 
 
     except Exception as e:
         traceback.print_exc()
         print(e)
-        print("Error: %s" % fname)
+        print(f"Error: {fname}")

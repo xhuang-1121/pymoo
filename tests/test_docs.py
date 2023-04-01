@@ -24,14 +24,17 @@ class DocumentationTest(unittest.TestCase):
 
         # collect all the jupyter ipynb in the documentation
         for root, directories, filenames in os.walk(DOC_DIR):
-            for filename in filenames:
-                if filename.endswith(".ipynb") and "checkpoint" not in filename and not any([filename in s for s in SKIP]):
-                    ipynb.append(os.path.join(root, filename))
-
+            ipynb.extend(
+                os.path.join(root, filename)
+                for filename in filenames
+                if filename.endswith(".ipynb")
+                and "checkpoint" not in filename
+                and all(filename not in s for s in SKIP)
+            )
         i = 0
         if STARTING_AT is not None:
-            for j in range(len(ipynb)):
-                if STARTING_AT not in ipynb[j]:
+            for item in ipynb:
+                if STARTING_AT not in item:
                     i += 1
                 else:
                     break

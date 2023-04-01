@@ -40,10 +40,7 @@ class Sampling:
         """
         val = self._do(problem, n_samples, **kwargs)
 
-        if pop is None:
-            return val
-
-        return pop.new("X", val)
+        return val if pop is None else pop.new("X", val)
 
     @abstractmethod
     def _do(self, problem, n_samples, **kwargs):

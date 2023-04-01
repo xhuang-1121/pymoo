@@ -89,16 +89,12 @@ class C3DTLZ4(DTLZ4):
 
 
 def constraint_c1_linear(f):
-    g = - (1 - f[:, -1] / 0.6 - anp.sum(f[:, :-1] / 0.5, axis=1))
-
-    return g
+    return - (1 - f[:, -1] / 0.6 - anp.sum(f[:, :-1] / 0.5, axis=1))
 
 
 def constraint_c1_spherical(f, r):
     radius = anp.sum(f ** 2, axis=1)
-    g = - (radius - 16) * (radius - r ** 2)
-
-    return g
+    return - (radius - 16) * (radius - r ** 2)
 
 
 def constraint_c2(f, r):
@@ -112,9 +108,7 @@ def constraint_c2(f, r):
 
     a = 1 / anp.sqrt(n_obj)
     v2 = anp.sum((f - a) ** 2, axis=1) - r ** 2
-    g = anp.minimum(v1, v2.flatten())
-
-    return g
+    return anp.minimum(v1, v2.flatten())
 
 
 def constraint_c3_linear(f):  # M lines
@@ -141,5 +135,4 @@ def constraint_c3_spherical(f):  # M ellipse
 def constraint_c4_cylindrical(f, r):  # cylindrical
     l = anp.mean(f, axis=1)
     l = anp.expand_dims(l, axis=1)
-    g = -anp.sum(anp.power(f - l, 2), axis=1) + anp.power(r, 2)
-    return g
+    return -anp.sum(anp.power(f - l, 2), axis=1) + anp.power(r, 2)

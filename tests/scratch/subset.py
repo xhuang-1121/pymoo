@@ -86,7 +86,7 @@ from pymoo.optimize import minimize
 def my_callback(algorithm):
     disp = algorithm.func_display_attrs(algorithm.problem, algorithm.evaluator, algorithm, algorithm.pf)
     not_selected = (~algorithm.pop.get("X")).sum(axis=1)
-    print("Not Selected: (%s, %s) | " % (not_selected.min(), not_selected.max()), end='')
+    print(f"Not Selected: ({not_selected.min()}, {not_selected.max()}) | ", end='')
     algorithm._display(disp)
 
 
@@ -104,5 +104,5 @@ res = minimize(problem,
                seed=1,
                verbose=False)
 
-print("Function value: %s" % res.F[0])
+print(f"Function value: {res.F[0]}")
 print("Subset:", np.where(res.X)[0])

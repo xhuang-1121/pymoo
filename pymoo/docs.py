@@ -137,7 +137,7 @@ visualization = {
 
 }
 
-docs = {**algorithms, **visualization}
+docs = algorithms | visualization
 
 
 # =========================================================================================================

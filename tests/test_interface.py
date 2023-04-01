@@ -20,8 +20,7 @@ class InterfaceTest(unittest.TestCase):
         api = AskAndTell(algorithm, n_var=2, n_obj=1, n_constr=1, xl=-10, xu=10)
 
         # this loop runs always one step of the algorithm
-        for gen in range(200):
-
+        for _ in range(200):
             # ask the algorithm for values to be evaluated
             X = api.ask()
 

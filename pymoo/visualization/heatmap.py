@@ -97,15 +97,12 @@ class Heatmap(Plot):
         if self.solution_labels is None:
             pass
 
-        # in case just true just use a number for each solution
         elif isinstance(self.solution_labels, bool) and self.solution_labels:
             self.solution_labels = np.arange(len(F)) + 1
 
-        # otherwise use directly the label provided
-        else:
-            if len(self.solution_labels) != len(F):
-                raise Exception(
-                    "The labels provided for each solution must be equal to the number of solutions being plotted.")
+        elif len(self.solution_labels) != len(F):
+            raise Exception(
+                "The labels provided for each solution must be equal to the number of solutions being plotted.")
 
         if self.solution_labels is None:
             self.ax.set_yticks([])

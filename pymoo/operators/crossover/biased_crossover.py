@@ -13,9 +13,8 @@ class BiasedCrossover(Crossover):
     def _do(self, problem, X, **kwargs):
         _, n_matings, n_var = X.shape
         M = np.random.random((n_matings, n_var)) < self.bias
-        _X = crossover_mask(X, M)
-        return _X
+        return crossover_mask(X, M)
 
     def do(self, problem, pop, parents, **kwargs):
         off = super().do(problem, pop, parents, **kwargs)
-        return off[:int(len(off) / 2)]
+        return off[:len(off) // 2]

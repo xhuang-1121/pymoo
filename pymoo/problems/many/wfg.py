@@ -22,22 +22,14 @@ class WFG(Problem):
         if k:
             self.k = k
         else:
-            if n_obj == 2:
-                self.k = 4
-            else:
-                self.k = 2 * (n_obj - 1)
-
-        if l:
-            self.l = l
-        else:
-            self.l = n_var - self.k
-
+            self.k = 4 if n_obj == 2 else 2 * (n_obj - 1)
+        self.l = l or n_var - self.k
         self.validate(self.l, self.k, self.n_obj)
 
     def validate(self, l, k, n_obj):
         if n_obj < 2:
             raise ValueError('WFG problems must have two or more objectives.')
-        if not k % (n_obj - 1) == 0:
+        if k % (n_obj - 1) != 0:
             raise ValueError('Position parameter (k) must be divisible by number of objectives minus one.')
         if k < 4:
             raise ValueError('Position parameter (k) must be greater or equal than 4.')
@@ -45,9 +37,10 @@ class WFG(Problem):
             raise ValueError('Sum of distance and position parameters must be greater than num. of objs. (k + l >= M).')
 
     def _post(self, t, a):
-        x = []
-        for i in range(t.shape[1] - 1):
-            x.append(np.maximum(t[:, -1], a[i]) * (t[:, i] - 0.5) + 0.5)
+        x = [
+            np.maximum(t[:, -1], a[i]) * (t[:, i] - 0.5) + 0.5
+            for i in range(t.shape[1] - 1)
+        ]
         x.append(t[:, -1])
         return np.column_stack(x)
 
@@ -316,7 +309,7 @@ class WFG8(WFG):
     def _positional_to_optimal(self, K):
         k, l = self.k, self.l
 
-        for i in range(k, k + l):
+        for _ in range(k, k + l):
             u = K.sum(axis=1) / K.shape[1]
             tmp1 = np.abs(np.floor(0.5 - u) + 0.98 / 49.98)
             tmp2 = 0.02 + 49.98 * (0.98 / 49.98 - (1.0 - 2.0 * u) * tmp1)
@@ -324,8 +317,7 @@ class WFG8(WFG):
 
             K = np.column_stack([K, suffix[:, None]])
 
-        ret = K * (2 * (np.arange(self.n_var) + 1))
-        return ret
+        return K * (2 * (np.arange(self.n_var) + 1))
 
 
 class WFG9(WFG):
@@ -333,7 +325,7 @@ class WFG9(WFG):
     @staticmethod
     def t1(x, n):
         ret = []
-        for i in range(0, n - 1):
+        for i in range(n - 1):
             aux = _reduction_weighted_sum_uniform(x[:, i + 1:])
             ret.append(_transformation_param_dependent(x[:, i], aux))
         return np.column_stack(ret)
@@ -376,8 +368,7 @@ class WFG9(WFG):
             val = m.sum(axis=1) / m.shape[1]
             X[:, i] = 0.35 ** ((0.02 + 1.96 * val) ** -1)
 
-        ret = X * (2 * (np.arange(self.n_var) + 1))
-        return ret
+        return X * (2 * (np.arange(self.n_var) + 1))
 
 
 # ---------------------------------------------------------------------------------------------------------
@@ -511,7 +502,7 @@ def _shape_disconnected(x, alpha=1.0, beta=1.0, A=5.0):
 # ---------------------------------------------------------------------------------------------------------
 
 def validate_wfg2_wfg3(l):
-    if not l % 2 == 0:
+    if l % 2 != 0:
         raise ValueError('In WFG2/WFG3 the distance-related parameter (l) must be divisible by 2.')
 
 

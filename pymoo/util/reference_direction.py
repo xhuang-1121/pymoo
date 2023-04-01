@@ -29,23 +29,21 @@ class ReferenceDirectionFactory:
 
         if self.n_dim == 1:
             return np.array([[1.0]])
+        val = self._do()
+        if isinstance(val, tuple):
+            ref_dirs, other = val[0], val[1:]
         else:
+            ref_dirs = val
 
-            val = self._do()
-            if isinstance(val, tuple):
-                ref_dirs, other = val[0], val[1:]
-            else:
-                ref_dirs = val
+        if self.scaling is not None:
+            ref_dirs = scale_reference_directions(ref_dirs, self.scaling)
 
-            if self.scaling is not None:
-                ref_dirs = scale_reference_directions(ref_dirs, self.scaling)
+        # do ref_dirs is desired
+        if self.lexsort:
+            I = np.lexsort([ref_dirs[:, j] for j in range(ref_dirs.shape[1])][::-1])
+            ref_dirs = ref_dirs[I]
 
-            # do ref_dirs is desired
-            if self.lexsort:
-                I = np.lexsort([ref_dirs[:, j] for j in range(ref_dirs.shape[1])][::-1])
-                ref_dirs = ref_dirs[I]
-
-            return val
+        return val
 
     def _do(self):
         return None
@@ -83,11 +81,10 @@ def get_partition_closest_to_points(n_points, n_dim):
 def das_dennis(n_partitions, n_dim):
     if n_partitions == 0:
         return np.full((1, n_dim), 1 / n_dim)
-    else:
-        ref_dirs = []
-        ref_dir = np.full(n_dim, np.nan)
-        das_dennis_recursion(ref_dirs, ref_dir, n_partitions, n_partitions, 0)
-        return np.concatenate(ref_dirs, axis=0)
+    ref_dirs = []
+    ref_dir = np.full(n_dim, np.nan)
+    das_dennis_recursion(ref_dirs, ref_dir, n_partitions, n_partitions, 0)
+    return np.concatenate(ref_dirs, axis=0)
 
 
 def das_dennis_recursion(ref_dirs, ref_dir, n_partitions, beta, depth):
@@ -137,16 +134,13 @@ class UniformReferenceDirectionFactory(ReferenceDirectionFactory):
 class MultiLayerReferenceDirectionFactory:
 
     def __init__(self, *args) -> None:
-        self.layers = []
-        self.layers.extend(args)
+        self.layers = list(args)
 
     def add_layer(self, *args):
         self.layers.extend(args)
 
     def do(self):
-        ref_dirs = []
-        for factory in self.layers:
-            ref_dirs.append(factory)
+        ref_dirs = list(self.layers)
         ref_dirs = np.concatenate(ref_dirs, axis=0)
         is_duplicate = find_duplicates(ref_dirs)
         return ref_dirs[np.logical_not(is_duplicate)]
@@ -158,8 +152,7 @@ class MultiLayerReferenceDirectionFactory:
 
 def kmeans(X, centroids, n_max_iter, a_tol):
 
-    for i in range(n_max_iter):
-
+    for _ in range(n_max_iter):
         # assign all points to one of the centroids
         points_to_centroid = cdist(X, centroids).argmin(axis=1)
 

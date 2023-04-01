@@ -8,7 +8,7 @@ SKIP = ["__init__.py", "usage_video.py", "usage_stream.py"]
 
 
 def test_usage(usages):
-    usages = [f for f in usages if not any([f.endswith(s) for s in SKIP])]
+    usages = [f for f in usages if not any(f.endswith(s) for s in SKIP)]
 
     print(usages)
 
@@ -33,7 +33,7 @@ def test_usage(usages):
             try:
                 exec(s, globals())
             except:
-                raise Exception("Usage %s failed." % fname)
+                raise Exception(f"Usage {fname} failed.")
 
 
 class AllUsageTest(unittest.TestCase):

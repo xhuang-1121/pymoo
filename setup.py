@@ -59,7 +59,9 @@ def readme():
 
 
 def packages():
-    return ["pymoo"] + ["pymoo." + e for e in setuptools.find_packages(where='pymoo')]
+    return ["pymoo"] + [
+        f"pymoo.{e}" for e in setuptools.find_packages(where='pymoo')
+    ]
 
 
 data['long_description'] = readme()
@@ -77,16 +79,14 @@ data['packages'] = packages()
 
 def is_new_osx():
     name = distutils.util.get_platform()
-    if sys.platform != "darwin":
+    if (
+        sys.platform != "darwin"
+        or sys.platform == "darwin"
+        and not name.startswith("macosx-10")
+    ):
         return False
-    elif name.startswith("macosx-10"):
-        minor_version = int(name.split("-")[1].split(".")[1])
-        if minor_version >= 7:
-            return True
-        else:
-            return False
-    else:
-        return False
+    minor_version = int(name.split("-")[1].split(".")[1])
+    return minor_version >= 7
 
 
 # fix compiling for new macosx!
@@ -160,7 +160,6 @@ def run_setup(setup_args):
             from Cython.Build import cythonize
             kwargs['ext_modules'] = cythonize("pymoo/cython/*.pyx")
 
-        # otherwise use the existing pyx files - normal case during pip installation
         else:
 
             # find all cpp files in czthon folder
@@ -168,7 +167,10 @@ def run_setup(setup_args):
 
             # add for each file an extension object to be compiled
             for source in cpp_files:
-                ext = Extension("pymoo.cython.%s" % source[:-4], [os.path.join(cython_folder, source)])
+                ext = Extension(
+                    f"pymoo.cython.{source[:-4]}",
+                    [os.path.join(cython_folder, source)],
+                )
                 kwargs['ext_modules'].append(ext)
 
         if len(kwargs['ext_modules']) == 0:

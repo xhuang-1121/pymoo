@@ -31,7 +31,5 @@ def calc_jacobian(start, end):
         _jac = backward_pass(n, end._node)
         jac.append(_jac)
 
-    jac = anp.stack(jac, axis=1)
-
-    return jac
+    return anp.stack(jac, axis=1)
 

@@ -19,35 +19,27 @@ from pymoo.problems.single import *
 # =========================================================================================================
 
 def get_from_list(l, name, args, kwargs):
-    i = None
-
-    for k, e in enumerate(l):
-        if e[0] == name:
-            i = k
-            break
-
+    i = next((k for k, e in enumerate(l) if e[0] == name), None)
     if i is None:
         for k, e in enumerate(l):
             if re.match(e[0], name):
                 i = k
                 break
 
-    if i is not None:
+    if i is None:
+        raise Exception(f"Object '{name}' for not found in {[e[0] for e in l]}")
+    if len(l[i]) == 2:
+        name, clazz = l[i]
 
-        if len(l[i]) == 2:
-            name, clazz = l[i]
+    elif len(l[i]) == 3:
+        name, clazz, default_kwargs = l[i]
 
-        elif len(l[i]) == 3:
-            name, clazz, default_kwargs = l[i]
+        # overwrite the default if provided
+        for key, val in kwargs.items():
+            default_kwargs[key] = val
+        kwargs = default_kwargs
 
-            # overwrite the default if provided
-            for key, val in kwargs.items():
-                default_kwargs[key] = val
-            kwargs = default_kwargs
-
-        return clazz(*args, **kwargs)
-    else:
-        raise Exception("Object '%s' for not found in %s" % (name, [e[0] for e in l]))
+    return clazz(*args, **kwargs)
 
 
 # =========================================================================================================
@@ -67,7 +59,7 @@ def get_algorithm_options():
     from pymoo.algorithms.so_cmaes import CMAES
     from pymoo.algorithms.so_brkga import BRKGA
 
-    ALGORITHMS = [
+    return [
         ("ga", GA),
         ("brkga", BRKGA),
         ("de", DE),
@@ -80,8 +72,6 @@ def get_algorithm_options():
         ("rnsga3", RNSGA3),
         ("moead", MOEAD),
     ]
-
-    return ALGORITHMS
 
 
 def get_algorithm(name, *args, d={}, **kwargs):
@@ -98,15 +88,21 @@ def get_sampling_options():
     from pymoo.operators.integer_from_float_operator import IntegerFromFloatSampling
     from pymoo.operators.sampling.random_sampling import BinaryRandomSampling
 
-    SAMPLING = [
+    return [
         ("real_random", FloatRandomSampling),
         ("real_lhs", LatinHypercubeSampling),
         ("bin_random", BinaryRandomSampling),
-        ("int_random", IntegerFromFloatSampling, {'clazz': FloatRandomSampling}),
-        ("int_lhs", IntegerFromFloatSampling, {'clazz': LatinHypercubeSampling})
+        (
+            "int_random",
+            IntegerFromFloatSampling,
+            {'clazz': FloatRandomSampling},
+        ),
+        (
+            "int_lhs",
+            IntegerFromFloatSampling,
+            {'clazz': LatinHypercubeSampling},
+        ),
     ]
-
-    return SAMPLING
 
 
 def get_sampling(name, *args, d={}, **kwargs):
@@ -121,12 +117,7 @@ def get_selection_options():
     from pymoo.operators.selection.random_selection import RandomSelection
     from pymoo.operators.selection.tournament_selection import TournamentSelection
 
-    SELECTION = [
-        ("random", RandomSelection),
-        ("tournament", TournamentSelection)
-    ]
-
-    return SELECTION
+    return [("random", RandomSelection), ("tournament", TournamentSelection)]
 
 
 def get_selection(name, *args, d={}, **kwargs):
@@ -146,19 +137,21 @@ def get_crossover_options():
     from pymoo.operators.crossover.uniform_crossover import UniformCrossover
     from pymoo.operators.integer_from_float_operator import IntegerFromFloatCrossover
 
-    CROSSOVER = [
+    return [
         ("real_sbx", SimulatedBinaryCrossover, dict(prob=0.9, eta=30)),
-        ("int_sbx", IntegerFromFloatCrossover, dict(clazz=SimulatedBinaryCrossover, prob=0.9, eta=30)),
+        (
+            "int_sbx",
+            IntegerFromFloatCrossover,
+            dict(clazz=SimulatedBinaryCrossover, prob=0.9, eta=30),
+        ),
         ("real_de", DifferentialEvolutionCrossover),
         ("(real|bin|int)_ux", UniformCrossover),
         ("(bin|int)_hux", HalfUniformCrossover),
         ("(real|bin|int)_exp", ExponentialCrossover),
         ("(real|bin|int)_one_point", PointCrossover, {'n_points': 1}),
         ("(real|bin|int)_two_point", PointCrossover, {'n_points': 2}),
-        ("(real|bin|int)_k_point", PointCrossover)
+        ("(real|bin|int)_k_point", PointCrossover),
     ]
-
-    return CROSSOVER
 
 
 def get_crossover(name, *args, d={}, **kwargs):
@@ -175,14 +168,16 @@ def get_mutation_options():
     from pymoo.operators.mutation.polynomial_mutation import PolynomialMutation
     from pymoo.operators.integer_from_float_operator import IntegerFromFloatMutation
 
-    MUTATION = [
+    return [
         ("none", NoMutation, {}),
         ("real_pm", PolynomialMutation, dict(eta=20)),
-        ("int_pm", IntegerFromFloatMutation, dict(clazz=PolynomialMutation, eta=20)),
-        ("bin_bitflip", BinaryBitflipMutation)
+        (
+            "int_pm",
+            IntegerFromFloatMutation,
+            dict(clazz=PolynomialMutation, eta=20),
+        ),
+        ("bin_bitflip", BinaryBitflipMutation),
     ]
-
-    return MUTATION
 
 
 def get_mutation(name, *args, d={}, **kwargs):
@@ -203,7 +198,7 @@ def get_termination_options():
     from pymoo.util.termination.f_tol import SingleObjectiveSpaceToleranceTermination
     from pymoo.util.termination.default import MultiObjectiveDefaultTermination, SingleObjectiveDefaultTermination
 
-    TERMINATION = [
+    return [
         ("n_eval", MaximumFunctionCallTermination),
         ("(n_gen|n_iter)", MaximumGenerationTermination),
         ("igd", IGDTermination),
@@ -212,10 +207,8 @@ def get_termination_options():
         ("(f_tol$|ftol$)", MultiObjectiveSpaceToleranceTermination),
         ("(f_tol_s|ftol_s)", SingleObjectiveSpaceToleranceTermination),
         ("(default$|default_multi)", MultiObjectiveDefaultTermination),
-        ("default_single$", SingleObjectiveDefaultTermination)
+        ("default_single$", SingleObjectiveDefaultTermination),
     ]
-
-    return TERMINATION
 
 
 def get_termination(name, *args, d={}, **kwargs):
@@ -227,7 +220,7 @@ def get_termination(name, *args, d={}, **kwargs):
 # =========================================================================================================
 
 def get_problem_options():
-    PROBLEM = [
+    return [
         ('ackley', Ackley),
         ('bnh', BNH),
         ('carside', Carside),
@@ -293,18 +286,15 @@ def get_problem_options():
         ('wfg6', WFG6),
         ('wfg7', WFG7),
         ('wfg8', WFG8),
-        ('wfg9', WFG9)
+        ('wfg9', WFG9),
     ]
-
-    return PROBLEM
 
 
 def get_problem(name, *args, d={}, **kwargs):
-    if name.startswith("go-"):
-        from pymoo.vendor.global_opt import get_global_optimization_problem_options
-        return get_from_list(get_global_optimization_problem_options(), name.lower(), args, {**d, **kwargs})
-    else:
+    if not name.startswith("go-"):
         return get_from_list(get_problem_options(), name.lower(), args, {**d, **kwargs})
+    from pymoo.vendor.global_opt import get_global_optimization_problem_options
+    return get_from_list(get_global_optimization_problem_options(), name.lower(), args, {**d, **kwargs})
 
 
 # =========================================================================================================
@@ -316,13 +306,11 @@ def get_reference_direction_options():
     from pymoo.util.reference_direction import ReductionBasedReferenceDirectionFactory
     from pymoo.util.reference_direction import MultiLayerReferenceDirectionFactory
 
-    REFERENCE_DIRECTIONS = [
+    return [
         ("(das-dennis|uniform)", UniformReferenceDirectionFactory),
         ("multi-layer", MultiLayerReferenceDirectionFactory),
-        ("red", ReductionBasedReferenceDirectionFactory)
+        ("red", ReductionBasedReferenceDirectionFactory),
     ]
-
-    return REFERENCE_DIRECTIONS
 
 
 def get_reference_directions(name, *args, d={}, **kwargs):
@@ -343,7 +331,7 @@ def get_visualization_options():
     from pymoo.visualization.heatmap import Heatmap
     from pymoo.visualization.fitness_landscape import FitnessLandscape
 
-    VISUALIZATION = [
+    return [
         ("scatter", Scatter),
         ("heatmap", Heatmap),
         ("pcp", PCP),
@@ -351,10 +339,8 @@ def get_visualization_options():
         ("radar", Radar),
         ("radviz", Radviz),
         ("star", StarCoordinate),
-        ("fitness-landscape", FitnessLandscape)
+        ("fitness-landscape", FitnessLandscape),
     ]
-
-    return VISUALIZATION
 
 
 def get_visualization(name, *args, d={}, **kwargs):
@@ -374,15 +360,14 @@ def get_performance_indicator_options():
     from pymoo.performance_indicator.hv import Hypervolume
     from pymoo.performance_indicator.rmetric import RMetric
 
-    PERFORMANCE_INDICATOR = [
+    return [
         ("gd", GD),
         ("gd+", GDPlus),
         ("igd", IGD),
         ("igd+", IGDPlus),
         ("hv", Hypervolume),
-        ("rmetric", RMetric)
+        ("rmetric", RMetric),
     ]
-    return PERFORMANCE_INDICATOR
 
 
 def get_performance_indicator(name, *args, d={}, **kwargs):
@@ -401,16 +386,14 @@ def get_decomposition_options():
     from pymoo.decomposition.aasf import AASF
     from pymoo.decomposition.perp_dist import PerpendicularDistance
 
-    DECOMPOSITION = [
+    return [
         ("weighted-sum", WeightedSum),
         ("tchebi", Tchebicheff),
         ("pbi", PBI),
         ("asf", ASF),
         ("aasf", AASF),
-        ("perp_dist", PerpendicularDistance)
+        ("perp_dist", PerpendicularDistance),
     ]
-
-    return DECOMPOSITION
 
 
 def get_decomposition(name, *args, d={}, **kwargs):
@@ -425,12 +408,10 @@ def get_decision_making_options():
     from pymoo.decision_making.high_tradeoff import HighTradeoffPoints
     from pymoo.decision_making.pseudo_weights import PseudoWeights
 
-    DECISION_MAKING = [
+    return [
         ("high-tradeoff", HighTradeoffPoints),
-        ("pseudo-weights", PseudoWeights)
+        ("pseudo-weights", PseudoWeights),
     ]
-
-    return DECISION_MAKING
 
 
 def get_decision_making(name, *args, d={}, **kwargs):
@@ -465,7 +446,7 @@ def dummy(name, kwargs):
 
 
 def options_to_string(l):
-    return ", ".join(["'%s'" % k[0] for k in l])
+    return ", ".join([f"'{k[0]}'" for k in l])
 
 
 if Configuration.parse_custom_docs:

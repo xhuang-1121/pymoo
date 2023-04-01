@@ -3,11 +3,7 @@ import numpy as np
 
 def denormalize(x, x_min, x_max):
 
-    if x_max is None:
-        _range = 1
-    else:
-        _range = (x_max - x_min)
-
+    _range = 1 if x_max is None else (x_max - x_min)
     return x * _range + x_min
 
 
@@ -35,10 +31,7 @@ def normalize(x, x_min=None, x_max=None, return_bounds=False, estimate_bounds_if
     N = (x - x_min) / denom
 
     # return with or without bounds
-    if not return_bounds:
-        return N
-    else:
-        return N, x_min, x_max
+    return (N, x_min, x_max) if return_bounds else N
 
 
 def standardize(x, return_bounds=False):
@@ -48,10 +41,7 @@ def standardize(x, return_bounds=False):
     # standardize
     val = (x - mean) / std
 
-    if not return_bounds:
-        return val
-    else:
-        return val, mean, std
+    return (val, mean, std) if return_bounds else val
 
 
 def destandardize(x, mean, std):

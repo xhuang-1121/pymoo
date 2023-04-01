@@ -32,6 +32,4 @@ class PointCrossover(Crossover):
                 M[i, a:b] = True
                 j += 2
 
-        _X = crossover_mask(X, M)
-
-        return _X
+        return crossover_mask(X, M)

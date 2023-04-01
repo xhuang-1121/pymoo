@@ -9,10 +9,7 @@ class PolynomialMutation(Mutation):
         super().__init__()
         self.eta = float(eta)
 
-        if prob is not None:
-            self.prob = float(prob)
-        else:
-            self.prob = None
+        self.prob = float(prob) if prob is not None else None
 
     def _do(self, problem, X, **kwargs):
 

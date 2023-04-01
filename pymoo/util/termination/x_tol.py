@@ -21,7 +21,7 @@ class DesignSpaceToleranceTermination(ToleranceBasedTermination):
             return IGD(current).calc(last)
 
     def _decide(self):
-        if any([e is None for e in self.metrics]):
+        if any(e is None for e in self.metrics):
             return True
         else:
             return np.array(self.metrics[-self.n_last:]).std() > self.tol

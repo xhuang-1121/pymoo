@@ -40,10 +40,7 @@ def normalize(F, ideal_point=None, nadir_point=None, estimate_bounds_if_none=Tru
     else:
         norm = np.ones(F.shape[1])
 
-    if return_bounds:
-        return N, norm, ideal_point, nadir_point
-    else:
-        return N
+    return (N, norm, ideal_point, nadir_point) if return_bounds else N
 
 
 class NeighborFinder:
@@ -61,13 +58,7 @@ class NeighborFinder:
         _, n_dim = N.shape
 
         # at least find dimensionality times two neighbors - if enabled
-        if n_min_neigbors == "auto":
-            self.n_min_neigbors = 2 * n_dim
-
-        # disable the minimum neighbor variable
-        else:
-            self.n_min_neigbors = np.inf
-
+        self.n_min_neigbors = 2 * n_dim if n_min_neigbors == "auto" else np.inf
         # either choose epsilon
         self.epsilon = epsilon
 

@@ -107,7 +107,7 @@ class DE(GeneticAlgorithm):
             P[use_best, 0] = best
 
         else:
-            raise Exception("Unknown selection: %s" % self.var_selection)
+            raise Exception(f"Unknown selection: {self.var_selection}")
 
         # do the first crossover which is the actual DE operation
         self.off = crossover.do(self.problem, pop, P, algorithm=self)

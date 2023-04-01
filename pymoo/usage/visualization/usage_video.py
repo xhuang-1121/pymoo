@@ -37,7 +37,7 @@ with Video(File("ga.mp4")) as vid:
 
     # for each algorithm object in the history
     for entry in ret.history:
-        sc = Scatter(title=("Gen %s" % entry.n_gen))
+        sc = Scatter(title=f"Gen {entry.n_gen}")
         sc.add(entry.pop.get("F"))
         sc.add(entry.problem.pareto_front(), plot_type="line", color="black", alpha=0.7)
         sc.do()

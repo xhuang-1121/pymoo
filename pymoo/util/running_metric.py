@@ -30,10 +30,16 @@ class RunningMetric(Callback):
         if t > 0 and t % self.nth_gen == 0:
 
             for k, f in self.hist:
-                plt.plot(np.arange(len(f)), f, label="t=%s" % k, alpha=0.6, linewidth=3)
+                plt.plot(np.arange(len(f)), f, label=f"t={k}", alpha=0.6, linewidth=3)
 
             _delta_f = self.term.metric()["delta_f"]
-            plt.plot(np.arange(len(_delta_f)), _delta_f, label="t=%s (*)" % t, alpha=0.9, linewidth=3)
+            plt.plot(
+                np.arange(len(_delta_f)),
+                _delta_f,
+                label=f"t={t} (*)",
+                alpha=0.9,
+                linewidth=3,
+            )
 
             _delta_ideal = [m['delta_ideal'] > 0.005 for m in self.term.hist_metrics]
             _delta_nadir = [m['delta_nadir'] > 0.005 for m in self.term.hist_metrics]

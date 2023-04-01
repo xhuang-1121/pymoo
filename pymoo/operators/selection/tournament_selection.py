@@ -56,19 +56,13 @@ def compare(a, a_val, b, b_val, method, return_random_if_equal=False):
         elif a_val < b_val:
             return b
         else:
-            if return_random_if_equal:
-                return np.random.choice([a, b])
-            else:
-                return None
+            return np.random.choice([a, b]) if return_random_if_equal else None
     elif method == 'smaller_is_better':
         if a_val < b_val:
             return a
         elif a_val > b_val:
             return b
         else:
-            if return_random_if_equal:
-                return np.random.choice([a, b])
-            else:
-                return None
+            return np.random.choice([a, b]) if return_random_if_equal else None
     else:
         raise Exception("Unknown method.")

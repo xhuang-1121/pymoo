@@ -11,8 +11,7 @@ def calc_potential_energy(A):
     d = (A.shape[1] ** 2)
     i, j = np.triu_indices(len(A), 1)
     D = np.sqrt(squared_dist(A, A)[i, j])
-    energy = np.log((1 / D ** d).mean())
-    return energy
+    return np.log((1 / D ** d).mean())
 
 
 def subset_max_energy(X, n_survive):

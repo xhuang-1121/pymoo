@@ -29,7 +29,7 @@ class Output:
         self.attrs.append([name, number, width])
 
     def format_float(self, number, width):
-        if number >= 10 or number * 1e5 < 1:
+        if number >= 10 or number < 1 / 1e5:
             return f"%.{width - 7}E" % number
         else:
             return f"%.{width - 3}f" % number
@@ -81,12 +81,10 @@ class Display:
                 if isinstance(pf, bool) and not pf:
                     self.pf, self.pareto_front_is_available = None, False
 
-                # try to get the pareto front from the problem
-                elif pf is None or (isinstance(pf, bool) and pf):
+                elif pf is None or isinstance(pf, bool):
                     self.pf = pareto_front_if_possible(problem)
                     self.pareto_front_is_available = self.pf is not None
 
-                # the pf should be given directly
                 else:
                     self.pf = pf
                     self.pf, self.pareto_front_is_available = pf, True
@@ -105,7 +103,6 @@ class Display:
             # print the actually line
             self.output.do()
 
-        # catch any exception to make sure the algorithm does not fail because of printing
         except:
             print("WARNING: Error while preparing the output to be printed.")
 

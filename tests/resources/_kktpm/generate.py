@@ -24,6 +24,6 @@ def generate_test_data():
                  disp=True,
                  seed=1)
 
-        np.savetxt("%s.x" % str_problem, np.concatenate(X, axis=0), delimiter=",")
+        np.savetxt(f"{str_problem}.x", np.concatenate(X, axis=0), delimiter=",")
 
 generate_test_data()

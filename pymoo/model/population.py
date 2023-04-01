@@ -15,10 +15,9 @@ class Population(np.ndarray):
     def merge(self, other):
         if len(self) == 0:
             return other
-        else:
-            obj = np.concatenate([self, other]).view(Population)
-            obj.individual = self.individual
-            return obj
+        obj = np.concatenate([self, other]).view(Population)
+        obj.individual = self.individual
+        return obj
 
     def copy(self):
         pop = Population(n_individuals=len(self), individual=self.individual)
@@ -27,7 +26,7 @@ class Population(np.ndarray):
         return pop
 
     def has(self, key):
-        return all([ind.has(key) for ind in self])
+        return all(ind.has(key) for ind in self)
 
     def __deepcopy__(self, memo):
         return self.copy()
@@ -42,24 +41,21 @@ class Population(np.ndarray):
 
         if len(args) == 1:
             return Population(n_individuals=args[0], individual=self.individual)
-        else:
-            n = len(args[1]) if len(args) > 0 else 0
-            pop = Population(n_individuals=n, individual=self.individual)
-            if len(args) > 0:
-                pop.set(*args)
-            return pop
+        n = len(args[1]) if args else 0
+        pop = Population(n_individuals=n, individual=self.individual)
+        if args:
+            pop.set(*args)
+        return pop
 
     def collect(self, func, to_numpy=True):
-        val = []
-        for i in range(len(self)):
-            val.append(func(self[i]))
+        val = [func(self[i]) for i in range(len(self))]
         if to_numpy:
             val = np.array(val)
         return val
 
     def set(self, *args):
 
-        for i in range(int(len(args) / 2)):
+        for i in range(len(args) // 2):
 
             key, values = args[i * 2], args[i * 2 + 1]
             is_iterable = hasattr(values, '__len__') and not isinstance(values, str)
@@ -75,10 +71,7 @@ class Population(np.ndarray):
 
     def get(self, *args, to_numpy=True):
 
-        val = {}
-        for c in args:
-            val[c] = []
-
+        val = {c: [] for c in args}
         for i in range(len(self)):
 
             for c in args:
@@ -88,10 +81,7 @@ class Population(np.ndarray):
         if to_numpy:
             res = [np.array(e) for e in res]
 
-        if len(args) == 1:
-            return res[0]
-        else:
-            return tuple(res)
+        return res[0] if len(args) == 1 else tuple(res)
 
     def __array_finalize__(self, obj):
         if obj is None:

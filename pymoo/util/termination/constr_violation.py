@@ -18,7 +18,7 @@ class ConstraintViolationToleranceTermination(ToleranceBasedTermination):
         return algorithm.pop.get("CV")[:, 0].mean()
 
     def _calc_metric(self):
-        CV = np.array([e for e in self.history])
+        CV = np.array(list(self.history))
 
         # calculate the improvement regarding the CV in each transition
         delta_CV = np.array([CV[k] - CV[k + 1] for k in range(len(CV) - 1)])

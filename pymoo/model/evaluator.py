@@ -48,7 +48,7 @@ class Evaluator:
         self.n_eval += len(I)
 
         # actually evaluate all solutions using the function that can be overwritten
-        if len(I) > 0:
+        if I:
             self._eval(problem, pop[I], **kwargs)
 
             # set the feasibility attribute if cv exists
@@ -62,7 +62,7 @@ class Evaluator:
         elif is_numpy_array:
             if len(pop) == 1:
                 pop = pop[0]
-            return tuple([pop.get(e) for e in self.evaluate_values_of])
+            return tuple(pop.get(e) for e in self.evaluate_values_of)
         else:
             return pop
 

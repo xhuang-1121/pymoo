@@ -31,7 +31,7 @@ class KKTPMTest(unittest.TestCase):
             import os
 
             def load_file(f):
-                return np.loadtxt(os.path.join(folder, "%s_%s.txt" % (str_problem, f)))
+                return np.loadtxt(os.path.join(folder, f"{str_problem}_{f}.txt"))
 
             X = load_file("x")
             _F, _G, _dF, _dG = problem.evaluate(X, return_values_of=["F", "G", "dF", "dG"])

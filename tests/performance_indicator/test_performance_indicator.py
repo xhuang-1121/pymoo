@@ -35,10 +35,10 @@ class PerformanceIndicatorTest(unittest.TestCase):
         for indicator, ext in l:
 
             for i in range(1, 5):
-                F = np.loadtxt(os.path.join(folder, "performance_indicators_%s.f" % i))
+                F = np.loadtxt(os.path.join(folder, f"performance_indicators_{i}.f"))
 
                 val = indicator(pf).calc(F)
-                correct = np.loadtxt(os.path.join(folder, "performance_indicators_%s.%s" % (i, ext)))
+                correct = np.loadtxt(os.path.join(folder, f"performance_indicators_{i}.{ext}"))
                 self.assertTrue(correct == val)
 
     def test_performance_indicator_1(self):

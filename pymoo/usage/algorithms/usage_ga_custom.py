@@ -92,9 +92,9 @@ res = minimize(problem,
                seed=1,
                verbose=True)
 
-print("Function value: %s" % res.F[0])
+print(f"Function value: {res.F[0]}")
 print("Subset:", np.where(res.X)[0])
 
 opt = np.sort(np.argsort(L)[:n_max])
 print("Optimal Subset:", opt)
-print("Optimal Function Value: %s" % L[opt].sum())
+print(f"Optimal Function Value: {L[opt].sum()}")

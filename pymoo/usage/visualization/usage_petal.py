@@ -28,7 +28,10 @@ plot.show()
 
 # START petal_width_multiple
 F = np.random.random((6, 6))
-plot = Petal(bounds=[0, 1], title=["Solution %s" % t for t in ["A", "B", "C", "D", "E", "F"]])
+plot = Petal(
+    bounds=[0, 1],
+    title=[f"Solution {t}" for t in ["A", "B", "C", "D", "E", "F"]],
+)
 plot.add(F[:3])
 plot.add(F[3:])
 plot.show()

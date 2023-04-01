@@ -24,10 +24,7 @@ class PseudoWeights(DecisionMaking):
         # search for the closest individual having this pseudo weights
         I = np.argmin(np.sum(np.abs(pseudo_weights - self.weights), axis=1))
 
-        if return_pseudo_weights:
-            return I, pseudo_weights
-        else:
-            return I
+        return (I, pseudo_weights) if return_pseudo_weights else I
 
 
 

@@ -55,12 +55,11 @@ class ZDT3(ZDT):
             x2 = 1 - anp.sqrt(x1) - x1 * anp.sin(10 * anp.pi * x1)
             pf.append(anp.array([x1, x2]).T)
 
-        if not flatten:
-            pf = anp.concatenate([pf[None,...] for pf in pf])
-        else:
-            pf = anp.row_stack(pf)
-
-        return pf
+        return (
+            anp.row_stack(pf)
+            if flatten
+            else anp.concatenate([pf[None, ...] for pf in pf])
+        )
 
     def _evaluate(self, x, out, *args, **kwargs):
         f1 = x[:, 0]
@@ -114,9 +113,10 @@ class ZDT5(ZDT):
     def _evaluate(self, x, out, *args, **kwargs):
 
         _x = [x[:, :30]]
-        for i in range(self.m - 1):
-            _x.append(x[:, 30 + i * self.n: 30 + (i + 1) * self.n])
-
+        _x.extend(
+            x[:, 30 + i * self.n : 30 + (i + 1) * self.n]
+            for i in range(self.m - 1)
+        )
         u = anp.column_stack([x_i.sum(axis=1) for x_i in _x])
         v = (2 + u) * (u < self.n) + 1 * (u == self.n)
         g = v[:, 1:].sum(axis=1)

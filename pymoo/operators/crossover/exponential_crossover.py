@@ -40,5 +40,4 @@ class ExponentialCrossover(Crossover):
                 else:
                     break
 
-        _X = crossover_mask(X, M)
-        return _X
+        return crossover_mask(X, M)

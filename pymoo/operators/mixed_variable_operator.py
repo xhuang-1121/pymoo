@@ -15,7 +15,7 @@ def prepare_processing(mask, operators):
 
         # check if operator for that type was defined
         if val not in operators:
-            raise Exception("Operator for type %s was not defined." % val)
+            raise Exception(f"Operator for type {val} was not defined.")
 
         # append it as a processing type
         process.append({
@@ -56,7 +56,7 @@ def apply_mixed_variable_operation(problem, process, fun):
 
 def concatenate_mixed_variables(problem, process, ret):
     # find the minimum of returned individuals and make them equal among operators
-    n_rows = min([len(e) for e in ret])
+    n_rows = min(len(e) for e in ret)
     ret = [e[:n_rows] for e in ret]
 
     # create the result array and set the values for each operator

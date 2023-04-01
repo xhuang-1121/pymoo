@@ -79,13 +79,13 @@ class PCP(Plot):
             for i in range(len(F)):
                 plt.plot(np.arange(F.shape[1]), F[i, :], **_kwargs)
 
+        margin_left = 0.08
+
         # Plot the parallel coordinate axes
         for i in range(self.n_dim):
             self.ax.axvline(i, **self.axis_style)
 
             bottom, top = -0.1, 1.075
-            margin_left = 0.08
-
             if self.show_bounds:
                 self.ax.text(i - margin_left, bottom, self.func_number_to_text(bounds[0][i]))
                 self.ax.text(i - margin_left, top, self.func_number_to_text(bounds[1][i]))

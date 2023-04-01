@@ -60,7 +60,9 @@ class MOEAD(GeneticAlgorithm):
         self.ref_dirs = ref_dirs
 
         if self.ref_dirs.shape[0] < self.n_neighbors:
-            print("Setting number of neighbours to population size: %s" % self.ref_dirs.shape[0])
+            print(
+                f"Setting number of neighbours to population size: {self.ref_dirs.shape[0]}"
+            )
             self.n_neighbors = self.ref_dirs.shape[0]
 
         # neighbours includes the entry by itself intentionally for the survival method
@@ -73,13 +75,8 @@ class MOEAD(GeneticAlgorithm):
             # set a string
             decomp = self.decomposition
 
-            # for one or two objectives use tchebi otherwise pbi
             if decomp == 'auto':
-                if self.problem.n_obj <= 2:
-                    decomp = 'tchebi'
-                else:
-                    decomp = 'pbi'
-
+                decomp = 'tchebi' if self.problem.n_obj <= 2 else 'pbi'
             # set the decomposition object
             self._decomposition = get_decomposition(decomp)
 

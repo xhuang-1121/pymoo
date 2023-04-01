@@ -51,16 +51,13 @@ def parameter_less_constraints(F, CV, F_max=None):
 
 
 def random_permuations(n, l):
-    perms = []
-    for i in range(n):
-        perms.append(np.random.permutation(l))
-    P = np.concatenate(perms)
-    return P
+    perms = [np.random.permutation(l) for _ in range(n)]
+    return np.concatenate(perms)
 
 
 def get_duplicates(M):
     res = []
-    I = np.lexsort([M[:, i] for i in reversed(range(0, M.shape[1]))])
+    I = np.lexsort([M[:, i] for i in reversed(range(M.shape[1]))])
     S = M[I, :]
 
     i = 0
@@ -70,7 +67,7 @@ def get_duplicates(M):
         while np.all(S[i, :] == S[i + 1, :]):
             l.append(I[i])
             i += 1
-        if len(l) > 0:
+        if l:
             l.append(I[i])
             res.append(l)
         i += 1
@@ -95,8 +92,7 @@ def vectorized_cdist(A, B, func_dist=euclidean_distance, **kwargs):
     v = np.tile(B, (A.shape[0], 1))
 
     D = func_dist(u, v, **kwargs)
-    M = np.reshape(D, (A.shape[0], B.shape[0]))
-    return M
+    return np.reshape(D, (A.shape[0], B.shape[0]))
 
 
 def covert_to_type(problem, X):
@@ -115,10 +111,7 @@ def find_duplicates(X, epsilon=1e-16):
     # set the diagonal to infinity
     D[np.triu_indices(len(X))] = np.inf
 
-    # set as duplicate if a point is really close to this one
-    is_duplicate = np.any(D < epsilon, axis=1)
-
-    return is_duplicate
+    return np.any(D < epsilon, axis=1)
 
 
 def at_least_2d_array(x, extend_as="row"):
@@ -138,19 +131,18 @@ def to_1d_array_if_possible(x):
     if not isinstance(x, np.ndarray):
         x = np.array([x])
 
-    if x.ndim == 2:
-        if x.shape[0] == 1 or x.shape[1] == 1:
-            x = x.flatten()
+    if x.ndim == 2 and (x.shape[0] == 1 or x.shape[1] == 1):
+        x = x.flatten()
 
     return x
 
 
 def stack(*args, flatten=True):
-    if not flatten:
-        ps = np.concatenate([e[None, ...] for e in args])
-    else:
-        ps = np.row_stack(args)
-    return ps
+    return (
+        np.row_stack(args)
+        if flatten
+        else np.concatenate([e[None, ...] for e in args])
+    )
 
 
 def all_combinations(A, B):
@@ -168,23 +160,21 @@ def pop_from_sampling(problem, sampling, n_initial_samples, pop=None):
     if isinstance(sampling, Population):
         pop = sampling
 
+    elif isinstance(sampling, np.ndarray):
+        pop = pop.new("X", sampling)
+
+    elif isinstance(sampling, Sampling):
+        # use the sampling
+        pop = sampling.do(problem, n_initial_samples, pop=pop)
+
     else:
-        # if just an X array create a pop
-        if isinstance(sampling, np.ndarray):
-            pop = pop.new("X", sampling)
-
-        elif isinstance(sampling, Sampling):
-            # use the sampling
-            pop = sampling.do(problem, n_initial_samples, pop=pop)
-
-        else:
-            return None
+        return None
 
     return pop
 
 
 def evaluate_if_not_done_yet(evaluator, problem, pop, algorithm=None):
-    I = np.where(pop.get("F") == None)[0]
+    I = np.where(pop.get("F") is None)[0]
     if len(I) > 0:
         pop[I] = evaluator.eval(problem, pop[I], algorithm=algorithm)
 
@@ -209,9 +199,7 @@ def calc_perpendicular_distance(N, ref_dirs):
     scalar_proj = np.sum(v * u, axis=1) / norm_u
     proj = scalar_proj[:, None] * u / norm_u[:, None]
     val = np.linalg.norm(proj - v, axis=1)
-    matrix = np.reshape(val, (len(N), len(ref_dirs)))
-
-    return matrix
+    return np.reshape(val, (len(N), len(ref_dirs)))
 
 
 def distance_of_closest_points_to_others(X):
@@ -231,16 +219,8 @@ def powerset(iterable):
 
 
 def intersect(a, b):
-    H = set()
-    for entry in b:
-        H.add(entry)
-
-    ret = []
-    for entry in a:
-        if entry in H:
-            ret.append(entry)
-
-    return ret
+    H = set(b)
+    return [entry for entry in a if entry in H]
 
 
 def has_feasible(pop):

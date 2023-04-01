@@ -39,11 +39,7 @@ class Plot:
         self.title = title
 
         # the style to be used for the axis
-        if axis_style is None:
-            self.axis_style = {}
-        else:
-            self.axis_style = axis_style.copy()
-
+        self.axis_style = {} if axis_style is None else axis_style.copy()
         # the style of the axes
         if axis_label_style is None:
             self.axis_label_style = {}
@@ -67,10 +63,7 @@ class Plot:
         self.tight_layout = tight_layout
 
         # the colormap or the color lists to use
-        if isinstance(cmap, str):
-            self.cmap = matplotlib.cm.get_cmap(cmap)
-        else:
-            self.cmap = cmap
+        self.cmap = matplotlib.cm.get_cmap(cmap) if isinstance(cmap, str) else cmap
         if isinstance(self.cmap, ListedColormap):
             self.colors = self.cmap.colors
 
@@ -98,7 +91,7 @@ class Plot:
         if len(self.to_plot) > 0:
             unique_dim = np.unique(np.array([e[0].shape[1] for e in self.to_plot]))
             if len(unique_dim) > 1:
-                raise Exception("Inputs with different dimensions were added: %s" % unique_dim)
+                raise Exception(f"Inputs with different dimensions were added: {unique_dim}")
 
             self.n_dim = unique_dim[0]
 
@@ -175,22 +168,16 @@ class Plot:
         return self
 
     def get_labels(self):
-        if isinstance(self.axis_labels, list):
-            if len(self.axis_labels) != self.n_dim:
-                raise Exception("Number of axes labels not equal to the number of axes.")
-            else:
-                return self.axis_labels
-        else:
+        if not isinstance(self.axis_labels, list):
             return [f"${self.axis_labels}_{{{i}}}$" for i in range(1, self.n_dim + 1)]
+        if len(self.axis_labels) != self.n_dim:
+            raise Exception("Number of axes labels not equal to the number of axes.")
+        else:
+            return self.axis_labels
 
 
 def get_parameter_with_options(param):
     if param is None:
         return None, None
-    else:
-        if isinstance(param, tuple):
-            val, kwargs = param
-        else:
-            val, kwargs = param, {}
-
-        return val, kwargs
+    val, kwargs = param if isinstance(param, tuple) else (param, {})
+    return val, kwargs
