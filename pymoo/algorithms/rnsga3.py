@@ -80,8 +80,9 @@ class RNSGA3(NSGA3):
 
     def _solve(self, problem):
         if self.survival.ref_points.shape[1] != problem.n_obj:
-            raise Exception("Dimensionality of reference points must be equal to the number of objectives: %s != %s" %
-                            (self.survival.ref_points.shape[1], problem.n_obj))
+            raise Exception(
+                f"Dimensionality of reference points must be equal to the number of objectives: {self.survival.ref_points.shape[1]} != {problem.n_obj}"
+            )
 
         return super()._solve(problem)
 
@@ -239,20 +240,17 @@ def line_plane_intersection(l0, l1, p0, p_no, epsilon=1e-6):
     l = l1 - l0
     dot = np.dot(l, p_no)
 
-    if abs(dot) > epsilon:
-        # the factor of the point between p0 -> p1 (0 - 1)
-        # if 'fac' is between (0 - 1) the point intersects with the segment.
-        # otherwise:
-        #  < 0.0: behind p0.
-        #  > 1.0: infront of p1.
-        w = p0 - l0
-        d = np.dot(w, p_no) / dot
-        l = l * d
-        return l0 + l
-    else:
-        # The segment is parallel to plane then return the perpendicular projection
-        ref_proj = l1 - (np.dot(l1 - p0, p_no) * p_no)
-        return ref_proj
+    if abs(dot) <= epsilon:
+        return l1 - (np.dot(l1 - p0, p_no) * p_no)
+    # the factor of the point between p0 -> p1 (0 - 1)
+    # if 'fac' is between (0 - 1) the point intersects with the segment.
+    # otherwise:
+    #  < 0.0: behind p0.
+    #  > 1.0: infront of p1.
+    w = p0 - l0
+    d = np.dot(w, p_no) / dot
+    l = l * d
+    return l0 + l
 
 
 parse_doc_string(RNSGA3.__init__)

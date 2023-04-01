@@ -17,7 +17,7 @@ def plot(*args, show=True, labels=None, no_fill=False, **kwargs):
     elif n_dim == 3:
         ret = plot_3d(*args, labels=labels, no_fill=no_fill, **kwargs)
     else:
-        print("Cannot plot a %s dimensional array." % n_dim)
+        print(f"Cannot plot a {n_dim} dimensional array.")
         return
 
     if labels:
@@ -51,15 +51,7 @@ def plot_3d(*args, no_fill=False, labels=None, **kwargs):
 
 
 def plot_2d(*args, labels=None, no_fill=False):
-    if no_fill:
-        kwargs = dict(
-            s=20,
-            facecolors='none',
-            edgecolors='r'
-        )
-    else:
-        kwargs = {}
-
+    kwargs = dict(s=20, facecolors='none', edgecolors='r') if no_fill else {}
     for i, F in enumerate(args):
         if labels:
             plt.scatter(F[:, 0], F[:, 1], label=labels[i], **kwargs)
@@ -140,8 +132,8 @@ def plot_problem_surface(problem, n_samples, plot_type="wireframe", cmap="summer
 
         A = np.zeros((n_samples * n_samples, 2))
         counter = 0
-        for i, x in enumerate(X_range):
-            for j, y in enumerate(Y_range):
+        for x in X_range:
+            for y in Y_range:
                 A[counter, 0] = x
                 A[counter, 1] = y
                 counter += 1

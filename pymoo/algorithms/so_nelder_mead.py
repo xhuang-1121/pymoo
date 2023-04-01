@@ -87,7 +87,7 @@ def max_expansion_factor(point, direction, xl, xu):
     if xu is not None:
         bounds.append(xu)
 
-    if len(bounds) == 0:
+    if not bounds:
         return np.inf
 
     # the bounds in one array
@@ -105,11 +105,7 @@ def max_expansion_factor(point, direction, xl, xu):
     val = val[val >= 0]
 
     # if no value there - no bound exist
-    if len(val) == 0:
-        return np.inf
-    # otherwise return the minimum of values considered
-    else:
-        return val.min()
+    return np.inf if len(val) == 0 else val.min()
 
 
 class NelderMead(Algorithm):
@@ -190,48 +186,48 @@ class NelderMead(Algorithm):
         # -------------------------------------------------------------------------------------------
 
         # if a restart should be considered
-        if self.n_max_local_restarts and not self.restarts_disabled:
+        if (
+            self.n_max_local_restarts
+            and not self.restarts_disabled
+            and self.criterion_local_restart.do_restart(self)
+        ):
+            # if there were at least 2 restarts
+            not_enough_restarts = len(self.restart_history) <= 1
 
-            # if there should be a restart
-            if self.criterion_local_restart.do_restart(self):
+            if not not_enough_restarts:
+                improvement_to_last = self.restart_history[-1].get("F").min() - self.pop.get("F").min() > 1e-8
 
-                # if there were at least 2 restarts
-                not_enough_restarts = len(self.restart_history) <= 1
+            # if all criteria for restarts are met
+            if (not_enough_restarts or improvement_to_last) and len(
+                    self.restart_history) < self.n_max_local_restarts:
 
-                if not not_enough_restarts:
-                    improvement_to_last = self.restart_history[-1].get("F").min() - self.pop.get("F").min() > 1e-8
+                # append to the restart history
+                self.restart_history.append(self.pop)
 
-                # if all criteria for restarts are met
-                if (not_enough_restarts or improvement_to_last) and len(
-                        self.restart_history) < self.n_max_local_restarts:
+                # work on a copy from now on
+                pop = self.pop.copy()
 
-                    # append to the restart history
-                    self.restart_history.append(self.pop)
+                # initialize new simplex around best point and sort again
+                pop[1:].set("X", self.initialize_simplex(pop[0].X))
+                pop[1:] = self.evaluator.eval(self.problem, pop[1:])
 
-                    # work on a copy from now on
-                    pop = self.pop.copy()
+                # sort by F values
+                pop = pop[np.argsort(pop.get("F")[:, 0])]
 
-                    # initialize new simplex around best point and sort again
-                    pop[1:].set("X", self.initialize_simplex(pop[0].X))
-                    pop[1:] = self.evaluator.eval(self.problem, pop[1:])
+                # set the current population to the copy
+                self.pop = pop
 
-                    # sort by F values
-                    pop = pop[np.argsort(pop.get("F")[:, 0])]
+            # otherwise just focus on the best result found so far until converging
+            else:
 
-                    # set the current population to the copy
-                    self.pop = pop
+                # if restarted before - search for the best one
+                if len(self.restart_history) > 1:
+                    best_F = [restart.get("F").min() for restart in self.restart_history]
+                    I = np.array(best_F).argmin()
+                    self.pop = self.restart_history[I]
 
-                # otherwise just focus on the best result found so far until converging
-                else:
-
-                    # if restarted before - search for the best one
-                    if len(self.restart_history) > 1:
-                        best_F = [restart.get("F").min() for restart in self.restart_history]
-                        I = np.array(best_F).argmin()
-                        self.pop = self.restart_history[I]
-
-                    # disable restarts for future
-                    self.restarts_disabled = True
+                # disable restarts for future
+                self.restarts_disabled = True
 
         return self.pop
 
@@ -282,8 +278,9 @@ class NelderMead(Algorithm):
 
         elif len(pop) != self.problem.n_var + 1:
 
-            raise Exception("Provided initial population has size of %s, but should have size of %s" %
-                            (len(pop), self.problem.n_var + 1))
+            raise Exception(
+                f"Provided initial population has size of {len(pop)}, but should have size of {self.problem.n_var + 1}"
+            )
 
         # sort by its corresponding function values
         self.pop = pop[np.argsort(pop.get("F")[:, 0])]
@@ -316,7 +313,6 @@ class NelderMead(Algorithm):
         if pop[0].F <= reflect.F < pop[n].F:
             pop[n + 1] = reflect
 
-        # if even better than the best - check for expansion
         elif reflect.F < pop[0].F:
 
             # -------------------------------------------------------------------------------------------
@@ -337,12 +333,7 @@ class NelderMead(Algorithm):
                 expand = self.evaluator.eval(self.problem, Individual(X=x_expand), algorithm=self)
 
             # if the expansion further improved take it - otherwise use expansion
-            if expand.F < reflect.F:
-                pop[n + 1] = expand
-            else:
-                pop[n + 1] = reflect
-
-        # if not worst than the worst - outside contraction
+            pop[n + 1] = expand if expand.F < reflect.F else reflect
         elif pop[n].F <= reflect.F < pop[n + 1].F:
 
             # -------------------------------------------------------------------------------------------
@@ -357,7 +348,6 @@ class NelderMead(Algorithm):
             else:
                 shrink = True
 
-        # if the reflection was worse than the worst - inside contraction
         else:
 
             # -------------------------------------------------------------------------------------------

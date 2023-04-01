@@ -23,6 +23,6 @@ ret = minimize(problem,
                termination=('n_gen', 1000),
                verbose=True)
 
-np.savetxt("%s_%s.f" % (p, len(ref_dirs)), ret.F)
+np.savetxt(f"{p}_{len(ref_dirs)}.f", ret.F)
 
 PCP().add(ret.F).show()

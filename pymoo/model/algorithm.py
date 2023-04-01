@@ -317,15 +317,9 @@ def filter_optimum(pop, least_infeasible=False):
         else:
             ret = ret[np.argmin(F)]
 
-    # no feasible solution was found
     else:
         # if flag enable report the least infeasible
-        if least_infeasible:
-            ret = pop[np.argmin(pop.get("CV"))]
-        # otherwise just return none
-        else:
-            ret = None
-
+        ret = pop[np.argmin(pop.get("CV"))] if least_infeasible else None
     if isinstance(ret, Individual):
         ret = Population().create(ret)
 

@@ -97,16 +97,17 @@ class NSGA3(GeneticAlgorithm):
 
         if self.ref_dirs is not None and self.ref_dirs.shape[1] != problem.n_obj:
             raise Exception(
-                "Dimensionality of reference points must be equal to the number of objectives: %s != %s" %
-                (self.ref_dirs.shape[1], problem.n_obj))
+                f"Dimensionality of reference points must be equal to the number of objectives: {self.ref_dirs.shape[1]} != {problem.n_obj}"
+            )
 
         return super()._solve(problem)
 
     def _set_optimum(self, **kwargs):
-        if not has_feasible(self.pop):
-            self.opt = self.pop[[np.argmin(self.pop.get("CV"))]]
-        else:
-            self.opt = self.survival.opt
+        self.opt = (
+            self.survival.opt
+            if has_feasible(self.pop)
+            else self.pop[[np.argmin(self.pop.get("CV"))]]
+        )
 
 
 class ReferenceDirectionSurvival(Survival):

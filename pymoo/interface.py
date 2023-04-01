@@ -76,11 +76,7 @@ class AskAndTell:
 
     def __init__(self, algorithm, problem=None, **kwargs):
 
-        if problem is not None:
-            self.problem = copy.deepcopy(problem)
-        else:
-            self.problem = Problem(**kwargs)
-
+        self.problem = Problem(**kwargs) if problem is None else copy.deepcopy(problem)
         self.algorithm = copy.deepcopy(algorithm)
 
     def get_population(self):

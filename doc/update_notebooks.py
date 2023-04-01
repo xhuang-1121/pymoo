@@ -21,14 +21,14 @@ def get_section(code, section):
 
     for i, line in enumerate(code):
 
-        if "# START %s" % section in line:
+        if f"# START {section}" in line:
             start = i
-        elif "# END %s" % section in line:
+        elif f"# END {section}" in line:
             end = i
             break
 
     if start is None:
-        raise Exception("%s not found." % section)
+        raise Exception(f"{section} not found.")
 
     return "\n".join(code[start + 1:end]).rstrip().lstrip()
 

@@ -9,14 +9,14 @@ import os
 def load(name):
     path = os.path.join(os.path.dirname(os.path.realpath(__file__)), "resources")
 
-    X = anp.loadtxt(os.path.join(path, "%s.x" % name))
+    X = anp.loadtxt(os.path.join(path, f"{name}.x"))
 
     try:
-        F = anp.loadtxt(os.path.join(path, "%s.f" % name))
+        F = anp.loadtxt(os.path.join(path, f"{name}.f"))
 
         CV = None
-        if os.path.exists(os.path.join(path, "%s.cv" % name)):
-            CV = anp.loadtxt(os.path.join(path, "%s.cv" % name))
+        if os.path.exists(os.path.join(path, f"{name}.cv")):
+            CV = anp.loadtxt(os.path.join(path, f"{name}.cv"))
 
     except:
         return X, None, None
@@ -51,12 +51,12 @@ class CorrectnessTest(unittest.TestCase):
     def test_problems(self):
         for entry in problems:
             name, params = entry
-            print("Testing: " + name)
+            print(f"Testing: {name}")
 
             X, F, CV = load(name)
 
             if F is None:
-                print("Warning: No correctness check for %s" % name)
+                print(f"Warning: No correctness check for {name}")
                 continue
 
             problem = get_problem(name, *params)

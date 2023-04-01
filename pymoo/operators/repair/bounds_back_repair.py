@@ -17,10 +17,7 @@ def bounds_back(problem, X):
         X[X < xl] = (xl + np.mod((xl - X), _range))[X < xl]
         X[X > xu] = (xu - np.mod((X - xu), _range))[X > xu]
 
-    if only_1d:
-        return X[0, :]
-    else:
-        return X
+    return X[0, :] if only_1d else X
 
 
 class BoundsBackRepair(Repair):

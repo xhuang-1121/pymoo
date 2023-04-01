@@ -33,7 +33,7 @@ class RMetric(Indicator):
         self.whole_pop = whole_pop
         self.ref_points = ref_points
         self.problem = problem
-        w_ = np.ones(self.ref_points.shape[1]) if not w else w
+        w_ = w or np.ones(self.ref_points.shape[1])
         self.w_points = self.ref_points + 2 * w_
 
     def _filter(self):
@@ -68,8 +68,7 @@ class RMetric(Indicator):
         return filtered_pop
 
     def _filter_fast(self):
-        filtered_pop = NonDominatedSorting.get_non_dominated(self.whole_pop, self.curr_pop)
-        return filtered_pop
+        return NonDominatedSorting.get_non_dominated(self.whole_pop, self.curr_pop)
 
     def _preprocess(self, data, ref_point, w_point):
 
@@ -112,8 +111,7 @@ class RMetric(Indicator):
         popsize, objDim = pop.shape
         diff_matrix = pop - np.tile(centeroid, (popsize, 1))[0]
         flags = np.sum(abs(diff_matrix) < range / 2, axis=1)
-        filtered_matrix = pop[np.where(flags == objDim)]
-        return filtered_matrix
+        return pop[np.where(flags == objDim)]
 
     def _trim_fast(self, pop, centeroid, range=0.2):
         """
@@ -124,8 +122,7 @@ class RMetric(Indicator):
         :return:
         """
         centeroid_matrix = cdist(pop, centeroid, metric='euclidean')
-        filtered_matrix = pop[np.where(centeroid_matrix < range / 2), :][0]
-        return filtered_matrix
+        return pop[np.where(centeroid_matrix < range / 2), :][0]
 
     def calc(self, hyper_volume=True, delta=0.2, pf=None):
         """
@@ -138,12 +135,7 @@ class RMetric(Indicator):
         # 1. Prescreen Procedure - NDS Filtering
         pop = self._filter()
 
-        if pf is not None:
-            solution = pf
-        else:
-            solution = self.problem.pareto_front()
-
-
+        solution = pf if pf is not None else self.problem.pareto_front()
         # solution = calc_PF(1, 10000, 2)
 
         labels = np.argmin(cdist(pop, self.ref_points), axis=1)
@@ -178,8 +170,8 @@ class RMetric(Indicator):
 
             nadir_point = np.amax(self.w_points, axis=0)
             front = translated
-            dim = self.ref_points[0].shape[0]
             if hyper_volume:
+                dim = self.ref_points[0].shape[0]
                 if dim < 3:
                     try:
                         # Python

@@ -17,10 +17,7 @@ def repair_out_of_bounds(problem, X):
         xu = np.repeat(problem.xu[None, :], X.shape[0], axis=0)
         X[X > xu] = xu[X > xu]
 
-    if only_1d:
-        return X[0, :]
-    else:
-        return X
+    return X[0, :] if only_1d else X
 
 
 class OutOfBoundsRepair(Repair):

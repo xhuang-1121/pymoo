@@ -24,10 +24,7 @@ class LatinHypercubeSampling(Sampling):
         X = np.random.random(size=(n_samples, n_var))
         val = X.argsort(axis=0) + 1
 
-        if self.smooth:
-            val = val - np.random.random(val.shape)
-        else:
-            val = val - 0.5
+        val = val - np.random.random(val.shape) if self.smooth else val - 0.5
         val /= n_samples
 
         return val
@@ -64,8 +61,7 @@ class LatinHypercubeSampling(Sampling):
             # current best score is stored here
             score = self._calc_score(X)
 
-            for j in range(self.iterations - 1):
-
+            for _ in range(self.iterations - 1):
                 # create new random sample and check the score again
                 _X = self._sample(n_samples, problem.n_var)
                 _score = self._calc_score(_X)

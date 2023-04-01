@@ -13,7 +13,7 @@ class TimeBasedTermination(Termination):
 
         if isinstance(max_time, str):
             self.max_time = time_to_int(max_time)
-        elif isinstance(max_time, int) or isinstance(max_time, float):
+        elif isinstance(max_time, (int, float)):
             self.max_time = max_time
         else:
             raise Exception("Either provide the time as a string or an integer.")

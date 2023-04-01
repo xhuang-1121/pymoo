@@ -90,7 +90,7 @@ class Radar(Plot):
                 "Points out of the boundaries exist! Please make sure the boundaries are indeed boundaries.")
 
         n_rows = len(self.to_plot)
-        n_cols = max([len(e[0]) for e in self.to_plot])
+        n_cols = max(len(e[0]) for e in self.to_plot)
         self.init_figure(n_rows=n_rows, n_cols=n_cols, force_axes_as_matrix=True)
 
         # normalize the input

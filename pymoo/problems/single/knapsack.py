@@ -26,5 +26,4 @@ def create_random_knapsack_problem(n_items, seed=1):
     P = anp.random.randint(1, 100, size=n_items)
     W = anp.random.randint(1, 100, size=n_items)
     C = int(anp.sum(W) / 10)
-    problem = Knapsack(n_items, W, P, C)
-    return problem
+    return Knapsack(n_items, W, P, C)

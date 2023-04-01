@@ -21,7 +21,7 @@ class NonDominatedSorting:
         if self.method == 'fast_non_dominated_sort':
             func = load_function("fast_non_dominated_sort")
         else:
-            raise Exception("Unknown non-dominated sorting method: %s" % self.method)
+            raise Exception(f"Unknown non-dominated sorting method: {self.method}")
 
         fronts = func(F, epsilon=self.epsilon)
 
@@ -63,7 +63,6 @@ def rank_from_fronts(fronts, n):
 # Returns all indices of F that are not dominated by the other objective values
 def find_non_dominated(F, _F=None):
     M = Dominator.calc_domination_matrix(F, _F)
-    I = np.where(np.all(M >= 0, axis=1))[0]
-    return I
+    return np.where(np.all(M >= 0, axis=1))[0]
 
 

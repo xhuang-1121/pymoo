@@ -27,10 +27,7 @@ class Termination:
 
         """
 
-        if self.force_termination:
-            return False
-        else:
-            return self._do_continue(algorithm)
+        return False if self.force_termination else self._do_continue(algorithm)
 
     # the concrete implementation of the algorithm
     def _do_continue(self, algorithm, **kwargs):

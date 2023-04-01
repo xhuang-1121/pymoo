@@ -67,6 +67,6 @@ class Decomposition:
             D = self._do(F, weights=weights, **kwargs).reshape(n_points, n_weights)
 
         else:
-            raise Exception("Unknown type for decomposition: %s" % _type)
+            raise Exception(f"Unknown type for decomposition: {_type}")
 
         return D

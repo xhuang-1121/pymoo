@@ -237,7 +237,9 @@ class Problem:
 
         # check the dimensionality of the problem and the given input
         if X.shape[1] != self.n_var:
-            raise Exception('Input dimension %s are not equal to n_var %s!' % (X.shape[1], self.n_var))
+            raise Exception(
+                f'Input dimension {X.shape[1]} are not equal to n_var {self.n_var}!'
+            )
 
         # automatic return the function values and CV if it has constraints if not defined otherwise
         if type(return_values_of) == str and return_values_of == "auto":
@@ -254,23 +256,20 @@ class Problem:
         # whether gradient calculation is necessary or not
         calc_gradient = (len(gradients_not_set) > 0)
 
-        # set in the dictionary if the output should be calculated - can be used for the gradient
-        out = {}
-        for val in return_values_of:
-            out[val] = None
-
+        out = {val: None for val in return_values_of}
         # calculate the output array - either elementwise or not. also consider the gradient
         if self.elementwise_evaluation:
             out = self._evaluate_elementwise(X, calc_gradient, out, *args, **kwargs)
         else:
             out = self._evaluate_batch(X, calc_gradient, out, *args, **kwargs)
 
-            calc_gradient_of = [key for key, val in out.items()
-                                if "d" + key in return_values_of and
-                                out.get("d" + key) is None and
-                                (type(val) == autograd.numpy.numpy_boxes.ArrayBox)]
-
-            if len(calc_gradient_of) > 0:
+            if calc_gradient_of := [
+                key
+                for key, val in out.items()
+                if f"d{key}" in return_values_of
+                and out.get(f"d{key}") is None
+                and type(val) == autograd.numpy.numpy_boxes.ArrayBox
+            ]:
                 deriv = self._calc_gradient(out, calc_gradient_of)
                 out = {**out, **deriv}
 
@@ -305,13 +304,11 @@ class Problem:
 
         if return_as_dictionary:
             return out
-        else:
-
             # if just a single value do not return a tuple
-            if len(return_values_of) == 1:
-                return out[return_values_of[0]]
-            else:
-                return tuple([out[val] for val in return_values_of])
+        if len(return_values_of) == 1:
+            return out[return_values_of[0]]
+        else:
+            return tuple(out[val] for val in return_values_of)
 
     def _calc_gradient(self, out, keys):
 
@@ -323,7 +320,7 @@ class Problem:
             with warnings.catch_warnings():
                 warnings.simplefilter("ignore")
                 jac = calc_jacobian(out["__autograd__"], val)
-                deriv["d" + key] = jac
+                deriv[f"d{key}"] = jac
 
         return deriv
 
@@ -389,7 +386,9 @@ class Problem:
             ret = [job.result() for job in jobs]
 
         else:
-            raise Exception("Unknown parallelization method: %s (None, threads, dask)" % self.parallelization)
+            raise Exception(
+                f"Unknown parallelization method: {self.parallelization} (None, threads, dask)"
+            )
 
         # stack all the single outputs together
         for key in ret[0].keys():
@@ -483,16 +482,12 @@ def get_problem_from_func(func, xl=None, xu=None, n_var=None, func_args={}):
     # determine through a test evaluation details about the problem
     n_var = xl.shape[0]
     n_obj = -1
-    n_constr = 0
-
     out = {}
     func(xl[None, :], out, **func_args)
     at_least2d(out)
 
     n_obj = out["F"].shape[1]
-    if out.get("G") is not None:
-        n_constr = out["G"].shape[1]
-
+    n_constr = out["G"].shape[1] if out.get("G") is not None else 0
     class MyProblem(Problem):
         def __init__(self):
             Problem.__init__(self)

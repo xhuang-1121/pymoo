@@ -129,7 +129,7 @@ class SingleObjectiveSpaceToleranceTermination(ToleranceBasedTermination):
         if _min == 0:
             _min = 1e-64
 
-        max_delta_f = max([e["delta_f"] for e in self.metrics])
-        max_delta_f_rel = max([(e["f"] / _min) - 1 for e in self.metrics])
+        max_delta_f = max(e["delta_f"] for e in self.metrics)
+        max_delta_f_rel = max((e["f"] / _min) - 1 for e in self.metrics)
 
         return max_delta_f > self.tol or max_delta_f_rel > self.tol_rel

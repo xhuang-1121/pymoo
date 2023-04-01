@@ -11,10 +11,7 @@ def get_circle_points(n_points):
 
 
 def default_number_to_text(val):
-    if val > 1e3:
-        return "{:.2e}".format(val)
-    else:
-        return "{:.2f}".format(val)
+    return "{:.2e}".format(val) if val > 1e3 else "{:.2f}".format(val)
 
 
 def in_notebook():
@@ -23,8 +20,7 @@ def in_notebook():
 
 def get_uniform_points_around_circle(n):
     t = 2 * np.pi * np.arange(n) / n
-    s = np.column_stack([np.cos(t), np.sin(t)])
-    return s
+    return np.column_stack([np.cos(t), np.sin(t)])
 
 
 def plot_circle(ax, center=0, radius=1, **kwargs):
@@ -101,10 +97,7 @@ def normalize(data, bounds, reverse=False, return_bounds=False):
 
         to_plot.append([F, data[k][1]])
 
-    if return_bounds:
-        return to_plot, bounds
-    else:
-        return to_plot
+    return (to_plot, bounds) if return_bounds else to_plot
 
 
 def parse_bounds(bounds, n_dim):
@@ -117,7 +110,7 @@ def parse_bounds(bounds, n_dim):
 
 def radviz_pandas(F):
     import pandas as pd
-    df = pd.DataFrame([x for x in F], columns=["X%s" % k for k in range(F.shape[1])])
+    df = pd.DataFrame(list(F), columns=[f"X{k}" for k in range(F.shape[1])])
     df["class"] = "Points"
     return pd.plotting.radviz(df, "class")
 

@@ -17,10 +17,11 @@ class MyCallback(Callback):
     def notify(self, algorithm):
         problem = algorithm.problem
 
-        pcp = PCP(title=("Gen %s" % algorithm.n_gen, {'pad': 30}),
-                  bounds=(problem.xl, problem.xu),
-                  labels=["$x_%s$" % k for k in range(problem.n_var)]
-                  )
+        pcp = PCP(
+            title=(f"Gen {algorithm.n_gen}", {'pad': 30}),
+            bounds=(problem.xl, problem.xu),
+            labels=[f"$x_{k}$" for k in range(problem.n_var)],
+        )
         pcp.set_axis_style(color="grey", alpha=0.5)
 
         pcp.add(algorithm.pop.get("X"), color="black", alpha=0.8, linewidth=1.5)

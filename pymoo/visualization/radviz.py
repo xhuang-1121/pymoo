@@ -60,7 +60,7 @@ class Radviz(Plot):
             self.ax.scatter(V[:, 0], V[:, 1], **self.endpoint_style)
 
         # plot all the points
-        for k, (F, kwargs) in enumerate(self.to_plot):
+        for F, kwargs in self.to_plot:
             N = (F[..., None] * V).sum(axis=1) / F.sum(axis=1)[:, None]
             self.ax.scatter(N[:, 0], N[:, 1], **kwargs)
 

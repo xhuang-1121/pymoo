@@ -117,11 +117,10 @@ class Scatter(Plot):
                 ax.scatter(F[:, 0], F[:, 1], F[:, 2], **kwargs)
             else:
                 ax.scatter(F[:, 0], F[:, 1], **kwargs)
+        elif is_3d:
+            ax.plot_trisurf(F[:, 0], F[:, 1], F[:, 2], **kwargs)
         else:
-            if is_3d:
-                ax.plot_trisurf(F[:, 0], F[:, 1], F[:, 2], **kwargs)
-            else:
-                ax.plot(F[:, 0], F[:, 1], **kwargs)
+            ax.plot(F[:, 0], F[:, 1], **kwargs)
 
     def set_labels(self, ax, labels, is_3d):
 

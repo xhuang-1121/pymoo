@@ -20,7 +20,7 @@ phenome = [0.4851565977955035, 0.053878298054392586, 2.298833100264349, 3.317221
 for m in range(3, 4, 3):
     for n in range(6, 24, 6):
         for k in range(3, 10):
-            name = "wfg%s" % k
+            name = f"wfg{k}"
 
 
             problems = [get_problem(name, n, m)]

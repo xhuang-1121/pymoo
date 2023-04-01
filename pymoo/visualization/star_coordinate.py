@@ -37,13 +37,9 @@ class StarCoordinate(Plot):
 
         self.axis_extension = axis_extension
 
-        if "arrow_style" not in kwargs:
-            self.arrow_style = {
-                "head_width": 0.02,
-                "head_length": 0.01
-            }
-        else:
-            self.arrow_style = kwargs["arrow_style"]
+        self.arrow_style = kwargs.get(
+            "arrow_style", {"head_width": 0.02, "head_length": 0.01}
+        )
 
     def _do(self):
 
@@ -67,7 +63,7 @@ class StarCoordinate(Plot):
         bounds = parse_bounds(self.bounds, self.n_dim)
         to_plot_norm = normalize(self.to_plot, bounds)
 
-        for k, (F, kwargs) in enumerate(to_plot_norm):
+        for F, kwargs in to_plot_norm:
             N = (F[..., None] * V).sum(axis=1)
             self.ax.scatter(N[:, 0], N[:, 1], **kwargs)
 

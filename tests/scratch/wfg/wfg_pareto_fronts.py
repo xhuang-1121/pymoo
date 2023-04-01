@@ -15,7 +15,7 @@ def calc_pareto_front(problem, ref_dirs):
     # survival = ReferenceDirectionSurvival(ref_dirs)
     survival = RankAndCrowdingSurvival()
 
-    for i in range(1000):
+    for _ in range(1000):
         _pf = problem.pareto_front(n_pareto_points=n_pareto_points, use_cache=False)
         F = np.row_stack([pf, _pf])
 
@@ -34,5 +34,5 @@ if __name__ == '__main__':
 
     Scatter().add(F).show()
 
-    for problem in [WFG1, WFG2, WFG3, WFG4, WFG5, WFG6, WFG7, WFG8, WFG9]:
+    for _ in [WFG1, WFG2, WFG3, WFG4, WFG5, WFG6, WFG7, WFG8, WFG9]:
         print("")

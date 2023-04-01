@@ -26,7 +26,7 @@ class DTLZ(Problem):
     def obj_func(self, X_, g, alpha=1):
         f = []
 
-        for i in range(0, self.n_obj):
+        for i in range(self.n_obj):
             _f = (1 + g)
             _f *= anp.prod(anp.cos(anp.power(X_[:, :X_.shape[1] - i], alpha) * anp.pi / 2.0), axis=1)
             if i > 0:
@@ -34,8 +34,7 @@ class DTLZ(Problem):
 
             f.append(_f)
 
-        f = anp.column_stack(f)
-        return f
+        return anp.column_stack(f)
 
 
 def generic_sphere(ref_dirs):
@@ -54,7 +53,7 @@ class DTLZ1(DTLZ):
         g = self.g1(X_M)
 
         f = []
-        for i in range(0, self.n_obj):
+        for i in range(self.n_obj):
             _f = 0.5 * (1 + g)
             _f *= anp.prod(X_[:, :X_.shape[1] - i], axis=1)
             if i > 0:
@@ -156,9 +155,7 @@ class DTLZ7(DTLZ):
             raise Exception("Not implemented yet.")
 
     def _evaluate(self, x, out, *args, **kwargs):
-        f = []
-        for i in range(0, self.n_obj - 1):
-            f.append(x[:, i])
+        f = [x[:, i] for i in range(self.n_obj - 1)]
         f = anp.column_stack(f)
 
         g = 1 + 9 / self.k * anp.sum(x[:, -self.k:], axis=1)

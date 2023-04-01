@@ -60,7 +60,4 @@ class Crossover:
         # flatten the array to become a 2d-array
         X = X.reshape(-1, X.shape[-1])
 
-        # create a population object
-        off = pop.new("X", X)
-
-        return off
+        return pop.new("X", X)

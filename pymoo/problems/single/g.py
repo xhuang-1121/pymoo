@@ -53,9 +53,7 @@ class G2(Problem):
                                  type_var=anp.double)
 
     def _evaluate(self, x, out, *args, **kwargs):
-        l = []
-        for j in range(self.n_var):
-            l.append((j + 1) * x[:, j] ** 2)
+        l = [(j + 1) * x[:, j] ** 2 for j in range(self.n_var)]
         sum_jx = anp.sum(anp.column_stack(l), axis=1)
 
         a = anp.sum(anp.cos(x) ** 4, axis=1)

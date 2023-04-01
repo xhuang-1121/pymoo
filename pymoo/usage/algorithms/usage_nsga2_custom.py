@@ -16,7 +16,7 @@ class MyProblem(Problem):
     def __init__(self, n_characters=10):
         super().__init__(n_var=1, n_obj=2, n_constr=0, elementwise_evaluation=True)
         self.n_characters = n_characters
-        self.ALPHABET = [c for c in string.ascii_lowercase]
+        self.ALPHABET = list(string.ascii_lowercase)
 
     def _evaluate(self, x, out, *args, **kwargs):
         n_a, n_b = 0, 0
@@ -86,7 +86,11 @@ class MyMutation(Mutation):
     def _do(self, problem, X, **kwargs):
         for i in range(len(X)):
             if np.random.random() < 0.5:
-                X[i, 0] = "".join(np.array([e for e in X[i, 0]])[np.random.permutation(problem.n_characters)])
+                X[i, 0] = "".join(
+                    np.array(list(X[i, 0]))[
+                        np.random.permutation(problem.n_characters)
+                    ]
+                )
 
         return X
 

@@ -66,10 +66,7 @@ class Dominator:
         smaller = np.reshape(np.any(L + epsilon < R, axis=1), (n, m))
         larger = np.reshape(np.any(L > R + epsilon, axis=1), (n, m))
 
-        M = np.logical_and(smaller, np.logical_not(larger)) * 1 \
+        return (
+            np.logical_and(smaller, np.logical_not(larger)) * 1
             + np.logical_and(larger, np.logical_not(smaller)) * -1
-
-        # if cv equal then look at dom
-        # M = constr + (constr == 0) * dom
-
-        return M
+        )

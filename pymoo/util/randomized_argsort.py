@@ -56,6 +56,6 @@ def _quicksort(A, I, left, right):
 if __name__ == '__main__':
     a = np.array([5, 9, 10, 0, 0, 0, 100, -2])
 
-    for i in range(200):
+    for _ in range(200):
         I = randomized_argsort(a, method="numpy")
         print(I)

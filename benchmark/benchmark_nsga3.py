@@ -234,9 +234,9 @@ if __name__ == '__main__':
 
         for run in range(1, n_runs+1):
 
-            fname = "%s_%s.run" % (_problem, run)
+            fname = f"{_problem}_{run}.run"
             _in = os.path.join(path, fname)
-            _out = "results/%s/%s/%s_%s.out" % (name, _problem.replace("_", "/"), _problem, run)
+            _out = f'results/{name}/{_problem.replace("_", "/")}/{_problem}_{run}.out'
 
             data = {
                 'args': [problem, method, termination],

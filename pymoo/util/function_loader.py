@@ -8,19 +8,20 @@ def get_functions():
     from pymoo.decomposition.util import calc_distance_to_weights
     from pymoo.util.misc import calc_perpendicular_distance
 
-    FUNCTIONS = {
+    return {
         "fast_non_dominated_sort": {
-            "python": fast_non_dominated_sort, "cython": "pymoo.cython.non_dominated_sorting"
+            "python": fast_non_dominated_sort,
+            "cython": "pymoo.cython.non_dominated_sorting",
         },
         "calc_distance_to_weights": {
-            "python": calc_distance_to_weights, "cython": "pymoo.cython.decomposition"
+            "python": calc_distance_to_weights,
+            "cython": "pymoo.cython.decomposition",
         },
         "calc_perpendicular_distance": {
-            "python": calc_perpendicular_distance, "cython": "pymoo.cython.calc_perpendicular_distance"
-        }
+            "python": calc_perpendicular_distance,
+            "cython": "pymoo.cython.calc_perpendicular_distance",
+        },
     }
-
-    return FUNCTIONS
 
 
 class FunctionLoader:
@@ -57,11 +58,11 @@ class FunctionLoader:
             _type = "cython" if self.is_compiled else "python"
 
         if func_name not in FUNCTIONS:
-            raise Exception("Function %s not found: %s" % (func_name, FUNCTIONS.keys()))
+            raise Exception(f"Function {func_name} not found: {FUNCTIONS.keys()}")
 
         func = FUNCTIONS[func_name]
         if _type not in func:
-            raise Exception("Module not available in %s." % _type)
+            raise Exception(f"Module not available in {_type}.")
         func = func[_type]
 
         # either provide a function or a string to the module (used for cython)
@@ -79,9 +80,6 @@ def load_function(func_name=None, _type="auto"):
 def is_compiled():
     try:
         from pymoo.cython.info import info
-        if info() == "yes":
-            return True
-        else:
-            return False
+        return info() == "yes"
     except:
         return False

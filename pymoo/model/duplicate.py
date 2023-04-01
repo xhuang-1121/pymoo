@@ -32,19 +32,18 @@ class DuplicateElimination:
                 else:
                     pop = pop[~self._do(pop, arg, np.full(len(pop), False))]
 
-        if return_indices:
-            no_duplicate, is_duplicate = [], []
-            H = set(pop)
-
-            for i, ind in enumerate(original):
-                if ind in H:
-                    no_duplicate.append(i)
-                else:
-                    is_duplicate.append(i)
-
-            return pop, no_duplicate, is_duplicate
-        else:
+        if not return_indices:
             return pop
+        no_duplicate, is_duplicate = [], []
+        H = set(pop)
+
+        for i, ind in enumerate(original):
+            if ind in H:
+                no_duplicate.append(i)
+            else:
+                is_duplicate.append(i)
+
+        return pop, no_duplicate, is_duplicate
 
     def _do(self, pop, other, is_duplicate):
         pass
@@ -90,7 +89,7 @@ class ElementwiseDuplicateElimination(DefaultDuplicateElimination):
     def _do(self, pop, other, is_duplicate):
 
         def to_float(val):
-            if isinstance(val, bool) or isinstance(val, np.bool_):
+            if isinstance(val, (bool, np.bool_)):
                 return 0.0 if val else 1.0
             else:
                 return val

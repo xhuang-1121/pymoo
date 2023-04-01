@@ -26,7 +26,7 @@ def decompose(problem, decomposition, weights, return_copy=True):
 
 def load_pareto_front_from_file(fname):
     current_dir = os.path.dirname(os.path.realpath(__file__))
-    fname = os.path.join(current_dir, "pf", "%s" % fname)
+    fname = os.path.join(current_dir, "pf", f"{fname}")
     if os.path.isfile(fname):
         pf = anp.loadtxt(fname)
         return pf[pf[:, 0].argsort()]
